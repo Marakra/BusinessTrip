@@ -4,12 +4,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
+import static java.lang.String.*;
+
 public class FileService {
 
     String fileName;
-
-
-    //todo 2 medtody zapisu i odczytu
 
     static final String RESOURCES_PATH = "Fitbit/src/main/java/org/infoshere/resources";
 
@@ -28,5 +27,18 @@ public class FileService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void readFromFile(String fileName) throws IOException {
+        String path = Paths.get(RESOURCES_PATH).toAbsolutePath().toString();
+        String filePath = path + File.separator + fileName + ".txt";
+
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line = reader.readLine();
+        while (line != null) {
+            System.out.println(line);
+            line = reader.readLine();
+        }
+        reader.close();
     }
 }
