@@ -1,24 +1,25 @@
 package org.infoshere.model;
 
 public class ActivityList {
-    private String name;
-    private String coach;
+    private String nameActivity;
+    private Coach coach;
     private String time;
-    private String typeActivity;
+    private TypeActivity typeActivity;
 
-    public ActivityList(String coach, String name, String time, String typeActivity) {
+
+    public ActivityList(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
         this.coach = coach;
-        this.name = name;
+        this.nameActivity = nameActivity;
         this.time = time;
         this.typeActivity = typeActivity;
     }
 
     public String getName() {
-        return name;
+        return nameActivity;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.nameActivity = name;
     }
 
     public String getTime() {
@@ -29,19 +30,19 @@ public class ActivityList {
         this.time = time;
     }
 
-    public String getCoach() {
+    public Coach getCoach() {
         return coach;
     }
 
-    public void setCoach(String coach) {
+    public void setCoach(Coach coach) {
         this.coach = coach;
     }
 
-    public String getTypeActivity() {
-        return typeActivity;
+    public void setTypeActivity(TypeActivity typeActivity) {
+        this.typeActivity = typeActivity;
     }
 
-    public void setTypeActivity(String typeActivity) {
-        this.typeActivity = typeActivity;
+    public TypeActivity getTypeActivity() {
+        return typeActivity;
     }
 }
