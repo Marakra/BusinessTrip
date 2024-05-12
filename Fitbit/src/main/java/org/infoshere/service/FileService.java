@@ -8,15 +8,11 @@ import static java.lang.String.*;
 
 public class FileService {
 
-    String fileName;
-
     static final String RESOURCES_PATH = "Fitbit/src/main/java/org/infoshere/resources";
-
-
 
     public void writeToFile(String fileName, String content) {
         String path = Paths.get(RESOURCES_PATH).toAbsolutePath().toString();
-        String filePath = path + File.separator + fileName + ".txt";
+        String filePath = path + File.separator + fileName + ".json";
 
         try {
             PrintWriter writer = new PrintWriter(new FileWriter(filePath, true));
@@ -31,7 +27,7 @@ public class FileService {
 
     public void readFromFile(String fileName) throws IOException {
         String path = Paths.get(RESOURCES_PATH).toAbsolutePath().toString();
-        String filePath = path + File.separator + fileName + ".txt";
+        String filePath = path + File.separator + fileName + ".json";
 
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line = reader.readLine();
