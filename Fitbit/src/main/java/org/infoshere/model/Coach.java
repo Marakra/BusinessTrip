@@ -8,9 +8,11 @@ public class Coach {
     private String firstName;
     private String lastName;
     private String specialization;
-    private List<ActivityList> activityList = new ArrayList<ActivityList>();
+    private List<Activity> activityList = new ArrayList<Activity>();
+
 
     public Coach(int id, String firstName, String lastName, String specialization, List<ActivityList> activityList) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.specialization = specialization;
@@ -45,11 +47,11 @@ public class Coach {
         this.specialization = specialization;
     }
 
-    public List<ActivityList> getActivityList() {
+    public List<Activity> getActivityList() {
         return activityList;
     }
 
-    public void setActivityList(List<ActivityList> activityList) {
+    public void setActivityList(List<Activity> activityList) {
         this.activityList = activityList;
     }
 }
