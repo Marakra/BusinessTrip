@@ -1,13 +1,13 @@
 package org.infoshere.model;
 
-public class ActivityList {
+public class Activity {
     private String nameActivity;
     private Coach coach;
     private String time;
     private TypeActivity typeActivity;
 
 
-    public ActivityList(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
+    public Activity(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
         this.coach = coach;
         this.nameActivity = nameActivity;
         this.time = time;
