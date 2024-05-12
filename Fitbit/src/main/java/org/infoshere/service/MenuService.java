@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class MenuService {
 
     public void displayMenu() {
-        System.out.println("1. List of available trainers");
+        System.out.println("1. List of available Coach");
         System.out.println("2. Activity list");
         System.out.println("3. Exit");
     }
@@ -25,9 +25,9 @@ public class MenuService {
 
     }
 
-    public static void trainersList() {
+    public static void coachs() {
         System.out.println("------------------------------------");
-        System.out.println("List of available trainers");
+        System.out.println("List of available Coach");
         System.out.println("------------------------------------");
     }
 

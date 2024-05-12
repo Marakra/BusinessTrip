@@ -1,7 +1,7 @@
 package org.infoshere.model;
 
 public class Activity {
-    private String nameActivity;
+    private String name;
     private Coach coach;
     private String time;
     private TypeActivity typeActivity;
@@ -9,17 +9,17 @@ public class Activity {
 
     public Activity(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
         this.coach = coach;
-        this.nameActivity = nameActivity;
+        this.name = nameActivity;
         this.time = time;
         this.typeActivity = typeActivity;
     }
 
     public String getName() {
-        return nameActivity;
+        return name;
     }
 
     public void setName(String name) {
-        this.nameActivity = name;
+        this.name = name;
     }
 
     public String getTime() {
