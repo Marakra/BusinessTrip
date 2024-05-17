@@ -4,22 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Coach {
-    private final int id;
+    private final int coachId;
     private String firstName;
     private String lastName;
     private String specialization;
     private List<Activity> activities = new ArrayList<Activity>();
 
 
-    public Coach(int id, String firstName, String lastName, String specialization, List<Activity> activities) {
-        this.id = id;
+    public Coach(int coachId, String firstName, String lastName, String specialization, List<Activity> activities) {
+        this.coachId = coachId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.specialization = specialization;
         this.activities = activities;
     }
 
-    public int getId() {return id;}
+    public int getCoachId() {
+        return coachId;
+    }
 
     public String getName() {
         return firstName;
@@ -45,11 +47,7 @@ public class Coach {
         this.specialization = specialization;
     }
 
-    public List<Activity> getActivityList() {
-        return activities;
-    }
+    public List<Activity> getActivities() {return activities;}
 
-    public void setActivityList(List<Activity> activityList) {
-        this.activities = activityList;
-    }
+    public void setActivities(List<Activity> activities) {this.activities = activities;}
 }
