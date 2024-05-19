@@ -22,25 +22,29 @@ public class MenuService {
             sc.next();
             return getChoice();
         }
-
     }
 
-    public static void coachs() {
+    public static void printHeader(String header) {
         System.out.println("------------------------------------");
-        System.out.println("List of available Coach");
-        System.out.println("------------------------------------");
-    }
-
-    public static void activityList() {
-        System.out.println("------------------------------------");
-        System.out.println("List of available Activity");
+        System.out.println("List of available " + header);
         System.out.println("------------------------------------");
     }
 
+    public static void contentList(String choice) throws IOException {
+        FileService fileService = new FileService();
+        if (choice.equals("Coach")) {
+            printHeader(choice);
+            fileService.readFromFile("Coach");
+            System.out.println("------------------------------------");
+        } else if (choice.equals("ActivityList")) {
+            printHeader(choice);
+            fileService.readFromFile("ActivityList");
+            System.out.println("------------------------------------");
+        }
+    }
     public static void exit() {
         System.out.println("------------------------------------");
         System.out.println("Exit");
         System.out.println("------------------------------------");
     }
-
 }
