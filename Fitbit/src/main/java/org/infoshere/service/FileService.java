@@ -1,24 +1,25 @@
 package org.infoshere.service;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
 import static java.lang.String.*;
 
 public class FileService {
+    
+    
 
-    static final String RESOURCES_PATH = "Fitbit/src/main/java/org/infoshere/resources";
+    static final Path pathMain = Paths.get("Fitbit/src/main/java/org/infoshere/resources");
+    
 
     public void writeToFile(String fileName, String content) {
-        String path = Paths.get(RESOURCES_PATH).toAbsolutePath().toString();
+        String path = pathMain.toAbsolutePath().toString();
         String filePath = path + File.separator + fileName + ".json";
-
-        try {
-            PrintWriter writer = new PrintWriter(new FileWriter(filePath, true));
-
-            writer.write(content + "\n");
-            writer.close();
+        
+        try (FileWriter writer = new FileWriter(filePath, true)){
+            writer.write(content + "\n"); //delete close
             System.out.println("Dane zostały zapisane do pliku.");
         } catch (IOException e) {
             e.printStackTrace();
@@ -26,15 +27,13 @@ public class FileService {
     }
 
     public void readFromFile(String fileName) throws IOException {
-        String path = Paths.get(RESOURCES_PATH).toAbsolutePath().toString();
+        String path = pathMain.toAbsolutePath().toString();
         String filePath = path + File.separator + fileName + ".json";
 
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        String line = reader.readLine();
-        while (line != null) {
-            System.out.println(line);
-            line = reader.readLine();
+        FileReader reader = new FileReader(filePath);
+        while (reader != null) {
+            System.out.println(reader);
+            break;
         }
-        reader.close();
     }
 }
