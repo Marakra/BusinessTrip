@@ -1,17 +1,14 @@
 package org.infoshere.service;
 
-import java.util.Scanner;
 
 public class BMICalculator {
     
-    public void bmiCalculation() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter weight in kg: ");
-        double weight = scanner.nextDouble();
-        System.out.println("Enter height in meters: example 1,67");
-        double height = scanner.nextDouble();
+    public double bmiCalculation(double weight, double height) {
+        long factor = (long) Math.pow(10, 2);
         double bmi = weight / Math.pow(height, 2);
-        System.out.println("BMI: " + bmi);
+        bmi = bmi * factor;
+        long tmp = Math.round(bmi);
+
+        return (double) tmp / factor;
     }
-    
 }
