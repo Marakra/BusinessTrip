@@ -6,7 +6,6 @@ public class Activity {
     private String time;
     private TypeActivity typeActivity;
 
-
     public Activity(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
         this.coach = coach;
         this.name = nameActivity;

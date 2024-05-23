@@ -10,7 +10,6 @@ import static java.lang.String.*;
 
 public class FileService {
 
-
     static final Path pathMain = Paths.get("Fitbit/src/main/java/org/infoshere/resources");
 
     public void writeToFile(String fileName, String content) {
