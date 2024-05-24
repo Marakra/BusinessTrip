@@ -1,39 +1,59 @@
 package org.infoshere.service;
+import org.infoshere.model.Activity;
+import org.infoshere.model.DayOfTheWeek;
+import org.infoshere.model.TypeActivity;
+
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-import static java.lang.String.*;
 
 public class FileService {
     
-    
-
     static final Path pathMain = Paths.get("Fitbit/src/main/java/org/infoshere/resources");
     
-
-    public void writeToFile(String fileName, String content) {
+    
+    
+    
+    public void writeNewActive() {
         String path = pathMain.toAbsolutePath().toString();
-        String filePath = path + File.separator + fileName + ".json";
+        String filePath = path + File.separator + "activities.json";
+        
+        
+        
+        
+        String content= " ";
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Add new activities: ");
+        String jsonActivity = scanner.nextLine();
+        System.out.println();
+        
+        
+        content = jsonActivity;
         
         try (FileWriter writer = new FileWriter(filePath, true)){
-            writer.write(content + "\n"); //delete close
-            System.out.println("Dane zostały zapisane do pliku.");
+            writer.write(content + "\n");
+            System.out.println("The new activity was saved to a file.");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void readFromFile(String fileName) throws IOException {
+    public void readActivities() throws IOException {
         String path = pathMain.toAbsolutePath().toString();
-        String filePath = path + File.separator + fileName + ".json";
-
-        FileReader reader = new FileReader(filePath);
-        while (reader != null) {
-            System.out.println(reader);
-            break;
+        String filePath = path + File.separator + "activities.json";
+        
+        char[] array = new char[100];
+        
+        try {
+            FileReader reader = new FileReader(filePath);
+            System.out.println("Activity list: ");
+            reader.read(array);
+            System.out.println(array);
+            reader.close();
+        } catch (IOException e) {
+            e.getStackTrace();
         }
     }
 }

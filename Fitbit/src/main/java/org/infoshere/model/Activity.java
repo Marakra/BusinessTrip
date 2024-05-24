@@ -1,19 +1,41 @@
 package org.infoshere.model;
 
+import java.util.Objects;
+
 public class Activity {
     private String nameActivity;
-    private Coach coach;
-    private String time;
+    private DayOfTheWeek dayOfTheWeek;
     private TypeActivity typeActivity;
 
 
-    public Activity(Coach coach, String nameActivity, String time, TypeActivity typeActivity) {
-        this.coach = coach;
+    public Activity(String nameActivity, DayOfTheWeek dayOfTheWeek, TypeActivity typeActivity) {
         this.nameActivity = nameActivity;
-        this.time = time;
-        this.typeActivity = typeActivity;
+        this.dayOfTheWeek = DayOfTheWeek.valueOf(String.valueOf(dayOfTheWeek));
+        this.typeActivity = TypeActivity.valueOf(String.valueOf(typeActivity));
     }
-
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Activity activity = (Activity) o;
+        return Objects.equals(nameActivity, activity.nameActivity)
+                && Objects.equals(dayOfTheWeek, activity.dayOfTheWeek)
+                && typeActivity == activity.typeActivity;
+    }
+    
+    @Override
+    public String toString() {
+        return "Activity{" +
+                "nameActivity='" + nameActivity + '\'' +
+                ", dayOfTheWeek=" + dayOfTheWeek +
+                ", typeActivity=" + typeActivity +
+                '}';
+    }
+    
+    @Override
+    public int hashCode() {return Objects.hash(nameActivity);}
+    
     public String getName() {
         return nameActivity;
     }
@@ -22,20 +44,11 @@ public class Activity {
         this.nameActivity = name;
     }
 
-    public String getTime() {
-        return time;
+    public DayOfTheWeek getTime() {
+        return dayOfTheWeek;
     }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public Coach getCoach() {
-        return coach;
-    }
-
-    public void setCoach(Coach coach) {
-        this.coach = coach;
+    public void setTime(DayOfTheWeek dayOfTheWeek) {this.dayOfTheWeek = dayOfTheWeek;
     }
 
     public void setTypeActivity(TypeActivity typeActivity) {
