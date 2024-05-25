@@ -58,17 +58,6 @@ public class MainMenu implements Menu {
         } while (choice != 6);
     }
 
-//    public int getChoice() {
-//        try {
-//            System.out.println("Enter your selection:");
-//            return sc.nextInt();
-//        } catch (InputMismatchException e) {
-//            System.out.println("Invalid input. Please enter a valid integer.");
-//            sc.nextLine();
-//            return getChoice();
-//        }
-//    }
-
     public int getChoice() {
         while(true) {
             try {
@@ -83,8 +72,6 @@ public class MainMenu implements Menu {
             }
         }
     }
-
-
 
     public void printFunction(String choice) throws IOException {
         FileService fileService = new FileService();
