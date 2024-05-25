@@ -84,6 +84,8 @@ public class MainMenu implements Menu {
         }
     }
 
+
+
     public void printFunction(String choice) throws IOException {
         FileService fileService = new FileService();
         BMICalculator bmiCalculator = new BMICalculator();
@@ -153,15 +155,15 @@ public class MainMenu implements Menu {
     }
 
     private void newActivity() {
-        try (Scanner scanner = new Scanner(System.in)) {
+
             System.out.print("Create new activity: ");
-            String nameActivity = scanner.nextLine();
+            String nameActivity = sc.nextLine();
 
             System.out.print("Choose day of week: ");
-            String dayOfTheWeek = scanner.nextLine();
+            String dayOfTheWeek = sc.nextLine();
 
             System.out.print("Choose type of activity: ");
-            String typeActivity = scanner.nextLine();
+            String typeActivity = sc.nextLine();
 
             DayOfTheWeek day = null;
             switch (dayOfTheWeek) {
@@ -213,10 +215,6 @@ public class MainMenu implements Menu {
             Activity activity = new Activity(nameActivity, day, type);
             ActivityService activityService = new ActivityService();
             activityService.writeToFile(activity);
-
-
-        }
-
     }
 }
 
