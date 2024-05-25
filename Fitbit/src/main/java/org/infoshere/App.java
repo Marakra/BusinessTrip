@@ -1,10 +1,12 @@
 package org.infoshere;
 
 import org.infoshere.model.Activity;
+import org.infoshere.model.Coach;
 import org.infoshere.model.DayOfTheWeek;
 import org.infoshere.model.TypeActivity;
 import org.infoshere.service.ActivityService;
 import org.infoshere.service.BMICalculator;
+import org.infoshere.service.CoachActivity;
 import org.infoshere.service.FileService;
 
 import javax.swing.*;
@@ -23,8 +25,26 @@ import java.util.Scanner;
 public class App {
     
     public static void main(String[] args) throws IOException {
+    
+    }
+    
+    private static void newCoach(){
         Scanner scanner = new Scanner(System.in);
-        try {
+        System.out.println("Create new coach");
+        System.out.print("Enter first name: ");
+        String firstName = scanner.nextLine();
+        System.out.print("Enter last name: ");
+        String lastName = scanner.nextLine();
+        System.out.print("Enter specialization: ");
+        String specialization = scanner.nextLine();
+        
+        Coach coach = new Coach(firstName, lastName, specialization);
+        CoachActivity coachActivity = new CoachActivity();
+        coachActivity.writeToFile(coach);
+    }
+    
+    private static void newActivity() {
+        try (Scanner scanner = new Scanner(System.in)) {
             System.out.print("Create new activity: ");
             String nameActivity = scanner.nextLine();
             
@@ -86,10 +106,7 @@ public class App {
             activityService.writeToFile(activity);
             
             activity.toString();
-        } finally {
-            scanner.close();
         }
-        
         
     }
 }
