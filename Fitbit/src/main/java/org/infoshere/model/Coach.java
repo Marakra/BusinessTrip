@@ -10,7 +10,6 @@ public class Coach {
     private String specialization;
     private List<Activity> activities = new ArrayList<Activity>();
 
-
     public Coach(int coachId, String firstName, String lastName, String specialization, List<Activity> activities) {
         this.coachId = coachId;
         this.firstName = firstName;
