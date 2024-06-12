@@ -1,6 +1,4 @@
-package com.travel.BizTravel360.Person;
-
-import java.util.List;
+package com.travel.BizTravel360.person;
 
 public class PersonService {
     
