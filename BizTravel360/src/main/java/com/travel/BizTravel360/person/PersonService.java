@@ -1,4 +1,7 @@
-package com.travel.BizTravel360.Person;
+package com.travel.BizTravel360.person;
+
+import com.travel.BizTravel360.person.Person;
+import com.travel.BizTravel360.person.PersonRepository;
 
 import java.util.List;
 
