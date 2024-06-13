@@ -3,22 +3,25 @@ package com.travel.BizTravel360.person;
 import java.util.Objects;
 
 public class Person {
-    private final int id;
+    private long personId;
     private String firstName;
     private String lastName;
     private String email;
     
-    public Person(int id, String firstName, String lastName, String email) {
-        this.id = id;
+    public Person(long personId, String firstName, String lastName, String email) {
+        this.personId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
     
-    public int getId() {
-        return id;
+    public long getPersonId() {
+        return personId;
     }
     
+    public void setPersonId(long personId) {
+        this.personId = personId;
+    }
     
     public String getFirstName() {
         return firstName;
@@ -49,13 +52,13 @@ public class Person {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return id == person.id && Objects.equals(firstName, person.firstName)
-                                && Objects.equals(lastName, person.lastName)
-                                && Objects.equals(email, person.email);
+        return personId == person.personId && Objects.equals(firstName, person.firstName)
+                            && Objects.equals(lastName, person.lastName)
+                            && Objects.equals(email, person.email);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email);
+        return Objects.hash(personId, firstName, lastName, email);
     }
 }

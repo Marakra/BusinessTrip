@@ -1,15 +1,12 @@
-package com.travel.BizTravel360.person;
+package com.travel.BizTravel360.Person;
 
-public class PersonService {
+import java.util.List;
+
+public class PersonService implements PersonRepository {
     
-    private final PersonRepository personRepository;
-    
-    public PersonService(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
-    
-    public void getAllPersons(){
-        System.out.println(personRepository.findAll());
+    @Override
+    public List<Person> findAll() {
+        return List.of();
     }
     
 }
