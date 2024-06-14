@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.Person;
+package com.travel.BizTravel360.person;
 
 import java.util.Objects;
 

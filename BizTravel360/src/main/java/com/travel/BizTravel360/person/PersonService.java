@@ -1,6 +1,8 @@
-package com.travel.BizTravel360.Person;
+package com.travel.BizTravel360.person;
 
-import java.util.ArrayList;
+import com.travel.BizTravel360.person.Person;
+import com.travel.BizTravel360.person.PersonRepository;
+
 import java.util.List;
 
 public class PersonService implements PersonRepository {
@@ -9,4 +11,5 @@ public class PersonService implements PersonRepository {
     public List<Person> findAll() {
         return List.of();
     }
+    
 }
