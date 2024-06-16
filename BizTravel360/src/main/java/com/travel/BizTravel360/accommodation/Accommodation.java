@@ -1,9 +1,9 @@
-package com.travel.BizTravel360.accomadion;
+package com.travel.BizTravel360.accommodation;
 
 import java.util.Date;
 import java.util.Objects;
 
-public class Accomadion {
+public class Accommodation {
 
     private String name;
     private String location;
@@ -11,7 +11,7 @@ public class Accomadion {
     private Date checkOutDate;
     private double amount;
 
-    public Accomadion(String name, String location, double amount, Date checkOutDate, Date checkInDate) {
+    public Accommodation(String name, String location, double amount, Date checkOutDate, Date checkInDate) {
         this.name = name;
         this.location = location;
         this.amount = amount;
@@ -67,7 +67,7 @@ public class Accomadion {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Accomadion that = (Accomadion) o;
+        Accommodation that = (Accommodation) o;
         return Double.compare(amount, that.amount) == 0 && Objects.equals(name, that.name) && Objects.equals(location, that.location) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate);
     }
 

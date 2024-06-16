@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.accomadion;
+package com.travel.BizTravel360.accommodation;
 
 import org.springframework.stereotype.Controller;
 
