@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Index - Moja aplikacja</title>
-</head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments::head"></head>
 <body>
-<h1>Witaj na stronie głównej!</h1>
+<nav th:replace="fragments::navbar"></nav>
+
+<footer th:replace="fragments::footer"></footer>
 </body>
 </html>
