@@ -1,13 +1,14 @@
 package com.travel.BizTravel360.file;
 
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 
-@Component
+@Service
 public class FileService implements FileRepository {
 
     private final ObjectMapper objectMapper;
@@ -23,7 +24,7 @@ public class FileService implements FileRepository {
     }
     
     @Override
-    public <T> T readFromFile(Class<T> valueType, String fileName) throws IOException {
-        return objectMapper.readValue(new File(fileName), valueType);
+    public <T> T readFromFile(TypeReference<T> valueTypeRef, String fileName) throws IOException {
+        return objectMapper.readValue(new File(fileName), valueTypeRef);
     }
 }
