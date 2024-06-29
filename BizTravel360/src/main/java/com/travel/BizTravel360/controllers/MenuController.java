@@ -1,11 +1,11 @@
 package com.travel.BizTravel360.controllers;
 
 
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class MenuController {
 
     @GetMapping("/")
@@ -13,16 +13,41 @@ public class MenuController {
         return "index";
     }
 
-    @GetMapping("/accommodation")
+    @GetMapping("/accommodations")
     public String accommodation(Model model) {
         model.addAttribute("fragments", "accommodation");
-        return "index";
+        return "menu_categories/accommodations";
+    }
+    
+    @GetMapping("/documents")
+    public String documents(Model model) {
+        model.addAttribute("fragments", "documents");
+        return "menu_categories/documents";
+    }
+    
+    @GetMapping("/expenses")
+    public String expenses(Model model) {
+        model.addAttribute("fragments", "expenses");
+        return "menu_categories/expenses";
+    }
+    
+    @GetMapping("/reports")
+    public String reports(Model model) {
+        model.addAttribute("fragments", "reports");
+        return "menu_categories/reports";
+    }
+    
+    @GetMapping("/transports")
+    public String transports(Model model) {
+        model.addAttribute("fragments", "transports");
+        return "menu_categories/transports";
     }
 
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("fragments", "dashboard");
-        return "index";
+    @GetMapping("/people")
+    public String people(Model model) {
+        model.addAttribute("fragments", "people");
+        return "menu_categories/people";
     }
+    
 
 }
