@@ -8,5 +8,5 @@ import java.util.List;
 public interface PersonRepository {
     
     void createPerson(Person person) throws Exception;
-    List<Person> readAll() throws Exception;
+    List<Person> readAllPeople() throws Exception;
 }

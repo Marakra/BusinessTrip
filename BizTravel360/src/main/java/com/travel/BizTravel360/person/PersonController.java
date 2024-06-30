@@ -24,7 +24,7 @@ public class PersonController {
     @GetMapping("/people")
     public String getAllPeople(Model model) {
         try {
-            List<Person> people = personService.readAll();
+            List<Person> people = personService.readAllPeople();
             
             Collections.reverse(people);
             

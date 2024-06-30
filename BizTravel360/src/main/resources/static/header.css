@@ -34,3 +34,23 @@ body {
     padding: 1rem 0;
     text-align: center;
 }
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e3f2fd;
+}
+.table thead {
+    background-color: #0d6efd;
+    color: white;
+}
+.table-hover tbody tr:hover {
+    background-color: #d1ecf1;
+}
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+

@@ -1,29 +1,6 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head th:replace="~{fragments/header::head}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <style>
-        .table-striped tbody tr:nth-of-type(odd) {
-            background-color: #e3f2fd;
-        }
-        .table thead {
-            background-color: #0d6efd;
-            color: white;
-        }
-        .table-hover tbody tr:hover {
-            background-color: #d1ecf1;
-        }
-        .btn-primary {
-            background-color: #0d6efd;
-            border-color: #0d6efd;
-        }
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-    </style>
-</head>
 <body>
 <div th:replace="~{fragments/header::header}"></div>
 
@@ -55,8 +32,8 @@
             </table>
         </div>
     </div>
+
 </div>
 <div th:replace="~{fragments/footer::footer}"></div>
-
 </body>
 </html>

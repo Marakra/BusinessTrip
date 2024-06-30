@@ -22,7 +22,7 @@ public class PersonService implements PersonRepository {
     
     @Override
     public void createPerson(Person person) throws IOException {
-        List<Person> people = readAll();
+        List<Person> people = readAllPeople();
         long maxId = people.stream().mapToLong(Person::getPersonId).max().orElse(0);
         person.setPersonId(maxId + 1);
         people.add(person);
@@ -30,7 +30,7 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public List<Person> readAll() throws IOException {
+    public List<Person> readAllPeople() throws IOException {
         return fileService.readFromFile(new TypeReference<List<Person>>() {}, peopleFilePath);
     }
     
