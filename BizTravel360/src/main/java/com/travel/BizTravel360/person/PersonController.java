@@ -1,9 +1,9 @@
 package com.travel.BizTravel360.person;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
+// dobrze jest informowac jaki obiekt person został pomyslnie wykonany, jak delete to personId: 123123, a jak update to lastName oraz firstName
 @Controller
 public class PersonController {
     
@@ -117,6 +118,3 @@ public class PersonController {
     
     
 }
-
-
-

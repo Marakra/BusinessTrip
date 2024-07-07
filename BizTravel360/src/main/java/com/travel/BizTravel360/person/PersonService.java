@@ -23,11 +23,12 @@ import java.util.*;
 public class PersonService implements PersonRepository {
     
     private final FileService fileService;
+
+    //
     private List<Person> people = new ArrayList<>();
     @Value("${people.file.path}")
     private String peopleFilePath;
-    
-    @Autowired
+
     public PersonService(FileService fileService, @Value("${people.file.path}") String peopleFilePath) {
         this.fileService = fileService;
         this.peopleFilePath = peopleFilePath;
@@ -45,29 +46,19 @@ public class PersonService implements PersonRepository {
     
     @Override
     public Person savePerson(Person person) {
-        ValidatorFactory factory = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .buildValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<Person>> violations = validator.validate(person);
-        
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<Person> violation : violations) {
-                log.error(violation.getMessage());
-            }
-            throw new IllegalArgumentException("Invalid person data");
-        }
-        
+        personValidator(person);
+
         person.setPersonId((long) (people.size() + 1));
         people.add(person);
         persistPeople();
+
         log.info("Person save successful");
         return person;
     }
-    
+
     @Override
     public List<Person> fetchPeopleList() {
+
         try{
             List<Person> reversedList = new ArrayList<>(people);
             Collections.reverse(reversedList);
@@ -121,6 +112,24 @@ public class PersonService implements PersonRepository {
             fileService.writerToFile(people, peopleFilePath);
         } catch (IOException e) {
             log.error("Failed to persist people to JSON file", e);
+        }
+    }
+
+    private void personValidator(Person person) {
+
+        ValidatorFactory factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        Set<ConstraintViolation<Person>> violations = validator.validate(person);
+
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<Person> violation : violations) {
+                log.error(violation.getMessage());
+            }
+            throw new IllegalArgumentException("Invalid person data");
         }
     }
 }
