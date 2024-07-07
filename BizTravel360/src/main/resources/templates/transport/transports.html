@@ -6,7 +6,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="" class="btn btn-primary">Create New Transport</a>
+        <a href="/createTransportForm" class="btn btn-primary">Create New Transport</a>
     </div>
 
     <div class="container mt-4">
@@ -29,9 +29,9 @@
                     <td th:text="${transport.transportId}">1</td>
                     <td th:text="${transport.typeTransport}">FLIGHT</td>
                     <td th:text="${transport.departureCity}">New York</td>
-                    <td th:text="${transport.departureTime}">2024-06-30T08:00:00Z</td>
+                    <td th:text="${transport.departureDate}">2024-06-30T08:00:00</td>
                     <td th:text="${transport.arrivalCity}">Los Angeles</td>
-                    <td th:text="${transport.arrivalTime}">2024-06-30T10:30:00Z</td>
+                    <td th:text="${transport.arrivalDate}">2024-06-30T10:30:00</td>
                     <td th:text="${transport.amount}">350.50</td>
                 </tr>
                 </tbody>
