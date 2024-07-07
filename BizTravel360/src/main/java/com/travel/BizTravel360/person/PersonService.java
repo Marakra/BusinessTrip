@@ -41,23 +41,12 @@ public class PersonService implements PersonRepository {
             log.error("Failed to read people list from JSON file", peopleFilePath, e);
             people = Collections.emptyList();
         }
+        updatePersonIds();
     }
     
     @Override
     public Person savePerson(Person person) {
-        ValidatorFactory factory = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .buildValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<Person>> violations = validator.validate(person);
-        
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<Person> violation : violations) {
-                log.error(violation.getMessage());
-            }
-            throw new IllegalArgumentException("Invalid person data");
-        }
+        validatePerson(person);
         
         person.setPersonId((long) (people.size() + 1));
         people.add(person);
@@ -68,54 +57,60 @@ public class PersonService implements PersonRepository {
     
     @Override
     public List<Person> fetchPeopleList() {
-        try{
-            List<Person> reversedList = new ArrayList<>(people);
-            Collections.reverse(reversedList);
-            
-            for (int i = 0; reversedList.size() > i; i++) {
-                reversedList.get(i).setPersonId((long) (i +1));
-            }
-            return reversedList;
-        } catch (Exception e){
-            log.error("Failed to read people list from JSON file", peopleFilePath, e);
-            throw new RuntimeException("Failed to load people data", e);
-        }
+        return new ArrayList<>(people);
     }
 
     
     @Override
-    public Person updatePerson(Person person, Long personId) {
-        Optional<Person> personDBOpt = people.stream()
+    public Person updatePerson(Person updatedPerson, Long personId) {
+        Optional<Person> personToUpdate = people.stream()
                 .filter(p -> Objects.equals(p.getPersonId(), personId)).findFirst();
         
-        if (personDBOpt.isPresent()) {
-            Person personDB = personDBOpt.get();
-            
-            if (Objects.nonNull(person.getFirstName())
-                    && !"".equalsIgnoreCase(person.getFirstName())) {
-                personDB.setFirstName(person.getFirstName());
-            }
-            if (Objects.nonNull(person.getLastName())
-                    && !"".equalsIgnoreCase(person.getLastName())) {
-                personDB.setLastName(person.getLastName());
-            }
-            if (Objects.nonNull(person.getEmail())
-                    && !"".equalsIgnoreCase(person.getEmail())) {
-                personDB.setEmail(person.getEmail());
-            }
-            persistPeople();
-            return personDB;
+            if (personToUpdate.isPresent()) {
+                Person person = personToUpdate.get();
+                person.setFirstName(updatedPerson.getFirstName());
+                person.setLastName(updatedPerson.getLastName());
+                person.setEmail(updatedPerson.getEmail());
+                persistPeople();
+                return person;
         } else {
             return null;
         }
     }
         
-        @Override
-        public void deletePersonById (Long personId){
-            people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
-            persistPeople();
-        }
+    @Override
+    public void deletePersonById (Long personId){
+        people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
+        persistPeople();
+    }
+    
+    private void validatePerson(Person person) {
+        ValidatorFactory factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<Person>> violations = validator.validate(person);
         
+        if (!violations.isEmpty()) {
+            violations.forEach(violation -> log.error(violation.getMessage()));
+            throw new IllegalArgumentException("Invalid person data");
+        }
+    }
+    
+    public Person findPersonById(Long personId) {
+        return people.stream()
+                .filter(p -> Objects.equals(p.getPersonId(), personId))
+                .findFirst()
+                .orElse(null);
+    }
+    
+    void updatePersonIds() {
+        for (int i = 0; i < people.size(); i++) {
+            people.get(i).setPersonId((long) (i + 1));
+        }
+    }
+    
     private void persistPeople(){
         try {
             fileService.writerToFile(people, peopleFilePath);
