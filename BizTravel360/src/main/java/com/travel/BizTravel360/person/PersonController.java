@@ -1,5 +1,7 @@
 package com.travel.BizTravel360.person;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,76 +10,90 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Collections;
 
 @Controller
 public class PersonController {
     
-    private final PersonService personService;
+    private final PersonRepository personRepository;
     
     @Autowired
-    public PersonController(PersonService personService) {
-        this.personService = personService;
+    public PersonController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
     }
+    
     
     @GetMapping("/people")
     public String getAllPeople(Model model) {
-        model.addAttribute("people", personService.fetchPeopleList());
+        
+        model.addAttribute("people", personRepository.fetchPeopleList());
         
         return "person/people";
     }
     
     @PostMapping("/createPerson")
-    public String createPerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes) {
+    public String createPerson(
+            @ModelAttribute("person") @Valid Person person,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
-            return "person/createPerson";
+            return "person/createPersonForm";
         }
-        Person savedPerson = personService.savePerson(person);
+        Person savedPerson = personRepository.savePerson(person);
         if (savedPerson != null) {
-            String successMessage = "Person " + savedPerson.getFirstName() + " "
-                                    + savedPerson.getLastName() + " created successfully";
-            redirectAttributes.addFlashAttribute("successMessage", successMessage);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage",
+                    "Person created successfully");
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Person creation failed");
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage",
+                    "Person creation failed");
         }
         
         return "redirect:/people";
     }
     
-    @GetMapping("/createPerson")
+    @GetMapping("/createPersonForm")
     public String showCreatePersonForm(Model model) {
+        
         model.addAttribute("person", new Person());
-        return "/person/createPerson";
+        
+        return "person/createPersonForm";
     }
     
-    @GetMapping("/editPerson/{personId}")
-    public String showEditPersonForm(@PathVariable("personId") Long personId, Model model) {
+    @GetMapping("/editPersonForm/{personId}")
+    public String showEditPersonForm(
+            @PathVariable("personId") Long personId,
+            Model model) {
+        Person person = personRepository.fetchPeopleList()
+                .stream()
+                .filter(p -> p.getPersonId().equals(personId))
+                .findFirst()
+                .orElse(null);
         
-        Person person = personService.findPersonById(personId);
-        
-        if (person != null){
-            model.addAttribute("person", person);
-            return "person/updatePerson";
-        }else {
+        if (person == null){
             return "redirect:/people";
         }
+        
+        model.addAttribute("person", person);
+        return "person/updatePersonForm";
     }
     
     @PostMapping("/updatePerson/{personId}")
-    public String updatePerson(@PathVariable("personId") Long personId, @ModelAttribute("person") @Valid Person person,
-                               BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String updatePerson(
+            @PathVariable("personId") Long personId,
+            @ModelAttribute("person") @Valid Person person,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         
         if (bindingResult.hasErrors()) {
-            return "person/updatePerson";
+            return "person/updatePersonForm";
         }
         
-        Person updatedPerson = personService.updatePerson(person, personId);
+        Person updatedPerson = personRepository.updatePerson(person, personId);
         if (updatedPerson != null) {
-            String updateMessage = "Person " + updatedPerson.getFirstName() + " "
-                    + updatedPerson.getLastName() + " created successfully";
-            redirectAttributes.addFlashAttribute("successMessage", updateMessage);
+            redirectAttributes.addFlashAttribute(
+                    "successMessage", "Person updated successfully");
         } else {
             redirectAttributes.addFlashAttribute(
                     "errorMessage", "Person update failed");
@@ -86,18 +102,19 @@ public class PersonController {
         return "redirect:/people";
     }
     
-    @PostMapping("/deletePerson/{personId}")
+    @DeleteMapping("/deletePerson/{personId}")
     public String deletePerson(
             @PathVariable("personId") Long personId,
             RedirectAttributes redirectAttributes) {
         
-        personService.deletePersonById(personId);
+        personRepository.deletePersonById(personId);
         redirectAttributes.addFlashAttribute(
                 "successMessage",
                 "Person deleted successfully");
         
-        return "redirect:/people";
+        return "redirect:people";
     }
+    
     
 }
 
