@@ -3,54 +3,103 @@ package com.travel.BizTravel360.person;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import javax.validation.Valid;
 import java.util.Collections;
-import java.util.List;
 
 @Controller
 public class PersonController {
     
     private final PersonService personService;
     
-   @Autowired
-   public PersonController(PersonService personService) {
-       this.personService = personService;
-   }
-   
+    @Autowired
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
+    
     @GetMapping("/people")
     public String getAllPeople(Model model) {
-        try {
-            List<Person> people = personService.readAll();
-            
-            Collections.reverse(people);
-            
-            for (int i = 0; i < people.size(); i++) {
-                people.get(i).setPersonId(i+1);
-            }
-            model.addAttribute("people", people);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load people data", e);
+        model.addAttribute("people", personService.fetchPeopleList());
+        
+        return "person/people";
+    }
+    
+    @PostMapping("/createPerson")
+    public String createPerson(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes) {
+        
+        if (bindingResult.hasErrors()) {
+            return "person/createPerson";
         }
-        return "pages/people";
+        Person savedPerson = personService.savePerson(person);
+        if (savedPerson != null) {
+            String successMessage = "Person " + savedPerson.getFirstName() + " "
+                                    + savedPerson.getLastName() + " created successfully";
+            redirectAttributes.addFlashAttribute("successMessage", successMessage);
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Person creation failed");
+        }
+        
+        return "redirect:/people";
     }
     
-    @GetMapping("createPersonForm")
-    public String createPersonForm(Model model) {
-       model.addAttribute("person", new Person());
-       return "createObjects/createPersonForm";
+    @GetMapping("/createPerson")
+    public String showCreatePersonForm(Model model) {
+        model.addAttribute("person", new Person());
+        return "/person/createPerson";
     }
     
-    @PostMapping("createPerson")
-    public String createPerson(@ModelAttribute Person person) {
-       try {
-           personService.createPerson(person);
-           return "redirect:people";
-       } catch (IOException e) {
-           throw new RuntimeException("Failed to create new person", e);
-       }
+    @GetMapping("/editPerson/{personId}")
+    public String showEditPersonForm(@PathVariable("personId") Long personId, Model model) {
+        
+        Person person = personService.findPersonById(personId);
+        
+        if (person != null){
+            model.addAttribute("person", person);
+            return "person/updatePerson";
+        }else {
+            return "redirect:/people";
+        }
     }
+    
+    @PostMapping("/updatePerson/{personId}")
+    public String updatePerson(@PathVariable("personId") Long personId, @ModelAttribute("person") @Valid Person person,
+                               BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        
+        if (bindingResult.hasErrors()) {
+            return "person/updatePerson";
+        }
+        
+        Person updatedPerson = personService.updatePerson(person, personId);
+        if (updatedPerson != null) {
+            String updateMessage = "Person " + updatedPerson.getFirstName() + " "
+                    + updatedPerson.getLastName() + " created successfully";
+            redirectAttributes.addFlashAttribute("successMessage", updateMessage);
+        } else {
+            redirectAttributes.addFlashAttribute(
+                    "errorMessage", "Person update failed");
+        }
+        
+        return "redirect:/people";
+    }
+    
+    @PostMapping("/deletePerson/{personId}")
+    public String deletePerson(
+            @PathVariable("personId") Long personId,
+            RedirectAttributes redirectAttributes) {
+        
+        personService.deletePersonById(personId);
+        redirectAttributes.addFlashAttribute(
+                "successMessage",
+                "Person deleted successfully");
+        
+        return "redirect:/people";
+    }
+    
 }
+
+
+
