@@ -1,81 +1,48 @@
 package com.travel.BizTravel360.transport;
 
-import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
+
+
+@Setter
+@Getter
 
 public class Transport {
     private long transportId;
     private TypeTransport typeTransport;
+    
+    @NotNull(message = "required field!")
     private String departureCity;
-    private Date departureTime;
-    private String arrivalCity;
-    private Date arrivalTime;
+    
+    @NotNull(message = "required field!")
+    private LocalDateTime departureDate;
+    
+    @NotNull(message = "required field!")
+    private LocalDateTime arrivalCity;
+    
+    @NotNull(message = "required field!")
+    private LocalDateTime arrivalDate;
+    
+    
+    @NotNull(message = "required field!")
+    @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
     private double amount;
     
+    public Transport() {}
+    
     public Transport(long transportId, TypeTransport typeTransport, String departureCity,
-                     Date departureTime, String arrivalCity, Date arrivalTime, double amount) {
+                     LocalDateTime departureDate, LocalDateTime arrivalCity, LocalDateTime arrivalDate, double amount) {
         this.transportId = transportId;
         this.typeTransport = typeTransport;
         this.departureCity = departureCity;
-        this.departureTime = departureTime;
+        this.departureDate = departureDate;
         this.arrivalCity = arrivalCity;
-        this.arrivalTime = arrivalTime;
-        this.amount = amount;
-    }
-    
-    public long getTransportId() {
-        return transportId;
-    }
-    
-    public void setTransportId(long transportId) {
-        this.transportId = transportId;
-    }
-    
-    public TypeTransport getTypeTransport() {
-        return typeTransport;
-    }
-    
-    public void setTypeTransport(TypeTransport typeTransport) {
-        this.typeTransport = typeTransport;
-    }
-    
-    public String getDepartureCity() {
-        return departureCity;
-    }
-    
-    public void setDepartureCity(String departureCity) {
-        this.departureCity = departureCity;
-    }
-    
-    public Date getDepartureTime() {
-        return departureTime;
-    }
-    
-    public void setDepartureTime(Date departureTime) {
-        this.departureTime = departureTime;
-    }
-    
-    public String getArrivalCity() {
-        return arrivalCity;
-    }
-    
-    public void setArrivalCity(String arrivalCity) {
-        this.arrivalCity = arrivalCity;
-    }
-    
-    public Date getArrivalTime() {
-        return arrivalTime;
-    }
-    
-    public void setArrivalTime(Date arrivalTime) {
-        this.arrivalTime = arrivalTime;
-    }
-    
-    public double getAmount() {
-        return amount;
-    }
-    
-    public void setAmount(double amount) {
+        this.arrivalDate = arrivalDate;
         this.amount = amount;
     }
     
@@ -84,19 +51,17 @@ public class Transport {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transport transport = (Transport) o;
-        return transportId == transport.transportId
-                && Double.compare(amount, transport.amount) == 0
+        return transportId == transport.transportId && Double.compare(amount, transport.amount) == 0
                 && typeTransport == transport.typeTransport
                 && Objects.equals(departureCity, transport.departureCity)
-                && Objects.equals(departureTime, transport.departureTime)
+                && Objects.equals(departureDate, transport.departureDate)
                 && Objects.equals(arrivalCity, transport.arrivalCity)
-                && Objects.equals(arrivalTime, transport.arrivalTime);
+                && Objects.equals(arrivalDate, transport.arrivalDate);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(transportId, typeTransport, departureCity,
-                            departureTime, arrivalCity, arrivalTime, amount);
+        return Objects.hash(transportId, typeTransport, departureCity, departureDate, arrivalCity, arrivalDate, amount);
     }
 }
 

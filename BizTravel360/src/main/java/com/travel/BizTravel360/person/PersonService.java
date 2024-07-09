@@ -42,11 +42,13 @@ public class PersonService implements PersonRepository {
             people = Collections.emptyList();
         }
         updatePersonIds();
+
     }
     
     @Override
     public Person savePerson(Person person) {
         validatePerson(person);
+
         
         person.setPersonId((long) (people.size() + 1));
         people.add(person);
@@ -83,7 +85,7 @@ public class PersonService implements PersonRepository {
         people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
         persistPeople();
     }
-    
+
     private void validatePerson(Person person) {
         ValidatorFactory factory = Validation.byDefaultProvider()
                 .configure()

@@ -1,5 +1,7 @@
 package com.travel.BizTravel360.person;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,13 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Collections;
+
 
 @Controller
 public class PersonController {
     
-    private final PersonService personService;
+    private final PersonRepository personRepository;
     
+    @Autowired
+    public PersonController(PersonRepository personRepository) {
+        this.personRepository = personRepository;
+    }
+   
     @Autowired
     public PersonController(PersonService personService) {
         this.personService = personService;
@@ -41,6 +48,7 @@ public class PersonController {
             redirectAttributes.addFlashAttribute("successMessage", successMessage);
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Person creation failed");
+
         }
         
         return "redirect:/people";
@@ -78,6 +86,7 @@ public class PersonController {
             String updateMessage = "Person " + updatedPerson.getFirstName() + " "
                     + updatedPerson.getLastName() + " created successfully";
             redirectAttributes.addFlashAttribute("successMessage", updateMessage);
+
         } else {
             redirectAttributes.addFlashAttribute(
                     "errorMessage", "Person update failed");
@@ -86,19 +95,23 @@ public class PersonController {
         return "redirect:/people";
     }
     
+
     @PostMapping("/deletePerson/{personId}")
     public String deletePerson(
             @PathVariable("personId") Long personId,
             RedirectAttributes redirectAttributes) {
         
+
         personService.deletePersonById(personId);
+
         redirectAttributes.addFlashAttribute(
                 "successMessage",
                 "Person deleted successfully");
         
+
         return "redirect:/people";
     }
-    
+
 }
 
 

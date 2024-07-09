@@ -5,8 +5,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PersonRepository {
+public  interface PersonRepository {
     
-    void createPerson(Person person) throws Exception;
-    List<Person> readAll() throws Exception;
+    Person savePerson(Person person);
+    List<Person> fetchPeopleList();
+    Person updatePerson(Person person, Long personId);
+    void deletePersonById(Long personId);
+    
 }

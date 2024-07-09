@@ -1,14 +1,38 @@
 package com.travel.BizTravel360.person;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
+
+@Setter
+@Getter
+@Entity
 public class Person {
-    private long personId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long personId;
+
+    @NotEmpty(message = "First name is a required field!")
+    @Size(min = 2, message = "First name should contain at least 2 characters.")
     private String firstName;
-    private String lastName;
-    private String email;
     
-    public Person() {}
+    @NotEmpty(message = "Last name is a required field!")
+    @Size(min = 2, message = "Last name should contain at least 2 characters")
+    private String lastName;
+    
+    @NotEmpty(message = "Email is a required field!")
+    @Email(message = "Email should be valid")
+    private String email;
     
     public Person(long personId, String firstName, String lastName, String email) {
         this.personId = personId;
@@ -17,37 +41,7 @@ public class Person {
         this.email = email;
     }
     
-    public long getPersonId() {
-        return personId;
-    }
-    
-    public void setPersonId(long personId) {
-        this.personId = personId;
-    }
-    
-    public String getFirstName() {
-        return firstName;
-    }
-    
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-    
-    public String getLastName() {
-        return lastName;
-    }
-    
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public Person() {}
     
     @Override
     public boolean equals(Object o) {
@@ -62,5 +56,15 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(personId, firstName, lastName, email);
+    }
+    
+    @Override
+    public String toString() {
+        return "Person{" +
+                "personId=" + personId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }
