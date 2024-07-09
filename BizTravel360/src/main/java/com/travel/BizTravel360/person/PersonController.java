@@ -15,12 +15,8 @@ import javax.validation.Valid;
 @Controller
 public class PersonController {
     
-    private final PersonRepository personRepository;
-    
-    @Autowired
-    public PersonController(PersonRepository personRepository) {
-        this.personRepository = personRepository;
-    }
+    private final PersonService personService;
+
    
     @Autowired
     public PersonController(PersonService personService) {
