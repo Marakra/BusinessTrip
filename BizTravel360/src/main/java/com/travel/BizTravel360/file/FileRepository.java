@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface FileRepository {
     
-    public void writerToFile(Object object, String fileName) throws IOException;
-    public <T> T readFromFile(TypeReference<T> valueType, String fileName) throws IOException;
+    void writerToFile(Object object, String fileName) throws IOException;
+    <T> T readFromFile(TypeReference<T> valueType, String fileName) throws IOException;
 }

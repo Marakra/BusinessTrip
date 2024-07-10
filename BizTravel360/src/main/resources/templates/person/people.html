@@ -15,7 +15,7 @@
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col">Number</th>
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
                     <th scope="col">Email</th>
@@ -23,8 +23,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="person : ${people}">
-                    <td th:text="${person.personId}"></td>
+                <tr th:each="person, itr : ${people}" th:if="${person != null}">
+                    <td th:text="${itr.index + 1}"></td>
                     <td th:text="${person.firstName}"></td>
                     <td th:text="${person.lastName}"></td>
                     <td th:text="${person.email}"></td>

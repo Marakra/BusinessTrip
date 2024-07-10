@@ -1,12 +1,12 @@
 package com.travel.BizTravel360.person;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.travel.BizTravel360.file.FileService;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @Slf4j
@@ -23,69 +25,80 @@ import java.util.*;
 public class PersonService implements PersonRepository {
     
     private final FileService fileService;
+    private final ObjectMapper objectMapper;
     private List<Person> people = new ArrayList<>();
+    
     @Value("${people.file.path}")
     private String peopleFilePath;
     
-    @Autowired
-    public PersonService(FileService fileService, @Value("${people.file.path}") String peopleFilePath) {
+    public PersonService(FileService fileService, @Value("${people.file.path}") String peopleFilePath, ObjectMapper objectMapper) {
         this.fileService = fileService;
         this.peopleFilePath = peopleFilePath;
+        this.objectMapper = objectMapper;
     }
     
     @PostConstruct
     private void init() {
         try {
-            people = fileService.readFromFile(new TypeReference<List<Person>>() {}, peopleFilePath);
+            if (Files.exists(Paths.get(peopleFilePath))) {
+                String json = Files.readString(Paths.get(peopleFilePath));
+                if (!json.isBlank()) {
+                    if (json.startsWith("[")) {
+                        Person[] peopleArray = objectMapper.readValue(json, Person[].class);
+                        people.addAll(Arrays.asList(peopleArray));
+                    } else {
+                        Person person = objectMapper.readValue(json, Person.class);
+                        people.add(person);
+                    }
+                }
+            }
         } catch (IOException e) {
-            log.error("Failed to read people list from JSON file", peopleFilePath, e);
-            people = Collections.emptyList();
+            log.error("Failed to read people from JSON file: {}", peopleFilePath, e);
         }
-        updatePersonIds();
-
+        
     }
     
     @Override
-    public Person savePerson(Person person) {
-        validatePerson(person);
-
+    public Person savePerson(Person newPerson) {
+        validatePerson(newPerson);
         
-        person.setPersonId((long) (people.size() + 1));
-        people.add(person);
+        newPerson.setPersonId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
+        people.add(newPerson);
         persistPeople();
         log.info("Person save successful");
-        return person;
+        return newPerson;
     }
     
     @Override
     public List<Person> fetchPeopleList() {
         return new ArrayList<>(people);
     }
-
+    
     
     @Override
     public Person updatePerson(Person updatedPerson, Long personId) {
         Optional<Person> personToUpdate = people.stream()
-                .filter(p -> Objects.equals(p.getPersonId(), personId)).findFirst();
+                .filter(p -> Objects.equals(p.getPersonId(), personId))
+                .findFirst();
         
-            if (personToUpdate.isPresent()) {
-                Person person = personToUpdate.get();
-                person.setFirstName(updatedPerson.getFirstName());
-                person.setLastName(updatedPerson.getLastName());
-                person.setEmail(updatedPerson.getEmail());
-                persistPeople();
-                return person;
+        if (personToUpdate.isPresent()) {
+            Person person = personToUpdate.get();
+            person.setFirstName(updatedPerson.getFirstName());
+            person.setLastName(updatedPerson.getLastName());
+            person.setEmail(updatedPerson.getEmail());
+            persistPeople();
+            return person;
         } else {
             return null;
         }
     }
-        
+    
     @Override
-    public void deletePersonById (Long personId){
+    public void deletePersonById(Long personId) {
         people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
         persistPeople();
     }
-
+    
     private void validatePerson(Person person) {
         ValidatorFactory factory = Validation.byDefaultProvider()
                 .configure()
@@ -101,19 +114,14 @@ public class PersonService implements PersonRepository {
     }
     
     public Person findPersonById(Long personId) {
-        return people.stream()
+        Optional<Person> foundPerson = people.stream()
                 .filter(p -> Objects.equals(p.getPersonId(), personId))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
+        
+        return foundPerson.orElse(null);
     }
     
-    void updatePersonIds() {
-        for (int i = 0; i < people.size(); i++) {
-            people.get(i).setPersonId((long) (i + 1));
-        }
-    }
-    
-    private void persistPeople(){
+    private void persistPeople() {
         try {
             fileService.writerToFile(people, peopleFilePath);
         } catch (IOException e) {
