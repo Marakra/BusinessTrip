@@ -1,0 +1,96 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+}
+.navbar {
+    background-color: #007bff; /* Niebieski kolor */
+}
+.navbar-brand, .nav-link {
+    color: #fff !important;
+    font-weight: bold;
+}
+.nav-link:hover {
+    color: #cce4ff !important;
+}
+.container-fluid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.content {
+    padding: 2rem 0;
+}
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+.footer {
+    background-color: #007bff;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #e3f2fd;
+}
+.table thead {
+    background-color: #0d6efd;
+    color: white;
+}
+.table-hover tbody tr:hover {
+    background-color: #d1ecf1;
+}
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+.form-container {
+    max-width: 500px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    background-color: #f9f9f9;
+}
+.form-container h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+.form-container label {
+    font-weight: bold;
+}
+.form-container input[type="text"],
+.form-container input[type="email"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.form-container button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.form-container button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: red;
+}
+

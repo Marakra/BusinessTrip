@@ -4,5 +4,6 @@ import java.util.List;
 
 public interface TransportRepository {
     
-    List<Transport> findAll();
+    void createTransport(Transport transport) throws Exception;
+    List<Transport> readAllTransports() throws Exception;
 }

@@ -1,8 +1,15 @@
 package com.travel.BizTravel360.person;
 
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-public interface PersonRepository {
+@Repository
+public  interface PersonRepository {
     
-    List<com.travel.BizTravel360.person.Person> findAll();
+    Person savePerson(Person person);
+    List<Person> fetchPeopleList();
+    Person updatePerson(Person person, Long personId);
+    void deletePersonById(Long personId);
+    
 }

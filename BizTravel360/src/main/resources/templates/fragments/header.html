@@ -1,30 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">BizTravel360</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
           crossorigin="anonymous">
-    <title th:text="${pageTitle}">BizTravel360</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <header th:fragment="header">
-        <nav class="navbar navbar-light" style="background-color: #e3f2fd;">
-            <div class="container-fluid">
-                <a class="nav-link" href="/"><b>BizTravel360</b></a>
-                <a class="nav-link" href="/people">People</a>
-                <a class="nav-link" href="/accommodations">Accommodations</a>
-                <a class="nav-link" href="/expenses">Expenses</a>
-                <a class="nav-link" href="/transports">Transports</a>
-                <a class="nav-link" href="/documents">Documents</a>
-                <a class="nav-link" href="/reports">Reports</a>
-
+<header th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">BizTravel360</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/people">People</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/accommodations">Accommodations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/expenses">Expenses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/transports">Transports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/documents">Documents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/reports">Reports</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-    </header>
-
+        </div>
+    </nav>
+</header>
 </body>
 </html>
