@@ -1,13 +1,19 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f7f7f7;
 }
 .navbar {
-    background-color: #007bff; /* Niebieski kolor */
+    background-color: #0056b3;
+}
+
+.color-text{
+    color: #0056b3;
 }
 .navbar-brand, .nav-link {
-    color: #fff !important;
-    font-weight: bold;
+    background-color: #0056b3;
+    border: none;
+    transition: background-color 0.3s;
+    float: right;
 }
 .nav-link:hover {
     color: #cce4ff !important;
@@ -72,6 +78,7 @@ body {
 .form-container input[type="text"],
 .form-container input[type="email"] {
     width: 100%;
+    color: #0056b3;
     padding: 8px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -86,11 +93,16 @@ body {
     cursor: pointer;
     border-radius: 4px;
 }
+
 .form-container button[type="submit"]:hover {
     background-color: #0056b3;
 }
 
 .error {
     color: red;
+}
+
+.mb-4{
+    color: #0056b3;
 }
 
