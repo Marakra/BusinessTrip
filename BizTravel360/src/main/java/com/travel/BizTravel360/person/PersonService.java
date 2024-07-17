@@ -28,7 +28,6 @@ public class PersonService implements PersonRepository {
     private String peopleFilePath;
     
     private List<Person> people = new ArrayList<>();
-    private Map<UUID, UUID> idMap = new ConcurrentHashMap();
 
     public PersonService(FileService fileService, @Value("${people.file.path}") String peopleFilePath) {
         this.fileService = fileService;
@@ -58,10 +57,7 @@ public class PersonService implements PersonRepository {
             trimPerson(person);
             validatePerson(person);
             
-            UUID realId = UUID.randomUUID();
-            UUID randomId = UUID.randomUUID();
-            person.setPersonId(realId);
-            idMap.put(randomId, realId);
+            person.setPersonId(UUID.randomUUID());
             people.add(person);
             fileService.writerToFile(people, peopleFilePath);
             log.info("Person save successful");
@@ -78,12 +74,8 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public Person updatePerson(Person updatedPerson, UUID randomId) {
-        UUID realId = idMap.get(randomId);
-        if (realId == null) {
-            throw new IllegalArgumentException("Invalid random id: " + randomId);
-        }
-        Person personToUpdate = findPersonByUuid(randomId);
+    public Person updatePerson(Person updatedPerson, UUID personId) {
+        Person personToUpdate = findPersonByUuid(personId);
         trimPerson(updatedPerson);
         
         if (personToUpdate != null) {
@@ -98,27 +90,17 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public void deletePersonById(UUID randomId) {
-        UUID realId = idMap.get(randomId);
-        if (realId == null) {
-            throw new IllegalArgumentException("Invalid id: " + randomId);
-        }
-        people.removeIf(p -> Objects.equals(p.getPersonId(), realId));
-        idMap.remove(randomId);
+    public void deletePersonById(UUID personId) {
+        people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
         persistPeople();
     }
     
     @Override
-    public Person findPersonByUuid(UUID randomId) {
-        UUID realId = idMap.get(randomId);
-        if (realId == null) {
-            throw new IllegalArgumentException("Invalid id: " + randomId);
-        }
-        Optional<Person> foundPerson = people.stream()
-                .filter(p -> Objects.equals(p.getPersonId(), realId))
-                .findFirst();
-        
-        return foundPerson.orElse(null);
+    public Person findPersonByUuid(UUID personId) {
+         return people.stream()
+                .filter(p -> Objects.equals(p.getPersonId(), personId))
+                .findFirst()
+                 .orElseThrow(() -> new IllegalArgumentException("Invalid person id: " + personId));
     }
     
     private void validatePerson(Person person) {
@@ -133,14 +115,6 @@ public class PersonService implements PersonRepository {
             violations.forEach(violation -> log.error(violation.getMessage()));
             throw new IllegalArgumentException("Invalid person data");
         }
-    }
-    
-    public UUID getRandomIdByPersonId(UUID personId) {
-        return idMap.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(personId))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No random ID found for the given person ID"));
     }
     
     private void persistPeople() {

@@ -6,7 +6,7 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="/create" class="btn btn-primary">Create New Person</a>
+        <a href="/personForm" class="btn btn-primary">Create New Person</a>
     </div>
 
     <div class="container mt-4">
@@ -29,9 +29,9 @@
                     <td th:text="${person.lastName}"></td>
                     <td th:text="${person.email}"></td>
                     <td>
-                        <a th:href="@{/updatePerson/{randomId}(randomId=${randomIdsMap[person.personId]})}"
+                        <a th:href="@{/updatePerson/{personId}(personId=${person.personId})}"
                            class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/deletePerson/{randomId}(randomId=${randomIdsMap[person.personId]})}"
+                        <form th:action="@{/deletePerson/{personId}(personId=${person.personId})}"
                               method="post" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -42,8 +42,6 @@
             </table>
         </div>
     </div>
-
 </div>
 <div th:replace="~{fragments/footer::footer}"></div>
-</body>
-</html>
+
