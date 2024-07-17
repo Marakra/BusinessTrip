@@ -43,7 +43,7 @@ public class PersonController {
     }
     
     @GetMapping("/updatePerson/{personId}")
-    public String updatePersonForm(@PathVariable("personId") UUID personId, Model model) {
+    public String updatePersonForm(@PathVariable("personId") Long personId, Model model) {
         Person person = personService.findPersonByUuid(personId);
         model.addAttribute("person", person);
         return "person/personForm";
@@ -73,7 +73,7 @@ public class PersonController {
     }
     
     @PostMapping("/deletePerson/{personId}")
-    public String deletePerson(@PathVariable("personId") UUID personId, RedirectAttributes redirectAttributes) {
+    public String deletePerson(@PathVariable("personId") Long personId, RedirectAttributes redirectAttributes) {
         try {
             personService.deletePersonById(personId);
             redirectAttributes.addFlashAttribute("successMessage", "Person deleted successfully");

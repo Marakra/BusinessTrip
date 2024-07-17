@@ -16,7 +16,7 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 @Slf4j
 @Transactional
@@ -57,7 +57,7 @@ public class PersonService implements PersonRepository {
             trimPerson(person);
             validatePerson(person);
             
-            person.setPersonId(UUID.randomUUID());
+            person.setPersonId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
             people.add(person);
             fileService.writerToFile(people, peopleFilePath);
             log.info("Person save successful");
@@ -74,7 +74,7 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public Person updatePerson(Person updatedPerson, UUID personId) {
+    public Person updatePerson(Person updatedPerson, Long personId) throws IOException {
         Person personToUpdate = findPersonByUuid(personId);
         trimPerson(updatedPerson);
         
@@ -90,13 +90,13 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public void deletePersonById(UUID personId) {
+    public void deletePersonById(Long personId) {
         people.removeIf(p -> Objects.equals(p.getPersonId(), personId));
         persistPeople();
     }
     
     @Override
-    public Person findPersonByUuid(UUID personId) {
+    public Person findPersonByUuid(Long personId) {
          return people.stream()
                 .filter(p -> Objects.equals(p.getPersonId(), personId))
                 .findFirst()

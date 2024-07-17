@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Objects;
-import java.util.UUID;
-
 
 @Setter
 @Getter
@@ -17,7 +15,7 @@ import java.util.UUID;
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID personId;
+    private Long personId;
 
     @NotBlank(message = "First name is a required field!")
     @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
@@ -33,7 +31,7 @@ public class Person {
     
     public Person() {}
     
-    public Person(UUID personId, String firstName, String lastName, String email) {
+    public Person(Long personId, String firstName, String lastName, String email) {
         this.personId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -51,15 +49,5 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(personId, firstName, lastName, email);
-    }
-    
-    @Override
-    public String toString() {
-        return "Person{" +
-                "personId=" + personId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }
