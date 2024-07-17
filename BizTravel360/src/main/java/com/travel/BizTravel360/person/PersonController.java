@@ -11,7 +11,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -29,7 +31,14 @@ public class PersonController {
     public String getAllPeople(Model model) {
         List<Person> personList = personService.fetchPeopleList();
         log.info("Fetched {} people", personList.size());
+        Map<UUID, UUID> randomIdsMap = personList.stream()
+                .collect(Collectors.toMap(
+                        Person::getPersonId,
+                        person -> personService.getRandomIdByPersonId(person.getPersonId())
+                ));
+        
         model.addAttribute("people", personList);
+        model.addAttribute("randomIdsMap", randomIdsMap);
         
         return "person/people";
     }
@@ -40,20 +49,18 @@ public class PersonController {
         return "person/personForm";
     }
     
-    @GetMapping("/updatePerson/{personId}")
-    public String updatePersonForm(@PathVariable("personId") UUID personId, Model model) {
+    @GetMapping("/updatePerson/{randomId}")
+    public String updatePersonForm(@PathVariable("randomId") UUID randomId, Model model) {
         
-        Person person = personService.findPersonByUuid(personId);
-        
+        Person person = personService.findPersonByUuid(randomId);
         if (person != null){
             model.addAttribute("person", person);
             log.info("Fetched {} person", person);
             return "person/personForm";
         }else {
-            log.error("Failed to find person with id {}", personId);
+            log.error("Failed to find person with random id {}", randomId);
             return "redirect:/people";
         }
-        
     }
     
     @PostMapping("/handlePerson")
@@ -68,25 +75,27 @@ public class PersonController {
                 String successMessage = "Person " + savedPerson.getFirstName() + " " + savedPerson.getLastName() + " created successfully";
                 redirectAttributes.addFlashAttribute("successMessage", successMessage);
             } else {
-                Person updatedPerson = personService.updatePerson(person, person.getPersonId());
+                UUID randomId = personService.getRandomIdByPersonId(person.getPersonId());
+                Person updatedPerson = personService.updatePerson(person, randomId);
                 String updateMessage = "Person " + updatedPerson.getFirstName() + " " + updatedPerson.getLastName() + " updated successfully";
                 redirectAttributes.addFlashAttribute("successMessage", updateMessage);
             }
-        } catch (RuntimeException e) {
+        } catch (RuntimeException | IOException e) {
             log.error("Error saving/updating person {}", e.getMessage(), e);
             redirectAttributes.addFlashAttribute("errorMessage", "Operation failed");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
         return "redirect:/people";
     }
     
-    @PostMapping("/deletePerson/{personId}")
-    public String deletePerson(@PathVariable("personId") UUID personId, RedirectAttributes redirectAttributes) {
-        
-        personService.deletePersonById(personId);
-        redirectAttributes.addFlashAttribute("successMessage", "Person deleted successfully");
-        
+    @PostMapping("/deletePerson/{randomId}")
+    public String deletePerson(@PathVariable("randomId") UUID randomId, RedirectAttributes redirectAttributes) {
+        try {
+            personService.deletePersonById(randomId);
+            redirectAttributes.addFlashAttribute("successMessage", "Person deleted successfully");
+        } catch (RuntimeException e) {
+            log.error("Error deleting person with random ID {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "Operation failed");
+        }
         return "redirect:/people";
     }
 

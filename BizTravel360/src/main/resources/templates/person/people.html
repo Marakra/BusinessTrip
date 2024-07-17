@@ -29,8 +29,10 @@
                     <td th:text="${person.lastName}"></td>
                     <td th:text="${person.email}"></td>
                     <td>
-                        <a th:href="@{/updatePerson/{personId}(personId=${person.personId})}" class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/deletePerson/{personId}(personId=${person.personId})}" method="post" style="display:inline">
+                        <a th:href="@{/updatePerson/{randomId}(randomId=${randomIdsMap[person.personId]})}"
+                           class="btn btn-sm btn-warning">Edit</a>
+                        <form th:action="@{/deletePerson/{randomId}(randomId=${randomIdsMap[person.personId]})}"
+                              method="post" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>

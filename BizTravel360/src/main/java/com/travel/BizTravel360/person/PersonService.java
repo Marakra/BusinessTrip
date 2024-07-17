@@ -16,16 +16,19 @@ import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Transactional
 @Service
 public class PersonService implements PersonRepository {
+    
     private final FileService fileService;
-    private List<Person> people = new ArrayList<>();
-
     @Value("${people.file.path}")
     private String peopleFilePath;
+    
+    private List<Person> people = new ArrayList<>();
+    private Map<UUID, UUID> idMap = new ConcurrentHashMap();
 
     public PersonService(FileService fileService, @Value("${people.file.path}") String peopleFilePath) {
         this.fileService = fileService;
@@ -55,7 +58,10 @@ public class PersonService implements PersonRepository {
             trimPerson(person);
             validatePerson(person);
             
-            person.setPersonId(UUID.randomUUID());
+            UUID realId = UUID.randomUUID();
+            UUID randomId = UUID.randomUUID();
+            person.setPersonId(realId);
+            idMap.put(randomId, realId);
             people.add(person);
             fileService.writerToFile(people, peopleFilePath);
             log.info("Person save successful");
@@ -72,9 +78,12 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public Person updatePerson(Person updatedPerson, UUID personUuid) {
-        Person personToUpdate = findPersonByUuid(personUuid);
-        
+    public Person updatePerson(Person updatedPerson, UUID randomId) {
+        UUID realId = idMap.get(randomId);
+        if (realId == null) {
+            throw new IllegalArgumentException("Invalid random id: " + randomId);
+        }
+        Person personToUpdate = findPersonByUuid(randomId);
         trimPerson(updatedPerson);
         
         if (personToUpdate != null) {
@@ -89,15 +98,24 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public void deletePersonById(UUID personUuid) {
-        people.removeIf(p -> Objects.equals(p.getPersonId(), personUuid));
+    public void deletePersonById(UUID randomId) {
+        UUID realId = idMap.get(randomId);
+        if (realId == null) {
+            throw new IllegalArgumentException("Invalid id: " + randomId);
+        }
+        people.removeIf(p -> Objects.equals(p.getPersonId(), realId));
+        idMap.remove(randomId);
         persistPeople();
     }
     
     @Override
-    public Person findPersonByUuid(UUID personUuid) {
+    public Person findPersonByUuid(UUID randomId) {
+        UUID realId = idMap.get(randomId);
+        if (realId == null) {
+            throw new IllegalArgumentException("Invalid id: " + randomId);
+        }
         Optional<Person> foundPerson = people.stream()
-                .filter(p -> Objects.equals(p.getPersonId(), personUuid))
+                .filter(p -> Objects.equals(p.getPersonId(), realId))
                 .findFirst();
         
         return foundPerson.orElse(null);
@@ -115,6 +133,14 @@ public class PersonService implements PersonRepository {
             violations.forEach(violation -> log.error(violation.getMessage()));
             throw new IllegalArgumentException("Invalid person data");
         }
+    }
+    
+    public UUID getRandomIdByPersonId(UUID personId) {
+        return idMap.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(personId))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No random ID found for the given person ID"));
     }
     
     private void persistPeople() {
