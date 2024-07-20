@@ -12,6 +12,6 @@ public  interface PersonRepository {
     List<Person> fetchPeopleList();
     Person updatePerson(Person person, Long personId) throws IOException;
     void deletePersonById(Long personId) throws IOException;
-    Person findPersonByUuid(Long personId) throws IOException;
+    Person findPersonById(Long personId) throws IOException;
     
 }

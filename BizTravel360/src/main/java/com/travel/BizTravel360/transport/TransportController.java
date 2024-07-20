@@ -1,42 +1,107 @@
 package com.travel.BizTravel360.transport;
 
+import jakarta.validation.Valid;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class TransportController {
     
     private final TransportService transportService;
     
-    @Autowired
     public TransportController(TransportService transportService) {this.transportService = transportService;}
     
     @GetMapping("/transports")
     public String getAllTransports(Model model) {
-            List<Transport> transports = transportService.readAllTransports();
-            model.addAttribute("transports", transports);
+        List<Transport> transportList = transportService.fetchTransportList();
+        log.info("Fetched {} transport", transportList.size());
+        model.addAttribute("transports", transportList);
         return "transport/transports";
     }
     
-//    @GetMapping("createTransportForm")
-//    public String createTransport(Model model) {
-//        model.addAttribute("transport", new Transport());
-//        return "transport/createTransportForm";
-//    }
-//
-//    @PostMapping("createTransport")
-//    public String createTransport (@ModelAttribute Transport transport) {
-//        try {
-//            transportService.createTransport(transport);
-//            return "redirect:/transports";
-//        } catch (Exception e) {
-//            throw new RuntimeException("Failed to create transport", e);
-//        }
-//    }
+    @GetMapping("/transportForm")
+    public String showSaveTransportForm(Model model) {
+        model.addAttribute("transport", new Transport());
+        return "transport/createTransportForm";
+    }
+    
+    @PostMapping("/newTransport")
+    public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
+                                BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "transport/createTransportForm";
+        }
+        try {
+            Transport savedTransport = transportService.saveTransport(transport);
+            String successMessage = String.format("Transport %s (%s) successfully saved. Departure: %s, Arrival: %s.",
+                    savedTransport.getTypeTransport(),
+                    savedTransport.getTransportIdentifier(),
+                    savedTransport.getDeparture(),
+                    savedTransport.getArrival());
+            model.addAttribute("successMessage", successMessage);
+            model.addAttribute("transport", new Transport());  // Reset the form
+        } catch (Exception e) {
+            log.error("Error saving transport: {}", e.getMessage(), e);
+            model.addAttribute("errorMessage", "An error occurred while saving the transport.");
+        }
+        return "transport/createTransportForm";
+    }
+    
+    
+    @GetMapping("/updateTransport/{transportId}")
+    public String showUpdateTransportForm(@PathVariable("transportId") Long transportId, Model model) throws IOException {
+        Transport transport = transportService.findTransportById(transportId);
+        model.addAttribute("transport", transport);
+        return "transport/updateTransportForm";
+    }
+    
+    @PostMapping("/updateTransport")
+    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
+                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "transport/updateTransportForm";
+        }
+        try {
+            Transport updatedTransport = transportService.saveTransport(transport);
+            String successMessage = String.format("Transport %s (%s) successfully updated. Departure: %s, Arrival: %s.",
+                    updatedTransport.getTypeTransport(),
+                    updatedTransport.getTransportIdentifier(),
+                    updatedTransport.getDeparture(),
+                    updatedTransport.getArrival());
+            
+            redirectAttributes.addFlashAttribute("successMessage", successMessage);
+        } catch (Exception e) {
+            log.error("Error updating transport: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while updating the transport.");
+        }
+        return "redirect:/transports";
+    }
+    
+    
+    @PostMapping("/deleteTransport/{transportId}")
+    public String deleteTransport(@PathVariable("transportId") Long transportId,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            transportService.deleteTransportById(transportId);
+            redirectAttributes.addFlashAttribute("successMessage", "Transport " + transportId + " successfully deleted.");
+        } catch (RuntimeException e){
+            log.error("Error deleting transport: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while deleting the transport.");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/transports";
+    }
     
 }

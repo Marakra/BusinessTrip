@@ -50,7 +50,6 @@ public class PersonService implements PersonRepository {
         }
     }
     
-    
     @Override
     public Person savePerson(Person person) throws IOException {
         try {
@@ -70,12 +69,14 @@ public class PersonService implements PersonRepository {
     
     @Override
     public List<Person> fetchPeopleList() {
-        return new ArrayList<>(people);
+        List<Person> reversedPeople = new ArrayList<>(this.people);
+        Collections.reverse(reversedPeople);
+        return new ArrayList<>(reversedPeople);
     }
     
     @Override
     public Person updatePerson(Person updatedPerson, Long personId) throws IOException {
-        Person personToUpdate = findPersonByUuid(personId);
+        Person personToUpdate = findPersonById(personId);
         trimPerson(updatedPerson);
         
         if (personToUpdate != null) {
@@ -96,7 +97,7 @@ public class PersonService implements PersonRepository {
     }
     
     @Override
-    public Person findPersonByUuid(Long personId) {
+    public Person findPersonById(Long personId) {
          return people.stream()
                 .filter(p -> Objects.equals(p.getPersonId(), personId))
                 .findFirst()
