@@ -1,5 +1,6 @@
 package com.travel.BizTravel360.transport;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.travel.BizTravel360.transport.annotation.ValidDateRange;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -32,8 +33,8 @@ public class Transport {
     
     @NotNull(message = "Departure date is a required field!")
     @FutureOrPresent(message = "Departure date must be in the present or future")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime departureDateTime = LocalDateTime.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    private LocalDateTime departureDateTime;
     
     @NotBlank(message = "Arrival city is a required field!")
     @Size(min = 3, max = 50, message = "Arrival city must be between 3 and 50 characters")
@@ -41,29 +42,24 @@ public class Transport {
     
     @NotNull(message = "Arrival date is a required field!")
     @Future(message = "Arrival date must be in the future")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDateTime arrivalDateTime = LocalDateTime.now();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    private LocalDateTime arrivalDateTime;
     
-    @NotNull(message = "Count is a required field!")
+    @NotNull(message = "Price is a required field!")
     @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
-    private Double count;
+    private Double price;
     
     public Transport() {}
     
     public Transport(Long transportId, TypeTransport typeTransport, String transportIdentifier, String departure,
-                     LocalDateTime departureDateTime, String arrival, LocalDateTime arrivalDateTime, Double count) {
+                     LocalDateTime departureDateTime, String arrival, LocalDateTime arrivalDateTime, Double price) {
         this.transportId = transportId;
         this.typeTransport = typeTransport;
         this.transportIdentifier = transportIdentifier;
         this.departure = departure;
-        this.departureDateTime = formatDate(departureDateTime);
+        this.departureDateTime = departureDateTime;
         this.arrival = arrival;
-        this.arrivalDateTime = formatDate(arrivalDateTime);
-        this.count = count;
-    }
-    
-    private LocalDateTime formatDate(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd [HH:mm]");
-        return LocalDateTime.parse(dateTime.format(formatter), formatter);
+        this.arrivalDateTime = arrivalDateTime;
+        this.price = price;
     }
 }

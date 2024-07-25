@@ -8,8 +8,8 @@ import java.util.List;
 @Repository
 public interface TransportRepository {
     
-    Transport saveTransport(Transport transport) throws IOException;
-    List<Transport> fetchTransportList();
+    void saveTransport(Transport transport) throws IOException;
+    List<Transport> fetchTransportList() throws IOException;
     Transport updateTransport(Transport transport, Long transportId) throws IOException;
     void deleteTransportById(Long transportId) throws IOException;
     Transport findTransportById(Long transportId) throws IOException;
