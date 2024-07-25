@@ -6,11 +6,11 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="/personForm" class="btn btn-primary">Create New Person</a>
+        <a href="/employee" class="btn btn-primary">Create New Employee</a>
     </div>
 
     <div class="container mt-4">
-        <h1 class="mb-4">People List</h1>
+        <h1 class="mb-4">Employee List</h1>
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
                 <thead>
@@ -23,15 +23,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="person, itr : ${people}" th:if="${person != null}">
+                <tr th:each="employee, itr : ${employees}" th:if="${employee != null}">
                     <td th:text="${itr.index + 1}"></td>
-                    <td th:text="${person.firstName}"></td>
-                    <td th:text="${person.lastName}"></td>
-                    <td th:text="${person.email}"></td>
+                    <td th:text="${#strings.capitalize(employee.firstName.toLowerCase)}"></td>
+                    <td th:text="${#strings.capitalize(employee.lastName.toLowerCase)}"></td>
+                    <td th:text="${#strings.toLowerCase(employee.email.toString())}"></td>
                     <td>
-                        <a th:href="@{/updatePerson/{personId}(personId=${person.personId})}"
+                        <a th:href="@{/employee/{employeeId}(employeeId=${employee.employeeId})}"
                            class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/deletePerson/{personId}(personId=${person.personId})}"
+                        <form th:action="@{/delete-employee/{employeeId}(employeeId=${employee.employeeId})}"
                               method="post" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>

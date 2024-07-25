@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.person;
+package com.travel.BizTravel360.employee;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -12,10 +12,10 @@ import java.util.Objects;
 @Setter
 @Getter
 @Entity
-public class Person {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long personId;
+    private Long employeeId;
 
     @NotBlank(message = "First name is a required field!")
     @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
@@ -29,10 +29,10 @@ public class Person {
     @Email(message = "Email should be valid")
     private String email;
     
-    public Person() {}
+    public Employee() {}
     
-    public Person(Long personId, String firstName, String lastName, String email) {
-        this.personId = personId;
+    public Employee(Long employeeId, String firstName, String lastName, String email) {
+        this.employeeId = employeeId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -42,12 +42,15 @@ public class Person {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Person person = (Person) o;
-        return Objects.equals(personId, person.personId) && Objects.equals(firstName, person.firstName) && Objects.equals(lastName, person.lastName) && Objects.equals(email, person.email);
+        Employee employee = (Employee) o;
+        return Objects.equals(employeeId, employee.employeeId)
+                && Objects.equals(firstName, employee.firstName)
+                && Objects.equals(lastName, employee.lastName)
+                && Objects.equals(email, employee.email);
     }
     
     @Override
     public int hashCode() {
-        return Objects.hash(personId, firstName, lastName, email);
+        return Objects.hash(employeeId, firstName, lastName, email);
     }
 }
