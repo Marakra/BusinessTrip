@@ -2,38 +2,56 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #f7f7f7;
 }
+
 .navbar {
     background-color: #0056b3;
 }
 
-.color-text{
+.color-text {
     color: #0056b3;
 }
+
+.error {
+    color: red;
+}
+
+.text-center {
+    text-align: center;
+}
+
 .navbar-brand, .nav-link {
     background-color: #0056b3;
     border: none;
     transition: background-color 0.3s;
     float: right;
 }
+
 .nav-link:hover {
     color: #cce4ff !important;
 }
+
 .container-fluid {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
 }
+
 .content {
     padding: 2rem 0;
 }
+
 .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
 }
+
 .btn-primary:hover {
     background-color: #0056b3;
     border-color: #004085;
 }
+
 .footer {
     background-color: #007bff;
     color: #fff;
@@ -44,21 +62,56 @@ body {
 .table-striped tbody tr:nth-of-type(odd) {
     background-color: #e3f2fd;
 }
+
 .table thead {
     background-color: #0d6efd;
     color: white;
 }
+
 .table-hover tbody tr:hover {
     background-color: #d1ecf1;
 }
-.btn-primary {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
 }
-.btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #004085;
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
 }
+
+.table th {
+    width: 12.5%;
+}
+.actions-column {
+    min-width: 150px;
+    text-align: center;
+}
+
+.actions-column form {
+    display: inline;
+}
+
+.actions-column .btn {
+    margin-right: 5px;
+}
+
+.btn-sm {
+    padding: 0.3rem 0.6rem;
+}
+
+.table td .btn {
+    display: inline-block;
+    margin: 0;
+}
+
+.table .actions-column {
+    width: 200px;
+}
+
 .form-container {
     max-width: 500px;
     margin: auto;
@@ -68,13 +121,16 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     background-color: #f9f9f9;
 }
+
 .form-container h1 {
     margin-bottom: 20px;
     text-align: center;
 }
+
 .form-container label {
     font-weight: bold;
 }
+
 .form-container input[type="text"],
 .form-container input[type="email"] {
     width: 100%;
@@ -85,6 +141,7 @@ body {
     border-radius: 4px;
     box-sizing: border-box;
 }
+
 .form-container button[type="submit"] {
     background-color: #007bff;
     color: white;
@@ -98,11 +155,6 @@ body {
     background-color: #0056b3;
 }
 
-.error {
-    color: red;
-}
-
-.mb-4{
+.mb-4 {
     color: #0056b3;
 }
-

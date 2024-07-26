@@ -1,45 +1,55 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/header::head}"></head>
-<body>
 <div th:replace="~{fragments/header::header}"></div>
-
-<div class="container mt-4">
+<body>
+<div class="container-fluid mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="/createTransportForm" class="btn btn-primary">Create New Transport</a>
+        <a href="/transport" class="btn btn-primary">Create New Transport</a>
     </div>
 
-    <div class="container mt-4">
+    <div class="container-fluid mt-4">
         <h1 class="mb-4">Transports List</h1>
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Transport</th>
-                    <th scope="col">From City</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">To City</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">amount</th>
+                    <th scope="col">Number</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">VIN</th>
+                    <th scope="col">From</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">To</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Price</th>
+                    <th scope="col" class="actions-column">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="transport : ${transports}">
-                    <td th:text="${transport.transportId}">1</td>
-                    <td th:text="${transport.typeTransport}">FLIGHT</td>
-                    <td th:text="${transport.departureCity}">New York</td>
-                    <td th:text="${transport.departureDate}">2024-06-30T08:00:00</td>
-                    <td th:text="${transport.arrivalCity}">Los Angeles</td>
-                    <td th:text="${transport.arrivalDate}">2024-06-30T10:30:00</td>
-                    <td th:text="${transport.amount}">350.50</td>
+                <tr class="color-text" th:each="transport, itr : ${transports}" th:if="${transport != null}">
+                    <td th:text="${itr.index + 1}"></td>
+                    <td th:text="${#strings.toLowerCase(transport.typeTransport.toString())}"></td>
+                    <td th:text="${#strings.toUpperCase(transport.transportIdentifier)}"></td>
+                    <td th:text="${#strings.capitalize(transport.departure.toLowerCase())}"></td>
+                    <td th:text="${#temporals.format(transport.departureDateTime, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#strings.capitalize(transport.arrival.toLowerCase())}"></td>
+                    <td th:text="${#temporals.format(transport.arrivalDateTime, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#numbers.formatDecimal(transport.price, 2, 2) + ' zl'}"></td>
+                    <td class="actions-column">
+                        <a th:href="@{/transport/{transportId}(transportId=${transport.transportId})}"
+                           class="btn btn-sm btn-warning">Edit</a>
+                        <form th:action="@{/delete-transport/{transportId}(transportId=${transport.transportId})}"
+                              method="POST" style="display:inline">
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
 <div th:replace="~{fragments/footer::footer}"></div>
 </body>
 </html>
