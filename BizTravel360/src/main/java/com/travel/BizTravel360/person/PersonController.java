@@ -44,7 +44,7 @@ public class PersonController {
     
     @GetMapping("/updatePerson/{personId}")
     public String updatePersonForm(@PathVariable("personId") Long personId, Model model) {
-        Person person = personService.findPersonByUuid(personId);
+        Person person = personService.findPersonById(personId);
         model.addAttribute("person", person);
         return "person/personForm";
     }

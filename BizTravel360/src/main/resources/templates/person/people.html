@@ -1,8 +1,8 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
-<head th:replace="~{fragments/header::head}">
-<body>
+<head th:replace="~{fragments/header::head}"></head>
 <div th:replace="~{fragments/header::header}"></div>
+
 
 <div class="container mt-4">
     <div class="d-flex justify-content-end mb-3">
@@ -23,7 +23,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="person, itr : ${people}" th:if="${person != null}">
+                <tr class="color-text" th:each="person, itr : ${people}" th:if="${person != null}">
                     <td th:text="${itr.index + 1}"></td>
                     <td th:text="${person.firstName}"></td>
                     <td th:text="${person.lastName}"></td>

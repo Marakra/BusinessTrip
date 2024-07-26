@@ -9,5 +9,5 @@ import java.util.List;
 public interface FileRepository {
     
      void writerToFile(Object object, String fileName) throws IOException;
-     <T> T readFromFile(TypeReference<T> valueTypeRef, String fileName) throws IOException;
+     <T> T readFromFile(String fileName, TypeReference<T> typeReference) throws IOException;
 }
