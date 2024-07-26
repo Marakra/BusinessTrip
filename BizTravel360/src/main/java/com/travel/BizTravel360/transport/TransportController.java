@@ -23,64 +23,58 @@ public class TransportController {
     public TransportController(TransportService transportService) {this.transportService = transportService;}
     
     @GetMapping("/transports")
-    public String getAllTransports(Model model) {
+    public String getAllTransports(Model model) throws IOException {
         List<Transport> transportList = transportService.fetchTransportList();
         log.info("Fetched {} transport", transportList.size());
         model.addAttribute("transports", transportList);
         return "transport/transports";
     }
     
-    @GetMapping("/transportForm")
+    @GetMapping("/transport")
     public String showSaveTransportForm(Model model) {
         model.addAttribute("transport", new Transport());
         return "transport/createTransportForm";
     }
     
-    @PostMapping("/newTransport")
+    @PostMapping("/transport")
     public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
                                 BindingResult bindingResult, Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/createTransportForm";
         }
-            Transport savedTransport = transportService.saveTransport(transport);
-            String successMessage = String.format("Transport %s (%s) successfully saved. Departure: %s, Arrival: %s.",
-                    savedTransport.getTypeTransport(),
-                    savedTransport.getTransportIdentifier(),
-                    savedTransport.getDeparture(),
-                    savedTransport.getArrival());
-            model.addAttribute("successMessage", successMessage);
-            model.addAttribute("transport", new Transport());  // Reset the form
+        transportService.saveTransport(transport);
+        model.addAttribute("transport", new Transport());  // Reset the form
+        
+
         return "transport/createTransportForm";
     }
     
     
-    @GetMapping("/updateTransport/{transportId}")
+    @GetMapping("/transport/{transportId}")
     public String showUpdateTransportForm(@PathVariable("transportId") Long transportId, Model model) throws IOException {
         Transport transport = transportService.findTransportById(transportId);
         model.addAttribute("transport", transport);
         return "transport/updateTransportForm";
     }
     
-    @PostMapping("/updateTransport")
-    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport, Long transportId,
+
+    @PostMapping("/update-transport")
+    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
-            Transport updatedTransport = transportService.updateTransport(transport, transportId);
-            String successMessage = String.format("Transport %s (%s) successfully updated. Departure: %s, Arrival: %s.",
-                    updatedTransport.getTypeTransport(),
-                    updatedTransport.getTransportIdentifier(),
-                    updatedTransport.getDeparture(),
-                    updatedTransport.getArrival());
-            
-            redirectAttributes.addFlashAttribute("successMessage", successMessage);
+            transportService.updateTransport(transport, transport.getTransportId());
+            redirectAttributes.addFlashAttribute("successMessage");
         return "redirect:/transports";
     }
     
-    @PostMapping("/deleteTransport/{transportId}")
-    public String deleteTransport(@PathVariable("transportId") Long transportId) throws IOException {
+    
+    @PostMapping("/delete-transport/{transportId}")
+    public String deleteTransport(@PathVariable("transportId") Long transportId,
+                                  RedirectAttributes redirectAttributes) throws IOException {
         transportService.deleteTransportById(transportId);
+        redirectAttributes.addFlashAttribute("successMessage", "Transport " + transportId + " successfully deleted.");
         return "redirect:/transports";
     }
     

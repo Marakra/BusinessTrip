@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="form-container">
         <h2 class="color-text">Edit Transport</h2>
-        <form method="POST" th:action="@{/updateTransport}" th:object="${transport}">
+        <form method="POST" th:action="@{/update-transport}" th:object="${transport}">
             <input type="hidden" th:field="*{transportId}" />
 
             <div class="form-group">
@@ -19,7 +19,7 @@
             </div>
 
             <div class="form-group">
-                <label for="transportIdentifier" class="color-text">Transport number (optional):</label>
+                <label for="transportIdentifier" class="color-text">Route number (optional):</label>
                 <input type="text" id="transportIdentifier" th:field="*{transportIdentifier}" class="form-control">
                 <ul><li th:each="err : ${#fields.errors('transportIdentifier')}" th:text="${err}" class="error"></li></ul>
             </div>
@@ -49,9 +49,9 @@
             </div>
 
             <div class="form-group">
-                <label for="count" class="color-text">Count:</label>
-                <input type="number" id="count" th:field="*{count}" step="0.01" class="form-control color-text" required>
-                <ul><li th:each="err : ${#fields.errors('count')}" th:text="${err}" class="error"></li></ul>
+                <label for="count" class="color-text">Price:</label>
+                <input type="number" id="count" th:field="*{price}" step="0.01" class="form-control color-text" required>
+                <ul><li th:each="err : ${#fields.errors('price')}" th:text="${err}" class="error"></li></ul>
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>

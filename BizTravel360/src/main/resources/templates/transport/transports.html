@@ -5,7 +5,7 @@
 
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="/transportForm" class="btn btn-primary">Create New Transport</a>
+        <a href="/transport" class="btn btn-primary">Create New Transport</a>
     </div>
 
     <div class="container-fluid mt-4">
@@ -31,14 +31,14 @@
                     <td th:text="${#strings.toLowerCase(transport.typeTransport.toString())}"></td>
                     <td th:text="${#strings.toUpperCase(transport.transportIdentifier)}"></td>
                     <td th:text="${#strings.capitalize(transport.departure.toLowerCase())}"></td>
-                    <td th:text="${transport.departureDateTime}"></td>
+                    <td th:text="${#temporals.format(transport.departureDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#strings.capitalize(transport.arrival.toLowerCase())}"></td>
-                    <td th:text="${transport.arrivalDateTime}"></td>
-                    <td th:text="${#numbers.formatDecimal(transport.count, 2, 2) + ' zl'}"></td>
+                    <td th:text="${#temporals.format(transport.arrivalDateTime, 'dd-MM-yyyy HH:mm')}"></td>
+                    <td th:text="${#numbers.formatDecimal(transport.price, 2, 2) + ' zl'}"></td>
                     <td class="actions-column">
-                        <a th:href="@{/updateTransport/{transportId}(transportId=${transport.transportId})}"
+                        <a th:href="@{/transport/{transportId}(transportId=${transport.transportId})}"
                            class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/deleteTransport/{transportId}(transportId=${transport.transportId})}"
+                        <form th:action="@{/delete-transport/{transportId}(transportId=${transport.transportId})}"
                               method="POST" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
