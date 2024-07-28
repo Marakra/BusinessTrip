@@ -30,9 +30,9 @@ public class TransportService implements TransportRepository{
     private final FileService fileService;
     @Value("${transports.file.path}")
     private String transportFilePath;
-
+    
     private List<Transport> transports = new ArrayList<>();
-
+    
     public TransportService(FileService fileService, @Value("${transports.file.path}") String transportFilePath) {
         this.fileService = fileService;
         this.transportFilePath = transportFilePath;
@@ -83,11 +83,11 @@ public class TransportService implements TransportRepository{
             fileService.writerToFile(transports, transportFilePath);
             log.info("Updated transport with ID: {}", transportId);
             logSuccessMessage(updateTransport);
-                return updateTransport;
-            } else {
-                log.warn("Transport with ID {} not found", transportId);
-                return null;
-            }
+            return updateTransport;
+        } else {
+            log.warn("Transport with ID {} not found", transportId);
+            return null;
+        }
     }
     
     @Override
@@ -119,7 +119,7 @@ public class TransportService implements TransportRepository{
                 .filter(t -> Objects.equals(t.getTransportId(), transportId))
                 .findFirst()
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
-        }
+    }
     
     private void validateTransport(Transport transport) {
         ValidatorFactory factory = Validation.byDefaultProvider()

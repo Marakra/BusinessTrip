@@ -45,7 +45,7 @@ public class TransportController {
         transportService.saveTransport(transport);
         model.addAttribute("transport", new Transport());  // Reset the form
         
-
+        
         return "transport/createTransportForm";
     }
     
@@ -57,15 +57,15 @@ public class TransportController {
         return "transport/updateTransportForm";
     }
     
-
+    
     @PostMapping("/update-transport")
     public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
-            transportService.updateTransport(transport, transport.getTransportId());
-            redirectAttributes.addFlashAttribute("successMessage");
+        transportService.updateTransport(transport, transport.getTransportId());
+        redirectAttributes.addFlashAttribute("successMessage");
         return "redirect:/transports";
     }
     

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/header::head}"></head>
 <div th:replace="~{fragments/header::header}"></div>
-
+<body>
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-end mb-3">
         <a href="/transport" class="btn btn-primary">Create New Transport</a>
@@ -21,7 +21,7 @@
                     <th scope="col">Date</th>
                     <th scope="col">To</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Count</th>
+                    <th scope="col">Price</th>
                     <th scope="col" class="actions-column">Actions</th>
                 </tr>
                 </thead>
@@ -51,3 +51,5 @@
     </div>
 </div>
 <div th:replace="~{fragments/footer::footer}"></div>
+</body>
+</html>
