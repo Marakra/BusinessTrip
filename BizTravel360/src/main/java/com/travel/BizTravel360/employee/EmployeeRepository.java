@@ -10,8 +10,8 @@ public  interface EmployeeRepository {
     
     void saveEmployee(Employee employee) throws IOException;
     List<Employee> fetchEmployeeList() throws IOException;
-    Employee updateEmployee(Employee updateEmployee, Long employeeId) throws IOException;
+    void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException;
     void deleteEmployeeById(Long employeeId) throws IOException;
-    Employee findEmployeeByUuid(Long employeeId) throws IOException;
+    Employee findEmployeeById(Long employeeId) throws IOException;
     
 }

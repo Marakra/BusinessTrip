@@ -34,7 +34,7 @@ public class EmployeeService implements EmployeeRepository {
     }
     
     @Override
-    public void saveEmployee(Employee employee) throws IOException {
+    public void  saveEmployee(Employee employee) throws IOException {
         try {
             trimEmployee(employee);
             validateEmployee(employee);
@@ -44,7 +44,6 @@ public class EmployeeService implements EmployeeRepository {
             existingEmployees.add(employee);
             
             fileService.writerToFile(existingEmployees, employeeFilePath);
-            
         } catch (IOException e) {
             log.error("Failed to save employee {}", employee, e);
             throw new EmployeeSaveException(String.format("Failed to save employee %s", employee), e);
@@ -62,50 +61,37 @@ public class EmployeeService implements EmployeeRepository {
     }
     
     @Override
-    public Employee updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
+    public void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
         this.employees = fetchEmployeeList();
         
-        boolean updated = false;
-        for (int i = 0; i < employees.size(); i++) {
-            if(Objects.equals(employees.get(i).getEmployeeId(), employeeId)){
-                employees.set(i, updateEmployee);
-                updated = true;
-                break;
-            }
-        }
-        if (updated){
+        try {
+            Employee existingEmployee = findEmployeeById(employeeId);
+            
+            int index = employees.indexOf(existingEmployee);
+            employees.set(index, updateEmployee);
+            
             fileService.writerToFile(employees, employeeFilePath);
-            log.info("Updated employee with ID: {}", employeeId);
-            return updateEmployee;
-        } else {
-            log.warn("Employee with ID {} not found", employeeId);
-            return null;
+        } catch (EmployeeNotFoundException e) {
+            log.error("Failed to find employee with id {}", employeeId, e);
         }
     }
     
     @Override
     public void deleteEmployeeById(Long employeeId) throws IOException {
-        List<Employee> employees = fetchEmployeeList();
-        List<Employee> updatedEmployees = new ArrayList<>();
-        boolean found = false;
+        this.employees = fetchEmployeeList();
         
-        for (Employee employee : employees) {
-            if (Objects.equals(employee.getEmployeeId(), employeeId)) {
-                found = true;
-            } else {
-                updatedEmployees.add(employee);
-            }
-        }
-        if (found){
-            fileService.writerToFile(updatedEmployees, employeeFilePath);
-            log.info("Deleted employee with ID: {}", employeeId);
-        } else {
-            log.warn("Employee with id {} not found for deletion", employeeId);
+        try {
+            Employee existingEmployee = findEmployeeById(employeeId);
+            
+            employees.remove(existingEmployee);
+            fileService.writerToFile(employees, employeeFilePath);
+        } catch (EmployeeNotFoundException e) {
+            log.error("Failed to find employee with id {}", employeeId, e);
         }
     }
     
     @Override
-    public Employee findEmployeeByUuid(Long employeeId) throws IOException {
+    public Employee findEmployeeById(Long employeeId) throws IOException {
         if (employees.isEmpty()){
             this.employees = fileService.readFromFile(employeeFilePath, new TypeReference<List<Employee>>() {});
         }

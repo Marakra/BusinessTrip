@@ -1,20 +1,19 @@
 package com.travel.BizTravel360.transport;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.travel.BizTravel360.transport.annotation.ValidDateRange;
+import com.travel.BizTravel360.transport.annotation.ValidDateRangeTransport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 
 @Setter
 @Getter
 @Entity
-@ValidDateRange
+@ValidDateRangeTransport
 public class Transport {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

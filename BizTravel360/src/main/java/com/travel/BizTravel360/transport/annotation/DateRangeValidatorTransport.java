@@ -4,10 +4,10 @@ import com.travel.BizTravel360.transport.Transport;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class DateRangeValidator implements ConstraintValidator <ValidDateRange, Transport>{
+public class DateRangeValidatorTransport implements ConstraintValidator <ValidDateRangeTransport, Transport>{
     
     @Override
-    public void initialize(ValidDateRange constraintAnnotation) {
+    public void initialize(ValidDateRangeTransport constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
     }
     

@@ -3,7 +3,16 @@ package com.travel.BizTravel360.accommodation;
 public enum TypeAccommodation {
     HOTEL,
     HOSTEL,
-    BED_AND_BREAKFAST,
     APARTMENT,
-    BUNGALOW
+    BUNGALOW,
+    GUEST_HOUSE,
+    MOTEL,
+    VILLA,
+    COTTAGE,
+    RESORT,
+    CAMPING,
+    LODGE,
+    FARM_STAY,
+    CABIN,
+    TREEHOUSE
 }

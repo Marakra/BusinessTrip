@@ -5,10 +5,7 @@ import org.springframework.ui.Model;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -44,8 +41,6 @@ public class TransportController {
         }
         transportService.saveTransport(transport);
         model.addAttribute("transport", new Transport());  // Reset the form
-        
-        
         return "transport/createTransportForm";
     }
     
