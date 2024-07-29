@@ -25,9 +25,8 @@ public class TransportService implements TransportRepository{
     @Value("${transports.file.path}")
     private String transportFilePath;
     
-    private List<Transport> transports = new ArrayList<>();
-    
-    public TransportService(FileService fileService, @Value("${transports.file.path}") String transportFilePath) {
+    public TransportService(FileService fileService,
+                            @Value("${transports.file.path}") String transportFilePath) {
         this.fileService = fileService;
         this.transportFilePath = transportFilePath;
     }
@@ -39,10 +38,10 @@ public class TransportService implements TransportRepository{
             validateTransport(transport);
             
             transport.setTransportId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Transport> existingTransports = fetchTransportList();
-            existingTransports.add(transport);
+            List<Transport> transportList = fetchTransportList();
+            transportList.add(transport);
             
-            fileService.writerToFile(existingTransports, transportFilePath);
+            fileService.writerToFile(transportList, transportFilePath);
             
             logSuccessMessage(transport);
         } catch (IOException e) {
@@ -54,48 +53,41 @@ public class TransportService implements TransportRepository{
     @Override
     public List<Transport> fetchTransportList() throws IOException {
         if (Files.exists(Paths.get(transportFilePath))) {
-            this.transports = fileService.readFromFile(transportFilePath, new TypeReference<List<Transport>>() {});
-            Collections.reverse(transports);
-            return transports;
+            List<Transport> transportList = fileService.readFromFile(transportFilePath,
+                                                new TypeReference<List<Transport>>() {});
+            Collections.reverse(transportList);
+            return transportList;
         }
         return new ArrayList<>();
     }
     
     @Override
     public void updateTransport(Transport updateTransport, Long transportId) throws IOException {
-        this.transports = fetchTransportList();
+        Transport existingTransport = findTransportById(transportId);
+        List<Transport> transportList = fetchTransportList();
         
-        try {
-            Transport existingTransport = findTransportById(transportId);
+        int index = transportList.indexOf(existingTransport);
+        updateTransport.setTransportId(transportId);
+        transportList.set(index, updateTransport);
             
-            int index = transports.indexOf(existingTransport);
-            transports.set(index, updateTransport);
-            
-            fileService.writerToFile(transports, transportFilePath);
-            logSuccessMessage(updateTransport);
-        } catch (TransportNotFoundException e) {
-            log.warn("Transport {} not found", transportId, e);
-        }
+        fileService.writerToFile(transportList, transportFilePath);
+        logSuccessMessage(updateTransport);
     }
     
     @Override
     public void deleteTransportById(Long transportId) throws IOException {
-        this.transports = fetchTransportList();
+        List<Transport> transportList = fetchTransportList();
+        Transport existingTransport = findTransportById(transportId);
         
-        try {
-            Transport existingTransport = findTransportById(transportId);
-            transports.remove(existingTransport);
-            fileService.writerToFile(transports, transportFilePath);
-        } catch (TransportNotFoundException e) {
-            log.warn("Transport {} not found", transportId, e);
-        }
+        transportList.remove(existingTransport);
+        fileService.writerToFile(transportList, transportFilePath);
+        logSuccessMessage(existingTransport);
     }
+    
     @Override
     public Transport findTransportById (Long transportId) throws IOException {
-        if (transports.isEmpty()) {
-            this.transports = fileService.readFromFile(transportFilePath, new TypeReference<List<Transport>>() {});
-        }
-        return transports.stream()
+        List<Transport> transportList = fetchTransportList();
+        return transportList.stream()
                 .filter(t -> Objects.equals(t.getTransportId(), transportId))
                 .findFirst()
                 .orElseThrow(() -> new TransportNotFoundException(transportId));

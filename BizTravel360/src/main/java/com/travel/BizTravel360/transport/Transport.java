@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Setter
@@ -60,5 +61,25 @@ public class Transport {
         this.arrival = arrival;
         this.arrivalDateTime = arrivalDateTime;
         this.price = price;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transport transport = (Transport) o;
+        return Objects.equals(transportId, transport.transportId)
+                && typeTransport == transport.typeTransport
+                && Objects.equals(transportIdentifier, transport.transportIdentifier)
+                && Objects.equals(departure, transport.departure)
+                && Objects.equals(departureDateTime, transport.departureDateTime)
+                && Objects.equals(arrival, transport.arrival)
+                && Objects.equals(arrivalDateTime, transport.arrivalDateTime)
+                && Objects.equals(price, transport.price);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(transportId, typeTransport, transportIdentifier, departure, departureDateTime, arrival, arrivalDateTime, price);
     }
 }

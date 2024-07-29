@@ -25,9 +25,8 @@ public class AccommodationService implements AccommodationRepository {
     @Value("${accommodations.file.path}")
     private String accommodationFilePath;
     
-    private List<Accommodation> accommodations = new ArrayList<>();
-    
-    public AccommodationService(FileService fileService, @Value("${accommodations.file.path}") String accommodationFilePath) {
+    public AccommodationService(FileService fileService,
+                                @Value("${accommodations.file.path}") String accommodationFilePath) {
         this.fileService = fileService;
         this.accommodationFilePath = accommodationFilePath;
     }
@@ -39,11 +38,10 @@ public class AccommodationService implements AccommodationRepository {
             validateAccommodation(accommodation);
             
             accommodation.setAccommodationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Accommodation> existingAccommodations = fetchAccommodationList();
-            existingAccommodations.add(accommodation);
+            List<Accommodation> accommodationList = fetchAccommodationList();
+            accommodationList.add(accommodation);
             
-            fileService.writerToFile(existingAccommodations, accommodationFilePath);
-            
+            fileService.writerToFile(accommodationList, accommodationFilePath);
             logSuccessMessage(accommodation);
         } catch (IOException e) {
             log.error("Failed to save accommodation {}", accommodation, e);
@@ -54,52 +52,41 @@ public class AccommodationService implements AccommodationRepository {
     @Override
     public List<Accommodation> fetchAccommodationList() throws IOException {
         if (Files.exists(Paths.get(accommodationFilePath))){
-            this.accommodations = fileService.readFromFile(accommodationFilePath, new TypeReference<List<Accommodation>>() {});
-            Collections.reverse(accommodations);
-            return accommodations;
+            List<Accommodation> accommodationList = fileService.readFromFile(accommodationFilePath,
+                                                        new TypeReference<List<Accommodation>>() {});
+            Collections.reverse(accommodationList);
+            return accommodationList;
         }
         return new ArrayList<>();
     }
     
     @Override
     public void updateAccommodation(Accommodation updateAccommodation, Long accommodationId) throws IOException {
-        this.accommodations = fetchAccommodationList();
+        Accommodation existingAccommodation = findAccommodationById(accommodationId);
+        List<Accommodation> accommodationList = fetchAccommodationList();
         
-        try {
-            Accommodation existingAccommodation = findAccommodationById(accommodationId);
-            
-            int index = accommodations.indexOf(existingAccommodation);
-            accommodations.set(index, updateAccommodation);
-            
-            fileService.writerToFile(accommodations, accommodationFilePath);
-            logSuccessMessage(updateAccommodation);
-        } catch (AccommodationNotFoundException e) {
-            log.warn("Accommodation with id {} not found.", accommodationId, e);
-        }
+        int index = accommodationList.indexOf(existingAccommodation);
+        updateAccommodation.setAccommodationId(accommodationId);
+        accommodationList.set(index, updateAccommodation);
+        
+        fileService.writerToFile(accommodationList, accommodationFilePath);
+        logSuccessMessage(updateAccommodation);
     }
     
     @Override
     public void deleteAccommodationById(Long accommodationId) throws IOException {
-        this.accommodations = fetchAccommodationList();
+        List<Accommodation> accommodationList = fetchAccommodationList();
+        Accommodation existingAccommodation = findAccommodationById(accommodationId);
         
-        try {
-            Accommodation existingAccommodation = findAccommodationById(accommodationId);
-            
-            accommodations.remove(existingAccommodation);
-            
-            fileService.writerToFile(accommodations, accommodationFilePath);
-            logSuccessMessage(existingAccommodation);
-        } catch (AccommodationNotFoundException e){
-            log.warn("Accommodation with id {} not found.", accommodationId, e);
-        }
+        accommodationList.remove(existingAccommodation);
+        fileService.writerToFile(accommodationList, accommodationFilePath);
+        logSuccessMessage(existingAccommodation);
     }
     
     @Override
     public Accommodation findAccommodationById(Long accommodationId) throws IOException {
-        if (accommodations.isEmpty()){
-            this.accommodations = fileService.readFromFile(accommodationFilePath, new TypeReference<List<Accommodation>>() {});
-        }
-        return accommodations.stream()
+        List<Accommodation> accommodationList = fetchAccommodationList();
+        return accommodationList.stream()
                 .filter(a -> Objects.equals(a.getAccommodationId(), accommodationId))
                 .findFirst()
                .orElseThrow(() -> new AccommodationNotFoundException(accommodationId));
@@ -124,6 +111,7 @@ public class AccommodationService implements AccommodationRepository {
                 accommodation.getName(),
                 accommodation.getTypeAccommodation(),
                 accommodation.getAddress());
+        log.info(successMessage);
     }
     
     private void trimAccommodation(Accommodation accommodation) {

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -55,5 +56,24 @@ public class Accommodation {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.price = price;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Accommodation that = (Accommodation) o;
+        return Objects.equals(accommodationId, that.accommodationId)
+                && Objects.equals(name, that.name)
+                && typeAccommodation == that.typeAccommodation
+                && Objects.equals(address, that.address)
+                && Objects.equals(checkIn, that.checkIn)
+                && Objects.equals(checkOut, that.checkOut)
+                && Objects.equals(price, that.price);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(accommodationId, name, typeAccommodation, address, checkIn, checkOut, price);
     }
 }
