@@ -1,78 +1,79 @@
 package com.travel.BizTravel360.accommodation;
 
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Setter
+@Getter
+@Entity
+@ValidDateRangeAccommodation
 public class Accommodation {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long accommodationId;
+    
+    @NotBlank(message = "Name is a required field!")
+    @Size(max = 30, message = "Name must be at most 50 characters")
     private String name;
-    private String location;
-    private Date checkInDate;
-    private Date checkOutDate;
-    private double amount;
-
-    public Accommodation(String name, String location, double amount, Date checkOutDate, Date checkInDate) {
+    
+    @NotNull(message = "Type accommodation is a required field!")
+    @Enumerated(EnumType.STRING)
+    private TypeAccommodation typeAccommodation;
+    
+    @NotBlank(message = "Address is a required field!")
+    @Size(max = 30, message = "Address must be at most 50 characters")
+    private String address;
+    
+    @NotNull(message = "CheckIn is a required field!")
+    @Future(message = "CheckIn must be in the future")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    private LocalDateTime checkIn;
+    
+    @NotNull(message = "CheckOut is a required field!")
+    @Future(message = "checkOut must be in the future")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    private LocalDateTime checkOut;
+    
+    @NotNull(message = "Price is a required field!")
+    @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
+    private Double price;
+    
+    public Accommodation() {}
+    
+    public Accommodation(Long accommodationId, String name, TypeAccommodation typeAccommodation,
+                         String address, LocalDateTime checkIn, LocalDateTime checkOut, Double price) {
+        this.accommodationId = accommodationId;
         this.name = name;
-        this.location = location;
-        this.amount = amount;
-        this.checkOutDate = checkOutDate;
-        this.checkInDate = checkInDate;
+        this.typeAccommodation = typeAccommodation;
+        this.address = address;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.price = price;
     }
-
-    public boolean isBooked() {
-        return false;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public Date getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Date checkOutDate) {
-        this.checkOutDate = checkOutDate;
-    }
-
-    public Date getCheckInDate() {
-        return checkInDate;
-    }
-
-    public void setCheckInDate(Date checkInDate) {
-        this.checkInDate = checkInDate;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
+    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Accommodation that = (Accommodation) o;
-        return Double.compare(amount, that.amount) == 0 && Objects.equals(name, that.name) && Objects.equals(location, that.location) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate);
+        return Objects.equals(accommodationId, that.accommodationId)
+                && Objects.equals(name, that.name)
+                && typeAccommodation == that.typeAccommodation
+                && Objects.equals(address, that.address)
+                && Objects.equals(checkIn, that.checkIn)
+                && Objects.equals(checkOut, that.checkOut)
+                && Objects.equals(price, that.price);
     }
-
+    
     @Override
     public int hashCode() {
-        return Objects.hash(name, location, checkInDate, checkOutDate, amount);
+        return Objects.hash(accommodationId, name, typeAccommodation, address, checkIn, checkOut, price);
     }
 }

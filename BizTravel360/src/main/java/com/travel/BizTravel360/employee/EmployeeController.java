@@ -47,7 +47,7 @@ public class EmployeeController {
     
     @GetMapping("/employee/{employeeId}")
     public String showUpdateEmployeeForm(@PathVariable("employeeId") Long employeeId, Model model) throws IOException {
-        Employee employee = employeeService.findEmployeeByUuid(employeeId);
+        Employee employee = employeeService.findEmployeeById(employeeId);
         model.addAttribute("employee", employee);
         return "employee/updateEmployeeForm";
     }

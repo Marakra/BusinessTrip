@@ -26,25 +26,23 @@ public class EmployeeService implements EmployeeRepository {
     @Value("${employees.file.path}")
     private String employeeFilePath;
     
-    private List<Employee> employees = new ArrayList<>();
-    
-    public EmployeeService(FileService fileService, @Value("${employees.file.path}") String employeeFilePath) {
+    public EmployeeService(FileService fileService,
+                           @Value("${employees.file.path}") String employeeFilePath) {
         this.fileService = fileService;
         this.employeeFilePath = employeeFilePath;
     }
     
     @Override
-    public void saveEmployee(Employee employee) throws IOException {
+    public void  saveEmployee(Employee employee) throws IOException {
         try {
             trimEmployee(employee);
             validateEmployee(employee);
             
             employee.setEmployeeId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Employee> existingEmployees = fetchEmployeeList();
-            existingEmployees.add(employee);
+            List<Employee> employeeList = fetchEmployeeList();
+            employeeList.add(employee);
             
-            fileService.writerToFile(existingEmployees, employeeFilePath);
-            
+            fileService.writerToFile(employeeList, employeeFilePath);
         } catch (IOException e) {
             log.error("Failed to save employee {}", employee, e);
             throw new EmployeeSaveException(String.format("Failed to save employee %s", employee), e);
@@ -54,62 +52,39 @@ public class EmployeeService implements EmployeeRepository {
     @Override
     public List<Employee> fetchEmployeeList() throws IOException {
         if (Files.exists(Paths.get(employeeFilePath))){
-            this.employees = fileService.readFromFile(employeeFilePath, new TypeReference<List<Employee>>() {});
-            Collections.reverse(employees);
-            return employees;
+            List<Employee> employeeList = fileService.readFromFile(employeeFilePath,
+                                                new TypeReference<List<Employee>>() {});
+            Collections.reverse(employeeList);
+            return employeeList;
         }
         return new ArrayList<>();
     }
     
     @Override
-    public Employee updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
-        this.employees = fetchEmployeeList();
+    public void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
+        Employee existingEmployee = findEmployeeById(employeeId);
+        List<Employee> employeeList = fetchEmployeeList();
         
-        boolean updated = false;
-        for (int i = 0; i < employees.size(); i++) {
-            if(Objects.equals(employees.get(i).getEmployeeId(), employeeId)){
-                employees.set(i, updateEmployee);
-                updated = true;
-                break;
-            }
-        }
-        if (updated){
-            fileService.writerToFile(employees, employeeFilePath);
-            log.info("Updated employee with ID: {}", employeeId);
-            return updateEmployee;
-        } else {
-            log.warn("Employee with ID {} not found", employeeId);
-            return null;
-        }
+        int index = employeeList.indexOf(existingEmployee);
+        updateEmployee.setEmployeeId(employeeId);
+        employeeList.set(index, updateEmployee);
+        
+        fileService.writerToFile(employeeList, employeeFilePath);
     }
     
     @Override
     public void deleteEmployeeById(Long employeeId) throws IOException {
-        List<Employee> employees = fetchEmployeeList();
-        List<Employee> updatedEmployees = new ArrayList<>();
-        boolean found = false;
+        List<Employee> employeeList = fetchEmployeeList();
         
-        for (Employee employee : employees) {
-            if (Objects.equals(employee.getEmployeeId(), employeeId)) {
-                found = true;
-            } else {
-                updatedEmployees.add(employee);
-            }
-        }
-        if (found){
-            fileService.writerToFile(updatedEmployees, employeeFilePath);
-            log.info("Deleted employee with ID: {}", employeeId);
-        } else {
-            log.warn("Employee with id {} not found for deletion", employeeId);
-        }
+        Employee existingEmployee = findEmployeeById(employeeId);
+        employeeList.remove(existingEmployee);
+        fileService.writerToFile(employeeList, employeeFilePath);
     }
     
     @Override
-    public Employee findEmployeeByUuid(Long employeeId) throws IOException {
-        if (employees.isEmpty()){
-            this.employees = fileService.readFromFile(employeeFilePath, new TypeReference<List<Employee>>() {});
-        }
-        return employees.stream()
+    public Employee findEmployeeById(Long employeeId) throws IOException {
+        List<Employee> employeeList = fetchEmployeeList();
+        return employeeList.stream()
                 .filter(e -> Objects.equals(e.getEmployeeId(), employeeId))
                 .findFirst()
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
