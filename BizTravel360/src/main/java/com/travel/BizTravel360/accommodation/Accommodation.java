@@ -2,6 +2,7 @@ package com.travel.BizTravel360.accommodation;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
+import com.travel.BizTravel360.delegation.Delegation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -21,7 +22,7 @@ public class Accommodation {
     
     @NotBlank(message = "Name is a required field!")
     @Size(max = 30, message = "Name must be at most 50 characters")
-    private String name;
+    private String nameAccommodation;
     
     @NotNull(message = "Type accommodation is a required field!")
     @Enumerated(EnumType.STRING)
@@ -45,12 +46,16 @@ public class Accommodation {
     @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
     private Double price;
     
+    @ManyToOne
+    @JoinColumn(name = "delegation_id")
+    private Delegation delegation;
+    
     public Accommodation() {}
     
-    public Accommodation(Long accommodationId, String name, TypeAccommodation typeAccommodation,
+    public Accommodation(Long accommodationId, String nameAccommodation, TypeAccommodation typeAccommodation,
                          String address, LocalDateTime checkIn, LocalDateTime checkOut, Double price) {
         this.accommodationId = accommodationId;
-        this.name = name;
+        this.nameAccommodation = nameAccommodation;
         this.typeAccommodation = typeAccommodation;
         this.address = address;
         this.checkIn = checkIn;
@@ -64,7 +69,7 @@ public class Accommodation {
         if (o == null || getClass() != o.getClass()) return false;
         Accommodation that = (Accommodation) o;
         return Objects.equals(accommodationId, that.accommodationId)
-                && Objects.equals(name, that.name)
+                && Objects.equals(nameAccommodation, that.nameAccommodation)
                 && typeAccommodation == that.typeAccommodation
                 && Objects.equals(address, that.address)
                 && Objects.equals(checkIn, that.checkIn)
@@ -74,6 +79,6 @@ public class Accommodation {
     
     @Override
     public int hashCode() {
-        return Objects.hash(accommodationId, name, typeAccommodation, address, checkIn, checkOut, price);
+        return Objects.hash(accommodationId, nameAccommodation, typeAccommodation, address, checkIn, checkOut, price);
     }
 }

@@ -5,10 +5,13 @@ import com.travel.BizTravel360.accommodation.exeptions.AccommodationNotFoundExce
 import com.travel.BizTravel360.accommodation.exeptions.AccommodationSaveException;
 import com.travel.BizTravel360.file.FileService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.*;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,13 +25,15 @@ import java.util.*;
 public class AccommodationService implements AccommodationRepository {
     
     private final FileService fileService;
-    @Value("${accommodations.file.path}")
     private String accommodationFilePath;
     
-    public AccommodationService(FileService fileService,
-                                @Value("${accommodations.file.path}") String accommodationFilePath) {
+    private Validator validator;
+    
+    public AccommodationService(@Value("${accommodations.file.path}") String accommodationFilePath,
+                                FileService fileService, Validator validator) {
         this.fileService = fileService;
         this.accommodationFilePath = accommodationFilePath;
+        this.validator = validator;
     }
     
     @Override
@@ -38,7 +43,7 @@ public class AccommodationService implements AccommodationRepository {
             validateAccommodation(accommodation);
             
             accommodation.setAccommodationId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Accommodation> accommodationList = fetchAccommodationList();
+            List<Accommodation> accommodationList = loadAccommodationFromFile();
             accommodationList.add(accommodation);
             
             fileService.writerToFile(accommodationList, accommodationFilePath);
@@ -50,20 +55,26 @@ public class AccommodationService implements AccommodationRepository {
     }
     
     @Override
-    public List<Accommodation> fetchAccommodationList() throws IOException {
-        if (Files.exists(Paths.get(accommodationFilePath))){
-            List<Accommodation> accommodationList = fileService.readFromFile(accommodationFilePath,
-                                                        new TypeReference<List<Accommodation>>() {});
-            Collections.reverse(accommodationList);
-            return accommodationList;
+    public Page<Accommodation> fetchAccommodationPage(Pageable pageable) throws IOException {
+        List<Accommodation> accommodationList = loadAccommodationFromFile();
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startIndex = currentPage * pageSize;
+        int totalAccommodationSize = accommodationList.size();
+        
+        if (totalAccommodationSize <= startIndex) {
+            accommodationList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startIndex + pageSize, totalAccommodationSize);
+            accommodationList = accommodationList.subList(startIndex, toIndex);
         }
-        return new ArrayList<>();
+        return new PageImpl<>(accommodationList, pageable, totalAccommodationSize);
     }
     
     @Override
     public void updateAccommodation(Accommodation updateAccommodation, Long accommodationId) throws IOException {
         Accommodation existingAccommodation = findAccommodationById(accommodationId);
-        List<Accommodation> accommodationList = fetchAccommodationList();
+        List<Accommodation> accommodationList = loadAccommodationFromFile();
         
         int index = accommodationList.indexOf(existingAccommodation);
         updateAccommodation.setAccommodationId(accommodationId);
@@ -75,7 +86,7 @@ public class AccommodationService implements AccommodationRepository {
     
     @Override
     public void deleteAccommodationById(Long accommodationId) throws IOException {
-        List<Accommodation> accommodationList = fetchAccommodationList();
+        List<Accommodation> accommodationList = loadAccommodationFromFile();
         Accommodation existingAccommodation = findAccommodationById(accommodationId);
         
         accommodationList.remove(existingAccommodation);
@@ -85,19 +96,24 @@ public class AccommodationService implements AccommodationRepository {
     
     @Override
     public Accommodation findAccommodationById(Long accommodationId) throws IOException {
-        List<Accommodation> accommodationList = fetchAccommodationList();
+        List<Accommodation> accommodationList = loadAccommodationFromFile();
         return accommodationList.stream()
                 .filter(a -> Objects.equals(a.getAccommodationId(), accommodationId))
                 .findFirst()
                .orElseThrow(() -> new AccommodationNotFoundException(accommodationId));
     }
     
+    public List<Accommodation> loadAccommodationFromFile() throws IOException {
+        if (Files.exists(Paths.get(accommodationFilePath))){
+            List<Accommodation> accommodationList = fileService.readFromFile(accommodationFilePath,
+                    new TypeReference<List<Accommodation>>() {});
+            Collections.reverse(accommodationList);
+            return accommodationList;
+        }
+        return new ArrayList<>();
+    }
+    
     private void validateAccommodation(Accommodation accommodation){
-        ValidatorFactory factory = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .buildValidatorFactory();
-        Validator validator = factory.getValidator();
         Set<ConstraintViolation<Accommodation>> constraintViolations = validator.validate(accommodation);
         
         if (!constraintViolations.isEmpty()) {
@@ -108,14 +124,14 @@ public class AccommodationService implements AccommodationRepository {
     
     private void logSuccessMessage(Accommodation accommodation) {
         String successMessage = String.format("Successfully updated accommodation: %s, type: $s, address: %s, ",
-                accommodation.getName(),
+                accommodation.getNameAccommodation(),
                 accommodation.getTypeAccommodation(),
                 accommodation.getAddress());
         log.info(successMessage);
     }
     
     private void trimAccommodation(Accommodation accommodation) {
-        accommodation.setName(accommodation.getName().trim());
+        accommodation.setNameAccommodation(accommodation.getNameAccommodation().trim());
         accommodation.setAddress(accommodation.getAddress().trim());
     }
 }

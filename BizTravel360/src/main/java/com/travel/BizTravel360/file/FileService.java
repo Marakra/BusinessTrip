@@ -29,16 +29,14 @@ public class FileService implements FileRepository {
         validatePath(fileName);
         
         try {
-            objectMapper.writeValue(new File(fileName), object);
-            log.info("The operation was completed successfully for this file: {}", fileName);
-            Path path = Paths.get(fileName);
+            File file = new File(fileName);
             if (object instanceof List) {
-                objectMapper.writeValue(path.toFile(), object);
+                objectMapper.writeValue(file, object);
                 log.info("The list was successfully written to file: {}", fileName);
             } else {
                 List<Object> list = new ArrayList<>();
                 list.add(object);
-                objectMapper.writeValue(path.toFile(), list);
+                objectMapper.writeValue(new File(fileName), list);
                 log.info("The single object was successfully written to file as a list: {}", fileName);
             }
         } catch (IOException e) {
@@ -54,6 +52,7 @@ public class FileService implements FileRepository {
         
         Path path = Paths.get(fileName);
         if (Files.notExists(path) || Files.size(path) == 0) {
+            log.info("File {} does not exist or is empty. Returning empty list.", fileName);
             return objectMapper.readValue("[]", typeReference);
         }
         
@@ -67,14 +66,19 @@ public class FileService implements FileRepository {
     
     private void validatePath(String fileName) {
         Path path = Paths.get(fileName).getParent();
-        if (path != null && !Files.notExists(path)) {
+        if (path != null) {
             try {
-                Files.createDirectories(path);
-                log.info("Created directories for path: {}", path);
+                if (Files.notExists(path)) {
+                    Files.createDirectories(path);
+                    log.info("Created directories for path: {}", path);
+                }
             } catch (IOException e) {
                 log.error("Failed to create directories for path: {}, due to IOException: {}", path, e.getMessage());
                 throw new RuntimeException("Failed to create directories for path: " + path, e);
             }
+        } else {
+            log.error("Invalid path: {}", fileName);
+            throw new RuntimeException("Invalid path: " + fileName);
         }
     }
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head}">
+    <title>Add Delegation</title>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container mt-4">
+
+    <h2 class="color-text">Add Delegation</h2>
+    <form method="POST" th:action="@{/delegation}" th:object="${delegation}">
+        <input type="hidden" th:field="*{delegationId}" />
+
+        <div class="form-group">
+            <label for="nameDelegation" class="color-text">Name:</label>
+            <input type="text" id="nameDelegation" th:field="*{nameDelegation}" class="form-control">
+            <ul><li th:each="err : ${#fields.errors('nameDelegation')}" th:text="${err}" class="error"></li></ul>
+        </div>
+
+        <div class="form-group">
+            <label for="employee" class="color-text">Employee:</label>
+            <select id="employee" th:field="*{employee.employeeId}" class="form-control color-text">
+                <option th:each="emp : ${employees}" th:value="${emp.employeeId}"
+                        th:text="${emp.firstName} + ' ' + ${emp.lastName}"></option>
+            </select>
+            <ul>
+                <li th:each="err : ${#fields.errors('employee')}" th:text="${err}" class="error"></li>
+            </ul>
+        </div>
+
+        <div class="form-group">
+            <label for="transports" class="color-text">Transport(s):</label>
+            <select multiple id="transports" name="transports" th:field="*{transports}" class="form-control color-text">
+                <option th:each="trans : ${transports}"
+                        th:value="${trans.transportId}"
+                        th:text="${#temporals.format(trans.departureDateTime, 'dd-MM-yyyy HH:mm')}
+                        + ' |***| ' + ${#temporals.format(trans.arrivalDateTime, 'dd-MM-yyyy HH:mm')}
+                        + ' |***| ' + ${trans.departure}
+                        + ' -> ' + ${trans.arrival}">
+                </option>
+            </select>
+            <small class="form-text text-muted">You can select multiple transports by holding down the Ctrl (Windows) or Command (Mac) key while clicking.</small>
+            <ul><li th:each="err : ${#fields.errors('transports')}" th:text="${err}" class="error"></li></ul>
+        </div>
+
+        <div class="form-group">
+            <label for="accommodations" class="color-text">Accommodation(s):</label>
+            <select multiple id="accommodations" name="accommodations" th:field="*{accommodations}" class="form-control color-text">
+                <option th:each="acc : ${accommodations}"
+                        th:value="${acc.accommodationId}"
+                        th:text="${#temporals.format(acc.checkIn, 'dd-MM-yyyy HH:mm')}
+                        + ' |***| ' + ${#temporals.format(acc.checkOut, 'dd-MM-yyyy HH:mm')}
+                        + ' |***| ' + ${acc.nameAccommodation}"></option>
+            </select>
+            <small class="form-text text-muted">You can select multiple accommodations by holding down the Ctrl (Windows) or Command (Mac) key while clicking.</small>
+
+            <ul><li th:each="err : ${#fields.errors('accommodations')}" th:text="${err}" class="error"></li></ul>
+        </div>
+
+        <div class="form-group">
+            <label for="departureDateTime" class="color-text">Start Delegation :</label>
+            <input type="datetime-local" id="departureDateTime" th:field="*{departureDateTime}" class="form-control color-text">
+            <ul><li th:each="err : ${#fields.errors('departureDateTime')}" th:text="${err}" class="error"></li></ul>
+        </div>
+
+        <div class="form-group">
+            <label for="arrivalDateTime" class="color-text">Finish Delegation:</label>
+            <input type="datetime-local" id="arrivalDateTime" th:field="*{arrivalDateTime}" class="form-control color-text">
+            <ul><li th:each="err : ${#fields.errors('arrivalDateTime')}" th:text="${err}" class="error"></li></ul>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Delegation</button>
+        <a href="/delegations" class="btn btn-secondary" style="float: right;">Back to the list</a>
+    </form>
+
+    <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

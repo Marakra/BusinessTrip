@@ -5,10 +5,13 @@ import com.travel.BizTravel360.file.FileService;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.exeptions.TransportSaveException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,13 +25,15 @@ import java.util.*;
 public class TransportService implements TransportRepository{
     
     private final FileService fileService;
-    @Value("${transports.file.path}")
     private String transportFilePath;
     
-    public TransportService(FileService fileService,
-                            @Value("${transports.file.path}") String transportFilePath) {
+    private Validator validator;
+    
+    public TransportService(@Value("${transports.file.path}") String transportFilePath,
+                            FileService fileService, Validator validator) {
         this.fileService = fileService;
         this.transportFilePath = transportFilePath;
+        this.validator = validator;
     }
     
     @Override
@@ -38,7 +43,7 @@ public class TransportService implements TransportRepository{
             validateTransport(transport);
             
             transport.setTransportId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Transport> transportList = fetchTransportList();
+            List<Transport> transportList = loadTransportFromFile();
             transportList.add(transport);
             
             fileService.writerToFile(transportList, transportFilePath);
@@ -51,20 +56,27 @@ public class TransportService implements TransportRepository{
     }
     
     @Override
-    public List<Transport> fetchTransportList() throws IOException {
-        if (Files.exists(Paths.get(transportFilePath))) {
-            List<Transport> transportList = fileService.readFromFile(transportFilePath,
-                                                new TypeReference<List<Transport>>() {});
-            Collections.reverse(transportList);
-            return transportList;
+    public Page<Transport> fetchTransportPage(Pageable pageable) throws IOException {
+        List<Transport> transportList = loadTransportFromFile();
+        int pageSize = pageable.getPageSize();
+        int currentPage = pageable.getPageNumber();
+        int startItem = currentPage * pageSize;
+        int totalTransportSize = transportList.size();
+        
+        if (totalTransportSize <= startItem) {
+            transportList = Collections.emptyList();
+        } else {
+            int toIndex = Math.min(startItem + pageSize, totalTransportSize);
+            transportList = transportList.subList(startItem, toIndex);
         }
-        return new ArrayList<>();
+        return new PageImpl<>(transportList, pageable, totalTransportSize);
     }
+    
     
     @Override
     public void updateTransport(Transport updateTransport, Long transportId) throws IOException {
         Transport existingTransport = findTransportById(transportId);
-        List<Transport> transportList = fetchTransportList();
+        List<Transport> transportList = loadTransportFromFile();
         
         int index = transportList.indexOf(existingTransport);
         updateTransport.setTransportId(transportId);
@@ -76,7 +88,7 @@ public class TransportService implements TransportRepository{
     
     @Override
     public void deleteTransportById(Long transportId) throws IOException {
-        List<Transport> transportList = fetchTransportList();
+        List<Transport> transportList = loadTransportFromFile();
         Transport existingTransport = findTransportById(transportId);
         
         transportList.remove(existingTransport);
@@ -86,19 +98,24 @@ public class TransportService implements TransportRepository{
     
     @Override
     public Transport findTransportById (Long transportId) throws IOException {
-        List<Transport> transportList = fetchTransportList();
+        List<Transport> transportList = loadTransportFromFile();
         return transportList.stream()
                 .filter(t -> Objects.equals(t.getTransportId(), transportId))
                 .findFirst()
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
     }
     
+    public List<Transport> loadTransportFromFile() throws IOException {
+        if (Files.exists(Paths.get(transportFilePath))) {
+            List<Transport> transportList = fileService.readFromFile(transportFilePath,
+                    new TypeReference<List<Transport>>() {});
+            Collections.reverse(transportList);
+            return transportList;
+        }
+        return new ArrayList<>();
+    }
+    
     private void validateTransport(Transport transport) {
-        ValidatorFactory factory = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator((MessageInterpolator) new ParameterMessageInterpolator())
-                .buildValidatorFactory();
-        Validator validator = factory.getValidator();
         Set<ConstraintViolation<Transport>> constraintViolations = validator.validate(transport);
         
         if (!constraintViolations.isEmpty()){

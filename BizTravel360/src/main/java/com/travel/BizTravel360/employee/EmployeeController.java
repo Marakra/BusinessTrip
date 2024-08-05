@@ -2,14 +2,18 @@ package com.travel.BizTravel360.employee;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 @Slf4j
@@ -21,10 +25,20 @@ public class EmployeeController {
     public EmployeeController(EmployeeService employeeService) {this.employeeService = employeeService;}
     
     @GetMapping("/employees")
-    public String getAllEmployees(Model model) throws IOException {
-        List<Employee> employees = employeeService.fetchEmployeeList();
-        log.info("Fetched: {} employees", employees.size());
+    public String getAllEmployees(@RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "size", defaultValue = "10") int size,
+                                  Model model) throws IOException {
+        Page<Employee> employees = employeeService.fetchEmployeePage(PageRequest.of(page, size));
+        log.info("Fetched: {} employees", employees.getTotalElements());
         model.addAttribute("employees", employees);
+        
+        int totalPages = employees.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "employee/employees";
     }
     
@@ -59,7 +73,7 @@ public class EmployeeController {
             return "employee/updateEmployeeForm";
         }
         employeeService.updateEmployee(employee, employee.getEmployeeId());
-        redirectAttributes.addFlashAttribute("successMessage");
+        redirectAttributes.addFlashAttribute("successMessage", "Employee has been updated");
         return "redirect:/employees";
     }
     

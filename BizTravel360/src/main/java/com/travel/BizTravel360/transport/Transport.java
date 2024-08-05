@@ -1,6 +1,7 @@
 package com.travel.BizTravel360.transport;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.travel.BizTravel360.delegation.Delegation;
 import com.travel.BizTravel360.transport.annotation.ValidDateRangeTransport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -49,10 +50,15 @@ public class Transport {
     @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
     private Double price;
     
+    @ManyToOne
+    @JoinColumn(name = "delegation_id")
+    private Delegation delegation;
+    
     public Transport() {}
     
-    public Transport(Long transportId, TypeTransport typeTransport, String transportIdentifier, String departure,
-                     LocalDateTime departureDateTime, String arrival, LocalDateTime arrivalDateTime, Double price) {
+    public Transport(Long transportId, TypeTransport typeTransport, String transportIdentifier,
+                     String departure, LocalDateTime departureDateTime, String arrival,
+                     LocalDateTime arrivalDateTime, Double price) {
         this.transportId = transportId;
         this.typeTransport = typeTransport;
         this.transportIdentifier = transportIdentifier;
