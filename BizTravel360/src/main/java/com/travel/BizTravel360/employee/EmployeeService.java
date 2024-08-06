@@ -17,11 +17,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class EmployeeService implements EmployeeRepository {
-    
+
+
+    private EmployeeRepository employeeRepository;
     private final FileService fileService;
     @Value("${employees.file.path}")
     private String employeeFilePath;
@@ -31,7 +34,11 @@ public class EmployeeService implements EmployeeRepository {
         this.fileService = fileService;
         this.employeeFilePath = employeeFilePath;
     }
-    
+
+    public List<Employee> fullTextSearch(String query){
+        return employeeRepository.fullTextSearch(query);
+    }
+
     @Override
     public void  saveEmployee(Employee employee) throws IOException {
         try {

@@ -2,6 +2,7 @@ package com.travel.BizTravel360.employee;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,8 +16,17 @@ import java.util.List;
 @Slf4j
 @Controller
 public class EmployeeController {
-
     private final EmployeeService employeeService;
+
+
+    @GetMapping("/employee")
+    public String fullTextSearch(@RequestParam("query") String query, Model model) {
+        List<Employee> searchResults = null;
+        searchResults = employeeService.fullTextSearch(query);
+
+        model.addAttribute("employees", searchResults);
+        return "employee/employees";// nazwa strony z listą pracowników
+    }
     
     public EmployeeController(EmployeeService employeeService) {this.employeeService = employeeService;}
     
@@ -70,5 +80,6 @@ public class EmployeeController {
         redirectAttributes.addFlashAttribute("successMessage", "Employee has been deleted");
         return "redirect:/employees";
     }
-    
+
+
 }
