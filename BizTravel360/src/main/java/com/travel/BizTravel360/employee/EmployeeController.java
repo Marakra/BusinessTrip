@@ -11,6 +11,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -18,18 +19,11 @@ import java.util.List;
 public class EmployeeController {
     private final EmployeeService employeeService;
 
-
-    @GetMapping("/employee")
-    public String fullTextSearch(@RequestParam("query") String query, Model model) {
-        List<Employee> searchResults = null;
-        searchResults = employeeService.fullTextSearch(query);
-
-        model.addAttribute("employees", searchResults);
-        return "employee/employees";// nazwa strony z listą pracowników
+    @Autowired
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
-    
-    public EmployeeController(EmployeeService employeeService) {this.employeeService = employeeService;}
-    
+
     @GetMapping("/employees")
     public String getAllEmployees(Model model) throws IOException {
         List<Employee> employees = employeeService.fetchEmployeeList();
@@ -81,5 +75,27 @@ public class EmployeeController {
         return "redirect:/employees";
     }
 
+    @GetMapping("/search/employee")
+    public String getAllEmployees(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
+        List<Employee> employees = employeeService.fetchEmployeeList();
+
+        if (query != null && !query.isEmpty()) {
+            employees = employees.stream()
+                    .filter(e -> (
+                                    e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
+                                            e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
+                                            e.getEmail().toLowerCase().contains(query.toLowerCase())
+                            )
+                    )
+                    .collect(Collectors.toList());
+        }
+
+        log.info("Fetched: {} employees", employees.size());
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+
+        return "employee/employees";
+    }
 
 }

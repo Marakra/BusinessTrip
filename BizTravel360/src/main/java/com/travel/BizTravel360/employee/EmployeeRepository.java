@@ -10,8 +10,7 @@ import java.util.List;
 
 @Repository
 public  interface EmployeeRepository {
-    @Query("select e from Employee e where lower(e.firstName) like lower(concat('%', :query, '%')) or lower(e.lastName) like lower(concat('%', :query, '%')) or lower(e.email) like lower(concat('%', :query, '%'))")
-    List<Employee> fullTextSearch(@Param("query") String query);
+
     void saveEmployee(Employee employee) throws IOException;
     List<Employee> fetchEmployeeList() throws IOException;
     void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException;
