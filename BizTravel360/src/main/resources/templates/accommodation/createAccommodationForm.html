@@ -11,8 +11,8 @@
 
             <div class="form-group">
                 <label for="nameAccommodation" class="color-text">Name:</label>
-                <input type="text" id="nameAccommodation" th:field="*{name}" class="form-control">
-                <ul><li th:each="err : ${#fields.errors('name')}" th:text="${err}" class="error"></li></ul>
+                <input type="text" id="nameAccommodation" th:field="*{nameAccommodation}" class="form-control">
+                <ul><li th:each="err : ${#fields.errors('nameAccommodation')}" th:text="${err}" class="error"></li></ul>
             </div>
 
             <div class="form-group">
@@ -51,13 +51,6 @@
             <button type="submit" class="btn btn-primary">Save Accommodation</button>
             <a href="/accommodations" class="btn btn-secondary" style="float: right;">Back to the list</a>
         </form>
-
-        <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
-            <span th:text="${successMessage}"></span>
-        </div>
-        <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
-            <span th:text="${errorMessage}"></span>
-        </div>
     </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>

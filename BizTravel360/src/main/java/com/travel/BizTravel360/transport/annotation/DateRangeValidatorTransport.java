@@ -17,9 +17,9 @@ public class DateRangeValidatorTransport implements ConstraintValidator <ValidDa
             return true; // or false if you want to validate non-null objects
         }
         
-        boolean isValid = transport.getDepartureDateTime() != null &&
-                transport.getArrivalDateTime() != null &&
-                transport.getDepartureDateTime().isBefore(transport.getArrivalDateTime());
+        boolean isValid = transport.getDepartureDateTime() != null
+                && transport.getArrivalDateTime() != null
+                && transport.getDepartureDateTime().isBefore(transport.getArrivalDateTime());
         
         if (!isValid) {
             constraint.disableDefaultConstraintViolation();
