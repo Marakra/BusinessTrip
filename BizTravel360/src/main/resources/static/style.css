@@ -232,3 +232,22 @@ footer {
     padding: 20px 0;
     text-align: center;
 }
+
+
+.custom-btn {
+    background-color: burlywood;
+    color: white;
+    border: none;
+}
+
+.custom-btn:hover {
+    background-color: chocolate;
+}
+
+.footer-section img {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
+

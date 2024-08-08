@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -57,21 +58,14 @@ public class EmployeeService implements EmployeeRepository {
     @Override
     public Page<Employee> fetchEmployeePage(Pageable pageable) throws IOException {
         List<Employee> employeeList = loadEmployeeFromFile();
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        int totalEmployeesSize = employeeList.size();
+       int totalEmployee = employeeList.size();
         
-        if (totalEmployeesSize <= startItem) {
-            employeeList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, totalEmployeesSize);
-            employeeList = employeeList.subList(startItem, toIndex);
-        }
-        
-        return new PageImpl<>(employeeList, pageable, totalEmployeesSize);
+        return employeeList.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(), list -> new PageImpl<>(list, pageable, totalEmployee)));
     }
-    
     
     @Override
     public void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
@@ -103,6 +97,7 @@ public class EmployeeService implements EmployeeRepository {
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
     }
     
+    @Override
     public List<Employee> loadEmployeeFromFile() throws IOException {
         if (Files.exists(Paths.get(employeeFilePath))){
             List<Employee> employeeList = fileService.readFromFile(employeeFilePath,
@@ -111,6 +106,14 @@ public class EmployeeService implements EmployeeRepository {
             return employeeList;
         }
         return new ArrayList<>();
+    }
+    
+    @Override
+    public void generateAnsSaveRandomEmployee(int count) throws IOException {
+        List<Employee> randomEmployee = DataGeneratorEmployee.generateRandomEmployeesList(count);
+        List<Employee> existingEmployees = loadEmployeeFromFile();
+        existingEmployees.addAll(randomEmployee);
+        fileService.writerToFile(existingEmployees, employeeFilePath);
     }
     
     private void validateEmployee(Employee employee) {

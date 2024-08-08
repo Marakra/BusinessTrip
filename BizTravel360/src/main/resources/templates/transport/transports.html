@@ -46,6 +46,9 @@
                 </tr>
                 </tbody>
             </table>
+            <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+                <span th:text="${successMessage}"></span>
+            </div>
 
             <!-- Pagination -->
             <nav aria-label="Page navigation">
@@ -71,5 +74,15 @@
         </div>
     </div>
 </div>
+
+<div class="container-fluid mt-4">
+    <form method="POST" action="/generate-random-transport">
+        <button type="submit" class="custom-btn">Generate Random Transports</button>
+    </form>
+    <div th:if="${message}" class="alert alert-success mt-3" role="alert">
+        <span th:text="${message}"></span>
+    </div>
+</div>
+
 <div th:replace="~{fragments/footer::footer}"></div>
 </html>

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -34,7 +35,8 @@ public class Transport {
     
     @NotNull(message = "Departure date is a required field!")
     @FutureOrPresent(message = "Departure date must be in the present or future")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime departureDateTime;
     
     @NotBlank(message = "Arrival city is a required field!")
@@ -43,11 +45,12 @@ public class Transport {
     
     @NotNull(message = "Arrival date is a required field!")
     @Future(message = "Arrival date must be in the future")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime arrivalDateTime;
     
     @NotNull(message = "Price is a required field!")
-    @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
+    @Positive(message = "Price must be positive")
     private Double price;
     
     @ManyToOne

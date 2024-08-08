@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -85,7 +86,7 @@ public class DelegationService implements DelegationRepository {
             });
             delegation.setAccommodations(accommodations);
             
-            Double totalPrice = calculatorTotalPrice(transports, accommodations);
+            BigDecimal totalPrice = calculatorTotalPrice(transports, accommodations);
             delegation.setTotalPrice(totalPrice);
             
             validateDelegation(delegation);
@@ -95,9 +96,7 @@ public class DelegationService implements DelegationRepository {
             List<Delegation> delegationList = loadDelegationFromFile();
             delegationList.add(delegation);
             
-            log.info("Writing delegations to file: {}", delegationFilePath);
             fileService.writerToFile(delegationList, delegationFilePath);
-            log.info("Delegations written to file successfully.");
         }catch (IOException e) {
             log.error("Failed to create delegation {}", delegation, e);
             throw new DelegationSaveException(String.format("Failed to create delegation: %s", delegation), e);
@@ -107,20 +106,19 @@ public class DelegationService implements DelegationRepository {
     @Override
     public Page<Delegation> fetchDelegationPage(Pageable pageable) throws IOException {
         List<Delegation> delegationList = loadDelegationFromFile();
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
         int totalDelegationSize = delegationList.size();
+        int startItem = pageable.getPageNumber() * pageable.getPageSize();
         
         List<Delegation> pageList;
         
         if (totalDelegationSize <= startItem) {
             pageList = Collections.emptyList();
         } else {
-            int toIndex = Math.min(totalDelegationSize + startItem, totalDelegationSize);
+            int toIndex = Math.min(startItem + pageable.getPageSize(), totalDelegationSize);
             pageList = delegationList.subList(startItem, toIndex);
         }
-        return new PageImpl<>(delegationList, pageable, totalDelegationSize);
+        
+        return new PageImpl<>(pageList, pageable, totalDelegationSize);
     }
     
     @Override
@@ -137,7 +135,6 @@ public class DelegationService implements DelegationRepository {
         log.warn("File {} not found", delegationFilePath);
         return new ArrayList<>();
     }
-    
     
     @Override
     public Optional<Delegation> fetchDelegationById(Long delegationId) throws IOException {
@@ -160,14 +157,16 @@ public class DelegationService implements DelegationRepository {
         delegation.setNameDelegation(delegation.getNameDelegation().trim());
     }
     
-    private Double calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
-        Double transportPrice = transports.stream()
-                .mapToDouble(Transport::getPrice)
-                .sum();
-        Double accommodationPrice = accommodations.stream()
-                .mapToDouble(Accommodation::getPrice)
-                .sum();
-        return transportPrice + accommodationPrice;
+    private BigDecimal calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
+        BigDecimal transportPrice = transports.stream()
+                .map(transport -> BigDecimal.valueOf(transport.getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        BigDecimal accommodationPrice = accommodations.stream()
+                .map(accommodation -> BigDecimal.valueOf(accommodation.getPrice()))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        return transportPrice.add(accommodationPrice);
     }
     
     private <T> List<T> fetchEntitiesByIds(List<Long> ids, Function<Long, T> fetchFunction) throws IOException {

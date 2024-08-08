@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -27,7 +28,7 @@ public class AccommodationService implements AccommodationRepository {
     private final FileService fileService;
     private String accommodationFilePath;
     
-    private Validator validator;
+    private final Validator validator;
     
     public AccommodationService(@Value("${accommodations.file.path}") String accommodationFilePath,
                                 FileService fileService, Validator validator) {
@@ -47,7 +48,6 @@ public class AccommodationService implements AccommodationRepository {
             accommodationList.add(accommodation);
             
             fileService.writerToFile(accommodationList, accommodationFilePath);
-            logSuccessMessage(accommodation);
         } catch (IOException e) {
             log.error("Failed to save accommodation {}", accommodation, e);
             throw new AccommodationSaveException(String.format("Failed to save accommodation %s.", accommodation), e);
@@ -57,18 +57,13 @@ public class AccommodationService implements AccommodationRepository {
     @Override
     public Page<Accommodation> fetchAccommodationPage(Pageable pageable) throws IOException {
         List<Accommodation> accommodationList = loadAccommodationFromFile();
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startIndex = currentPage * pageSize;
         int totalAccommodationSize = accommodationList.size();
         
-        if (totalAccommodationSize <= startIndex) {
-            accommodationList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startIndex + pageSize, totalAccommodationSize);
-            accommodationList = accommodationList.subList(startIndex, toIndex);
-        }
-        return new PageImpl<>(accommodationList, pageable, totalAccommodationSize);
+        return accommodationList.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(), list -> new PageImpl<>(list, pageable, totalAccommodationSize)));
     }
     
     @Override
@@ -81,7 +76,6 @@ public class AccommodationService implements AccommodationRepository {
         accommodationList.set(index, updateAccommodation);
         
         fileService.writerToFile(accommodationList, accommodationFilePath);
-        logSuccessMessage(updateAccommodation);
     }
     
     @Override
@@ -91,18 +85,19 @@ public class AccommodationService implements AccommodationRepository {
         
         accommodationList.remove(existingAccommodation);
         fileService.writerToFile(accommodationList, accommodationFilePath);
-        logSuccessMessage(existingAccommodation);
     }
     
     @Override
     public Accommodation findAccommodationById(Long accommodationId) throws IOException {
         List<Accommodation> accommodationList = loadAccommodationFromFile();
+        
         return accommodationList.stream()
                 .filter(a -> Objects.equals(a.getAccommodationId(), accommodationId))
                 .findFirst()
                .orElseThrow(() -> new AccommodationNotFoundException(accommodationId));
     }
     
+    @Override
     public List<Accommodation> loadAccommodationFromFile() throws IOException {
         if (Files.exists(Paths.get(accommodationFilePath))){
             List<Accommodation> accommodationList = fileService.readFromFile(accommodationFilePath,
@@ -113,21 +108,20 @@ public class AccommodationService implements AccommodationRepository {
         return new ArrayList<>();
     }
     
+    @Override
+    public void generateAndSaveRandomAccommodation(int count) throws IOException {
+        List<Accommodation> randomAccommodations = DataGeneratorAccommodation.generateRandomAccommodationsList(count);
+        List<Accommodation> existingAccommodations = loadAccommodationFromFile();
+        existingAccommodations.addAll(randomAccommodations);
+        fileService.writerToFile(existingAccommodations, accommodationFilePath);
+    }
+    
     private void validateAccommodation(Accommodation accommodation){
         Set<ConstraintViolation<Accommodation>> constraintViolations = validator.validate(accommodation);
-        
         if (!constraintViolations.isEmpty()) {
             constraintViolations.forEach(validation -> log.error(validation.getMessage()));
             throw new IllegalArgumentException("Invalid accommodation data");
         }
-    }
-    
-    private void logSuccessMessage(Accommodation accommodation) {
-        String successMessage = String.format("Successfully updated accommodation: %s, type: $s, address: %s, ",
-                accommodation.getNameAccommodation(),
-                accommodation.getTypeAccommodation(),
-                accommodation.getAddress());
-        log.info(successMessage);
     }
     
     private void trimAccommodation(Accommodation accommodation) {

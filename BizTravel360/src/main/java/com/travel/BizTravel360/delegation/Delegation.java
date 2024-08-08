@@ -9,7 +9,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -32,37 +34,37 @@ public class Delegation {
     @JoinColumn(name = "employee_id")
     private Employee employee;
     
-    @NotNull(message = "Transport list is a required field!")
+    @NotEmpty(message = "Transport list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)
     private List<Transport> transports;
     
-    @NotNull(message = "Accommodation list is a required field!")
+    @NotEmpty(message = "Accommodation list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)
     private List<Accommodation> accommodations;
     
-    @Digits(integer = 5, fraction = 2, message = "Invalid format. Max 5 digits and 2 decimals.")
-    private Double totalPrice;
-    
+    private BigDecimal totalPrice;
     private Boolean isAccepted = true;
     
     @NotNull(message = "Departure date is a required field!")
     @FutureOrPresent(message = "Departure date must be in the present or future")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime departureDateTime;
     
     @NotNull(message = "Arrival date is a required field!")
     @Future(message = "Arrival date must be in the future")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime arrivalDateTime;
     
-    @NotNull(message = "Create date is a required field!")
     @PastOrPresent(message = "Create date must be in the past or present")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createDateTime = LocalDateTime.now();
     
-    @NotNull(message = "Update date is a required field!")
     @PastOrPresent(message = "Update date must be in the past or present")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "Europe/Warsaw")
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateDateTime = LocalDateTime.now();
     
     public Delegation() {}
@@ -76,7 +78,7 @@ public class Delegation {
         this.employee = employee;
         this.transports = transports;
         this.accommodations = accommodations;
-        this.totalPrice = totalPrice != null ? totalPrice : 0.0;
+        this.totalPrice = BigDecimal.valueOf(totalPrice != null ? totalPrice : 0.0);
         this.isAccepted = isAccepted != null ? isAccepted : true;
         this.departureDateTime = departureDateTime;
         this.arrivalDateTime = arrivalDateTime;

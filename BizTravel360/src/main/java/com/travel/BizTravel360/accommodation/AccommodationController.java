@@ -19,15 +19,19 @@ import java.util.stream.IntStream;
 @Controller
 public class AccommodationController {
     
+    private  static final String PAGE_DEFAULT_VALUE = "0";
+    private static final String SIZE_DEFAULT_VALUE = "10";
+    private static final int GENERATE_RANDOM_ACCOMMODATIONS = 15;
+    
     private final AccommodationService accommodationService;
     
     public AccommodationController(AccommodationService accommodationService) {this.accommodationService = accommodationService;}
     
     @GetMapping("/accommodations")
-    public String getAllAccommodations(@RequestParam(value = "page", defaultValue = "0") int page,
-                                       @RequestParam(value = "size", defaultValue = "10") int size,
+    public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                       @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                        Model model) throws IOException {
-        Page<Accommodation> accommodations = accommodationService.fetchAccommodationPage(PageRequest.of(page, 10));
+        Page<Accommodation> accommodations = accommodationService.fetchAccommodationPage(PageRequest.of(page, size));
         log.info("Fetched accommodationList: {}", accommodations.getTotalElements());
         model.addAttribute("accommodations", accommodations);
         
@@ -49,13 +53,13 @@ public class AccommodationController {
     
     @PostMapping("/accommodation")
     public String saveAccommodation(@Valid @ModelAttribute("accommodation") Accommodation accommodation,
-                                    BindingResult bindingResult, Model model) throws IOException {
+                                    BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "accommodation/createAccommodationForm";
         }
         accommodationService.saveAccommodation(accommodation);
-        model.addAttribute("accommodation", new Accommodation());
-        return "accommodation/createAccommodationForm";
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "created"));
+        return "redirect:/accommodations";
     }
     
     @GetMapping("/accommodation/{accommodationId}")
@@ -72,15 +76,32 @@ public class AccommodationController {
             return "accommodation/updateAccommodationForm";
         }
         accommodationService.updateAccommodation(accommodation, accommodation.getAccommodationId());
-        redirectAttributes.addFlashAttribute("message", "accommodation updated successfully");
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "updated"));
         return "redirect:/accommodations";
     }
     
     @PostMapping("/delete-accommodation/{accommodationId}")
     public String deleteAccommodation(@PathVariable("accommodationId") Long accommodationId,
                                       RedirectAttributes redirectAttributes) throws IOException {
+        Accommodation accommodation = accommodationService.findAccommodationById(accommodationId);
         accommodationService.deleteAccommodationById(accommodationId);
-        redirectAttributes.addFlashAttribute("message", "accommodation deleted successfully");
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "deleted"));
         return "redirect:/accommodations";
+    }
+    
+    @PostMapping("/generate-random-accommodation")
+    public String generationRandomAccommodation(RedirectAttributes redirectAttributes) throws IOException {
+        accommodationService.generateAndSaveRandomAccommodation(GENERATE_RANDOM_ACCOMMODATIONS);
+        redirectAttributes.addFlashAttribute("message", "Random accommodations generated successfully!");
+        return "redirect:/accommodations";
+    }
+    
+    
+    private String renderSuccessMessage(Accommodation accommodation, String action) {
+        String successMessage = String.format("Successfully %s accommodation: %s",
+                action,
+                accommodation.getNameAccommodation());
+        log.info(successMessage);
+        return successMessage;
     }
 }

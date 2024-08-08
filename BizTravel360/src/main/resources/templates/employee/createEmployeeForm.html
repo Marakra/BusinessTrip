@@ -32,16 +32,7 @@
                 <button type="submit" class="btn btn-primary">Save Employee</button>
                 <a href="/employees" class="btn btn-secondary" style="float: right;">Back to the list</a>
             </form>
-
-            <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
-                <span th:text="${successMessage}"></span>
-            </div>
-            <div th:if="${errorMessage}" class="alert alert-danger mt-3" role="alert">
-                <span th:text="${errorMessage}"></span>
-            </div>
         </div>
     </div>
-
-
 <div th:replace="~{fragments/footer :: footer}"></div>
 

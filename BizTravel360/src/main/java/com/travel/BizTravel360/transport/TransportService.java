@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -27,7 +28,7 @@ public class TransportService implements TransportRepository{
     private final FileService fileService;
     private String transportFilePath;
     
-    private Validator validator;
+    private  final Validator validator;
     
     public TransportService(@Value("${transports.file.path}") String transportFilePath,
                             FileService fileService, Validator validator) {
@@ -47,8 +48,6 @@ public class TransportService implements TransportRepository{
             transportList.add(transport);
             
             fileService.writerToFile(transportList, transportFilePath);
-            
-            logSuccessMessage(transport);
         } catch (IOException e) {
             log.error("Failed to save transport {}", transport, e);
             throw new TransportSaveException(String.format("Failed to save transport %s", transport), e);
@@ -58,18 +57,13 @@ public class TransportService implements TransportRepository{
     @Override
     public Page<Transport> fetchTransportPage(Pageable pageable) throws IOException {
         List<Transport> transportList = loadTransportFromFile();
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
         int totalTransportSize = transportList.size();
         
-        if (totalTransportSize <= startItem) {
-            transportList = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, totalTransportSize);
-            transportList = transportList.subList(startItem, toIndex);
-        }
-        return new PageImpl<>(transportList, pageable, totalTransportSize);
+        return transportList.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toList(), list -> new PageImpl<>(list, pageable, totalTransportSize)));
     }
     
     
@@ -83,7 +77,6 @@ public class TransportService implements TransportRepository{
         transportList.set(index, updateTransport);
             
         fileService.writerToFile(transportList, transportFilePath);
-        logSuccessMessage(updateTransport);
     }
     
     @Override
@@ -93,18 +86,19 @@ public class TransportService implements TransportRepository{
         
         transportList.remove(existingTransport);
         fileService.writerToFile(transportList, transportFilePath);
-        logSuccessMessage(existingTransport);
     }
     
     @Override
     public Transport findTransportById (Long transportId) throws IOException {
         List<Transport> transportList = loadTransportFromFile();
+        
         return transportList.stream()
                 .filter(t -> Objects.equals(t.getTransportId(), transportId))
                 .findFirst()
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
     }
     
+    @Override
     public List<Transport> loadTransportFromFile() throws IOException {
         if (Files.exists(Paths.get(transportFilePath))) {
             List<Transport> transportList = fileService.readFromFile(transportFilePath,
@@ -115,6 +109,14 @@ public class TransportService implements TransportRepository{
         return new ArrayList<>();
     }
     
+    @Override
+    public void generateAndSaveRandomTransport(int count) throws IOException {
+        List<Transport> randomTransports = DataGeneratorTransport.generateRandomTransportList(count);
+        List<Transport> existingTransports = loadTransportFromFile();
+        existingTransports.addAll(randomTransports);
+        fileService.writerToFile(existingTransports, transportFilePath);
+    }
+    
     private void validateTransport(Transport transport) {
         Set<ConstraintViolation<Transport>> constraintViolations = validator.validate(transport);
         
@@ -122,15 +124,6 @@ public class TransportService implements TransportRepository{
             constraintViolations.forEach(validation -> log.error(validation.getMessage()));
             throw new IllegalArgumentException("Invalid transport data");
         }
-    }
-    
-    private void logSuccessMessage(Transport transport){
-        String successMessage = String.format("Transport %s (%s) successfully changed. Departure: %s, Arrival: %s.",
-                transport.getTypeTransport(),
-                transport.getTransportIdentifier(),
-                transport.getDeparture(),
-                transport.getArrival());
-        log.info(successMessage);
     }
     
     private void trimTransport(Transport transport) {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,6 +24,9 @@ import java.util.stream.IntStream;
 @Slf4j
 @Controller
 public class DelegationController {
+    
+    private  static final String PAGE_DEFAULT_VALUE = "0";
+    private static final String SIZE_DEFAULT_VALUE = "10";
     
     private final DelegationService delegationService;
     private final EmployeeService employeeService;
@@ -38,8 +42,8 @@ public class DelegationController {
     }
     
     @GetMapping("/delegations")
-    public String getAllDelegations(@RequestParam(value = "page", defaultValue = "0") int page,
-                                    @RequestParam(value = "size", defaultValue = "10") int size,
+    public String getAllDelegations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                     Model model) throws IOException {
         Page<Delegation> delegations = delegationService.fetchDelegationPage(PageRequest.of(page, size));
         log.info("Fetched {} delegation size: ", delegations.getTotalElements());
@@ -58,7 +62,7 @@ public class DelegationController {
     @GetMapping("/delegation")
     public String showCreateDelegationForm(Model model) throws IOException {
         model.addAttribute("delegation", new Delegation());
-        model.addAttribute("employees", employeeService.loadEmployeeFromFile()); // Correct key
+        model.addAttribute("employees", employeeService.loadEmployeeFromFile());
         model.addAttribute("transports", transportService.loadTransportFromFile());
         model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
         return "delegation/createDelegationForm";
@@ -66,7 +70,7 @@ public class DelegationController {
     
     @PostMapping("/delegation")
     public String saveDelegation(@Valid @ModelAttribute("delegation") Delegation delegation,
-                                 BindingResult bindingResult, Model model) throws IOException {
+                                 BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             log.error("Validation errors occurred: {}", bindingResult.getAllErrors());
             model.addAttribute("employees", employeeService.loadEmployeeFromFile());
@@ -74,19 +78,17 @@ public class DelegationController {
             model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
             return "delegation/createDelegationForm";
         }
-        try {
             delegationService.createDelegation(delegation);
-            log.info("Delegation created successfully: {}", delegation);
-        } catch (IOException e) {
-            log.error("Failed to create delegation: {}", delegation, e);
-            model.addAttribute("error", "Failed to create delegation. Please try again.");
-            model.addAttribute("employees", employeeService.loadEmployeeFromFile());
-            model.addAttribute("transports", transportService.loadTransportFromFile());
-            model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
-            return "delegation/createDelegationForm";
+            redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(delegation, "created"));
+            return "redirect:/delegations";
         }
-        model.addAttribute("message", "Delegation created successfully.");
-        return "redirect:/delegations";
+    
+    private String renderSuccessMessage(Delegation delegation, String action) {
+        String successMessage = String.format("Successfully %s delegation: %s",
+                action,
+                delegation.getNameDelegation());
+        log.info(successMessage);
+        return successMessage;
     }
     
 }

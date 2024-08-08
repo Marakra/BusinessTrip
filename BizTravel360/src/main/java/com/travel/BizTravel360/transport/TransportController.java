@@ -19,13 +19,17 @@ import java.util.stream.IntStream;
 @Controller
 public class TransportController {
     
+    private static final String PAGE_DEFAULT_VALUE = "0";
+    private static final String SIZE_DEFAULT_VALUE = "10";
+    private static final int GENERATE_RANDOM_TRANSPORT = 15;
+    
     private final TransportService transportService;
     
     public TransportController(TransportService transportService) {this.transportService = transportService;}
     
     @GetMapping("/transports")
-    public String getAllTransports(@RequestParam(value = "page", defaultValue = "0") int page,
-                                   @RequestParam(value = "size", defaultValue = "10") int size,
+    public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model) throws IOException {
         Page<Transport> transports = transportService.fetchTransportPage(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
@@ -49,13 +53,13 @@ public class TransportController {
     
     @PostMapping("/transport")
     public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
-                                BindingResult bindingResult, Model model) throws IOException {
+                                BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/createTransportForm";
         }
         transportService.saveTransport(transport);
-        model.addAttribute("transport", new Transport());  // Reset the form
-        return "transport/createTransportForm";
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "created"));
+        return "redirect:/transports";
     }
     
     
@@ -74,7 +78,7 @@ public class TransportController {
             return "transport/updateTransportForm";
         }
         transportService.updateTransport(transport, transport.getTransportId());
-        redirectAttributes.addFlashAttribute("successMessage");
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "updated"));
         return "redirect:/transports";
     }
     
@@ -82,9 +86,26 @@ public class TransportController {
     @PostMapping("/delete-transport/{transportId}")
     public String deleteTransport(@PathVariable("transportId") Long transportId,
                                   RedirectAttributes redirectAttributes) throws IOException {
+        Transport transport = transportService.findTransportById(transportId);
         transportService.deleteTransportById(transportId);
-        redirectAttributes.addFlashAttribute("successMessage", "Transport " + transportId + " successfully deleted.");
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
         return "redirect:/transports";
     }
     
+    @PostMapping("/generate-random-transport")
+    public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
+        transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
+        redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
+        return "redirect:/transports";
+    }
+    
+    private String renderSuccessMessage(Transport transport, String action){
+        String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
+                action,
+                transport.getTypeTransport(),
+                transport.getDeparture(),
+                transport.getArrival());
+        log.info(successMessage);
+        return successMessage;
+    }
 }
