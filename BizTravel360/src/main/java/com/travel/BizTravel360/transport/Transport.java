@@ -82,4 +82,12 @@ public class Transport {
     public int hashCode() {
         return Objects.hash(transportId, typeTransport, transportIdentifier, departure, departureDateTime, arrival, arrivalDateTime, price);
     }
+
+    public String getTypeTransportAsString() {
+        if (this.typeTransport != null) {
+            return this.typeTransport.toString().toLowerCase();
+        } else {
+            return null;
+        }
+    }
 }

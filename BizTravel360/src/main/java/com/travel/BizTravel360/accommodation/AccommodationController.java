@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
@@ -70,5 +71,25 @@ public class AccommodationController {
         accommodationService.deleteAccommodationById(accommodationId);
         redirectAttributes.addFlashAttribute("message", "accommodation deleted successfully");
         return "redirect:/accommodations";
+    }
+
+    @GetMapping("/search/accommodation")
+    public String searchAccommodation(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
+        List<Accommodation> accommodations = accommodationService.fetchAccommodationList();
+
+        if (query != null && !query.isEmpty()) {
+            accommodations = accommodations.stream()
+                    .filter(a -> (
+                            a.getName().toLowerCase().contains(query.toLowerCase()) ||
+                                    a.getTypeAccommodation().toString().toLowerCase().contains(query.toLowerCase()) ||
+                                    a.getAddress().toLowerCase().contains(query.toLowerCase())
+                    ))
+                    .collect(Collectors.toList());
+        }
+
+        model.addAttribute("accommodations", accommodations);
+        model.addAttribute("query", query);
+
+        return "accommodation/accommodations";
     }
 }

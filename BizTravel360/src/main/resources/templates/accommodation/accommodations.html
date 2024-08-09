@@ -9,6 +9,10 @@
     </div>
 
     <div class="container-fluid mt-4">
+        <form action="#" th:action="@{/search/accommodation}" method="get" class="d-flex justify-content-end mb-3">
+            <input type="text" name="query" placeholder="Search accommodation">
+            <button type="submit" class="btn btn-primary ml-2">Search</button>
+        </form>
         <h1 class="mb-4">Accommodation List</h1>
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
