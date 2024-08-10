@@ -77,26 +77,17 @@ public class TransportController {
 
     @GetMapping("/search/transport")
     public String searchTransport(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Transport> transports = transportService.fetchTransportList();
+        List<Transport> transports;
 
         if (query != null && !query.isEmpty()) {
-            transports = transports.stream().filter(t -> (t.getTypeTransportAsString() != null && t.getTypeTransportAsString().contains(query)
-                    || t.getTransportIdentifier().toLowerCase().contains(query.toLowerCase())
-                    || t.getDeparture().toLowerCase().contains(query.toLowerCase())
-                    || t.getArrival().toLowerCase().contains(query.toLowerCase()))).collect(Collectors.toList());
+            transports = transportService.getFilteredTransports(query);
+        } else {
+            transports = transportService.fetchTransportList();
         }
 
         model.addAttribute("transports", transports);
         model.addAttribute("query", query);
 
         return "transport/transports";
-    }
-
-    public Optional<BigDecimal> parseBigDecimal(String s) {
-        try {
-            return Optional.of(new BigDecimal(s));
-        } catch (NumberFormatException e) {
-            return Optional.empty();
-        }
     }
 }

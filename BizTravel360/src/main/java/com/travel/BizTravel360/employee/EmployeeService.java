@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -108,5 +109,15 @@ public class EmployeeService implements EmployeeRepository {
         employee.setFirstName(employee.getFirstName().trim());
         employee.setLastName(employee.getLastName().trim());
         employee.setEmail(employee.getEmail().trim());
+    }
+    public List<Employee> getFilteredEmployees(String query) throws IOException {
+        return fetchEmployeeList().stream()
+                .filter(e -> (
+                        e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
+                                e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
+                                e.getEmail().toLowerCase().contains(query.toLowerCase()) ||
+                                String.valueOf(e.getEmployeeId()).contains(query)
+                ))
+                .collect(Collectors.toList());
     }
 }

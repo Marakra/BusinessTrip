@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -117,5 +118,14 @@ public class AccommodationService implements AccommodationRepository {
     private void trimAccommodation(Accommodation accommodation) {
         accommodation.setName(accommodation.getName().trim());
         accommodation.setAddress(accommodation.getAddress().trim());
+    }
+    public List<Accommodation> getFilteredAccommodations(String query) throws IOException {
+        return fetchAccommodationList().stream()
+                .filter(a -> (
+                        a.getName().toLowerCase().contains(query.toLowerCase()) ||
+                                a.getTypeAccommodation().toString().toLowerCase().contains(query.toLowerCase()) ||
+                                a.getAddress().toLowerCase().contains(query.toLowerCase())
+                ))
+                .collect(Collectors.toList());
     }
 }

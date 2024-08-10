@@ -77,17 +77,12 @@ public class EmployeeController {
 
     @GetMapping("/search/employee")
     public String getAllEmployees(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Employee> employees = employeeService.fetchEmployeeList();
+        List<Employee> employees;
 
         if (query != null && !query.isEmpty()) {
-            employees = employees.stream()
-                    .filter(e -> (
-                                    e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
-                                            e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
-                                            e.getEmail().toLowerCase().contains(query.toLowerCase())
-                            )
-                    )
-                    .collect(Collectors.toList());
+            employees = employeeService.getFilteredEmployees(query);
+        } else {
+            employees = employeeService.fetchEmployeeList();
         }
 
         log.info("Fetched: {} employees", employees.size());

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional
@@ -120,5 +121,13 @@ public class TransportService implements TransportRepository{
         transport.setTransportIdentifier(transport.getTransportIdentifier().trim());
         transport.setDeparture(transport.getDeparture().trim());
         transport.setArrival(transport.getArrival().trim());
+    }
+    public List<Transport> getFilteredTransports(String query) throws IOException {
+        return fetchTransportList().stream()
+                .filter(t -> (t.getTypeTransportAsString() != null && t.getTypeTransportAsString().contains(query)
+                        || t.getTransportIdentifier().toLowerCase().contains(query.toLowerCase())
+                        || t.getDeparture().toLowerCase().contains(query.toLowerCase())
+                        || t.getArrival().toLowerCase().contains(query.toLowerCase())))
+                .collect(Collectors.toList());
     }
 }

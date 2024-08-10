@@ -75,16 +75,12 @@ public class AccommodationController {
 
     @GetMapping("/search/accommodation")
     public String searchAccommodation(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Accommodation> accommodations = accommodationService.fetchAccommodationList();
+        List<Accommodation> accommodations;
 
         if (query != null && !query.isEmpty()) {
-            accommodations = accommodations.stream()
-                    .filter(a -> (
-                            a.getName().toLowerCase().contains(query.toLowerCase()) ||
-                                    a.getTypeAccommodation().toString().toLowerCase().contains(query.toLowerCase()) ||
-                                    a.getAddress().toLowerCase().contains(query.toLowerCase())
-                    ))
-                    .collect(Collectors.toList());
+            accommodations = accommodationService.getFilteredAccommodations(query);
+        } else {
+            accommodations = accommodationService.fetchAccommodationList();
         }
 
         model.addAttribute("accommodations", accommodations);
