@@ -103,7 +103,7 @@ public class EmployeeController {
         if (query != null && !query.isEmpty()) {
             employees = employeeService.getFilteredEmployees(query);
         } else {
-            employees = employeeService.fetchEmployeeList();
+            employees = employeeService.loadEmployeeFromFile();
         }
 
         log.info("Fetched: {} employees", employees.size());

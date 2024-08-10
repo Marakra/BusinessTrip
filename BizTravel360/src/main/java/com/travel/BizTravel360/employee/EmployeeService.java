@@ -27,15 +27,12 @@ public class EmployeeService implements EmployeeRepository {
 
     private final FileService fileService;
     private String employeeFilePath;
-    
+
     private final Validator validator;
 
     public EmployeeService(@Value("${employees.file.path}") String employeeFilePath,
                            FileService fileService,
                            Validator validator) {
-
-    public EmployeeService(FileService fileService,
-                           @Value("${employees.file.path}") String employeeFilePath) {
         this.fileService = fileService;
         this.employeeFilePath = employeeFilePath;
         this.validator = validator;
@@ -59,17 +56,9 @@ public class EmployeeService implements EmployeeRepository {
     }
 
     @Override
-    public List<Employee> fetchEmployeeList() throws IOException {
-        if (Files.exists(Paths.get(employeeFilePath))){
-            List<Employee> employeeList = fileService.readFromFile(employeeFilePath,
-                    new TypeReference<List<Employee>>() {});
-            Collections.reverse(employeeList);
-            return employeeList;
-        }
-        return new ArrayList<>();
     public Page<Employee> fetchEmployeePage(Pageable pageable) throws IOException {
         List<Employee> employeeList = loadEmployeeFromFile();
-       int totalEmployee = employeeList.size();
+        int totalEmployee = employeeList.size();
 
         return employeeList.stream()
                 .skip((long) pageable.getPageNumber() * pageable.getPageSize())
@@ -81,8 +70,6 @@ public class EmployeeService implements EmployeeRepository {
     @Override
     public void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException {
         Employee existingEmployee = findEmployeeById(employeeId);
-        List<Employee> employeeList = fetchEmployeeList();
-
         List<Employee> employeeList = loadEmployeeFromFile();
 
         int index = employeeList.indexOf(existingEmployee);
@@ -94,8 +81,6 @@ public class EmployeeService implements EmployeeRepository {
 
     @Override
     public void deleteEmployeeById(Long employeeId) throws IOException {
-        List<Employee> employeeList = fetchEmployeeList();
-
         List<Employee> employeeList = loadEmployeeFromFile();
 
         Employee existingEmployee = findEmployeeById(employeeId);
@@ -131,7 +116,6 @@ public class EmployeeService implements EmployeeRepository {
         fileService.writerToFile(existingEmployees, employeeFilePath);
     }
 
-
     private void validateEmployee(Employee employee) {
         Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(employee);
 
@@ -146,8 +130,10 @@ public class EmployeeService implements EmployeeRepository {
         employee.setLastName(employee.getLastName().trim());
         employee.setEmail(employee.getEmail().trim());
     }
-    public List<Employee> getFilteredEmployees(String query) throws IOException {
-        return fetchEmployeeList().stream()
+
+
+    public List<Employee> getFilteredEmployees (String query) throws IOException {
+        return loadEmployeeFromFile().stream()
                 .filter(e -> (
                         e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
                                 e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
@@ -156,4 +142,5 @@ public class EmployeeService implements EmployeeRepository {
                 ))
                 .collect(Collectors.toList());
     }
+
 }

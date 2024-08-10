@@ -18,15 +18,15 @@ import java.util.stream.IntStream;
 @Slf4j
 @Controller
 public class AccommodationController {
-    
+
     private  static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
     private static final int GENERATE_RANDOM_ACCOMMODATIONS = 15;
 
     private final AccommodationService accommodationService;
-    
+
     public AccommodationController(AccommodationService accommodationService) {this.accommodationService = accommodationService;}
-    
+
     @GetMapping("/accommodations")
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
@@ -44,13 +44,13 @@ public class AccommodationController {
         }
         return "accommodation/accommodations";
     }
-    
+
     @GetMapping("/accommodation")
     public String showSaveAccommodationForm(Model model) {
         model.addAttribute("accommodation", new Accommodation());
         return "accommodation/createAccommodationForm";
     }
-    
+
     @PostMapping("/accommodation")
     public String saveAccommodation(@Valid @ModelAttribute("accommodation") Accommodation accommodation,
                                     BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
@@ -61,14 +61,14 @@ public class AccommodationController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "created"));
         return "redirect:/accommodations";
     }
-    
+
     @GetMapping("/accommodation/{accommodationId}")
     public String showUpdateAccommodationForm(@PathVariable("accommodationId") Long accommodationId, Model model) throws IOException {
         Accommodation accommodation = accommodationService.findAccommodationById(accommodationId);
         model.addAttribute("accommodation", accommodation);
         return "accommodation/updateAccommodationForm";
     }
-    
+
     @PostMapping("/update-accommodation")
     public String updateAccommodation(@Valid @ModelAttribute("accommodation") Accommodation accommodation,
                                       BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
@@ -79,7 +79,7 @@ public class AccommodationController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "updated"));
         return "redirect:/accommodations";
     }
-    
+
     @PostMapping("/delete-accommodation/{accommodationId}")
     public String deleteAccommodation(@PathVariable("accommodationId") Long accommodationId,
                                       RedirectAttributes redirectAttributes) throws IOException {
@@ -112,7 +112,7 @@ public class AccommodationController {
         if (query != null && !query.isEmpty()) {
             accommodations = accommodationService.getFilteredAccommodations(query);
         } else {
-            accommodations = accommodationService.fetchAccommodationList();
+            accommodations = accommodationService.loadAccommodationFromFile();
         }
 
         model.addAttribute("accommodations", accommodations);

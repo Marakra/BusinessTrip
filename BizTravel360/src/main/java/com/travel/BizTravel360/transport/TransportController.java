@@ -11,17 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Controller
 public class TransportController {
-
 
     private static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
@@ -29,9 +25,7 @@ public class TransportController {
 
     private final TransportService transportService;
 
-    public TransportController(TransportService transportService) {
-        this.transportService = transportService;
-    }
+    public TransportController(TransportService transportService) {this.transportService = transportService;}
 
     @GetMapping("/transports")
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
@@ -58,7 +52,6 @@ public class TransportController {
     }
 
     @PostMapping("/transport")
-    public String saveTransport(@Valid @ModelAttribute("transport") Transport transport, BindingResult bindingResult, Model model) throws IOException {
     public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
                                 BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
@@ -79,7 +72,8 @@ public class TransportController {
 
 
     @PostMapping("/update-transport")
-    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport, BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
+                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
@@ -93,26 +87,9 @@ public class TransportController {
     public String deleteTransport(@PathVariable("transportId") Long transportId,
                                   RedirectAttributes redirectAttributes) throws IOException {
         Transport transport = transportService.findTransportById(transportId);
-    public String deleteTransport(@PathVariable("transportId") Long transportId, RedirectAttributes redirectAttributes) throws IOException {
         transportService.deleteTransportById(transportId);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
         return "redirect:/transports";
-    }
-
-    @GetMapping("/search/transport")
-    public String searchTransport(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Transport> transports;
-
-        if (query != null && !query.isEmpty()) {
-            transports = transportService.getFilteredTransports(query);
-        } else {
-            transports = transportService.fetchTransportList();
-        }
-
-        model.addAttribute("transports", transports);
-        model.addAttribute("query", query);
-
-        return "transport/transports";
     }
 
     @PostMapping("/generate-random-transport")
@@ -130,5 +107,21 @@ public class TransportController {
                 transport.getArrival());
         log.info(successMessage);
         return successMessage;
+    }
+
+    @GetMapping("/search/transport")
+    public String searchTransport(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
+        List<Transport> transports;
+
+        if (query != null && !query.isEmpty()) {
+            transports = transportService.getFilteredTransports(query);
+        } else {
+            transports = transportService.loadTransportFromFile();
+        }
+
+        model.addAttribute("transports", transports);
+        model.addAttribute("query", query);
+
+        return "transport/transports";
     }
 }
