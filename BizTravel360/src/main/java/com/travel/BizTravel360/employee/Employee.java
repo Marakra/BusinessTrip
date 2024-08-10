@@ -1,5 +1,6 @@
 package com.travel.BizTravel360.employee;
 
+import com.travel.BizTravel360.delegation.Delegation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Objects;
 
 @Setter
@@ -28,6 +30,9 @@ public class Employee {
     @NotBlank(message = "Email is a required field!")
     @Email(message = "Email should be valid")
     private String email;
+    
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    private List<Delegation> delegations;
     
     public Employee() {}
     

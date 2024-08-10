@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public class AccommodationNotFoundException extends IOException {
     public AccommodationNotFoundException(Long accommodationId) {
-        super(String.format("Accommodation with id %s not found", accommodationId));
+        super(String.format("No found delegation with property id: %d", accommodationId));
     }
 }
