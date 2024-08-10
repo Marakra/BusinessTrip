@@ -18,15 +18,15 @@ import java.util.stream.IntStream;
 @Slf4j
 @Controller
 public class TransportController {
-    
+
     private static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
     private static final int GENERATE_RANDOM_TRANSPORT = 15;
-    
+
     private final TransportService transportService;
-    
+
     public TransportController(TransportService transportService) {this.transportService = transportService;}
-    
+
     @GetMapping("/transports")
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
@@ -34,7 +34,7 @@ public class TransportController {
         Page<Transport> transports = transportService.fetchTransportPage(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
         model.addAttribute("transports", transports);
-        
+
         int totalPages = transports.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.range(0, totalPages)
@@ -44,13 +44,13 @@ public class TransportController {
         }
         return "transport/transports";
     }
-    
+
     @GetMapping("/transport")
     public String showSaveTransportForm(Model model) {
         model.addAttribute("transport", new Transport());
         return "transport/createTransportForm";
     }
-    
+
     @PostMapping("/transport")
     public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
                                 BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
@@ -61,16 +61,16 @@ public class TransportController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "created"));
         return "redirect:/transports";
     }
-    
-    
+
+
     @GetMapping("/transport/{transportId}")
     public String showUpdateTransportForm(@PathVariable("transportId") Long transportId, Model model) throws IOException {
         Transport transport = transportService.findTransportById(transportId);
         model.addAttribute("transport", transport);
         return "transport/updateTransportForm";
     }
-    
-    
+
+
     @PostMapping("/update-transport")
     public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
@@ -81,8 +81,8 @@ public class TransportController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "updated"));
         return "redirect:/transports";
     }
-    
-    
+
+
     @PostMapping("/delete-transport/{transportId}")
     public String deleteTransport(@PathVariable("transportId") Long transportId,
                                   RedirectAttributes redirectAttributes) throws IOException {
@@ -91,14 +91,14 @@ public class TransportController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
         return "redirect:/transports";
     }
-    
+
     @PostMapping("/generate-random-transport")
     public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
         transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
         redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
         return "redirect:/transports";
     }
-    
+
     private String renderSuccessMessage(Transport transport, String action){
         String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
                 action,
@@ -107,5 +107,21 @@ public class TransportController {
                 transport.getArrival());
         log.info(successMessage);
         return successMessage;
+    }
+
+    @GetMapping("/search/transport")
+    public String searchTransport(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
+        List<Transport> transports;
+
+        if (query != null && !query.isEmpty()) {
+            transports = transportService.getFilteredTransports(query);
+        } else {
+            transports = transportService.loadTransportFromFile();
+        }
+
+        model.addAttribute("transports", transports);
+        model.addAttribute("query", query);
+
+        return "transport/transports";
     }
 }

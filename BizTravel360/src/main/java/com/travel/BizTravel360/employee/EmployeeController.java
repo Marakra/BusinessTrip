@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,20 +16,24 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Collectors;
 
 
 @Slf4j
 @Controller
 public class EmployeeController {
-    
+
     private static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
     private static final int GENERATE_RANDOM_EMPLOYEE = 15;
 
     private final EmployeeService employeeService;
-    
-    public EmployeeController(EmployeeService employeeService) {this.employeeService = employeeService;}
-    
+
+    @Autowired
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
     @GetMapping("/employees")
     public String getAllEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
@@ -35,7 +41,7 @@ public class EmployeeController {
         Page<Employee> employees = employeeService.fetchEmployeePage(PageRequest.of(page, size));
         log.info("Fetched: {} employees", employees.getTotalElements());
         model.addAttribute("employees", employees);
-        
+
         int totalPages = employees.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.range(0, totalPages)
@@ -89,14 +95,33 @@ public class EmployeeController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "deleted"));
         return "redirect:/employees";
     }
-    
+
+    @GetMapping("/search/employee")
+    public String getAllEmployees(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
+        List<Employee> employees;
+
+        if (query != null && !query.isEmpty()) {
+            employees = employeeService.getFilteredEmployees(query);
+        } else {
+            employees = employeeService.loadEmployeeFromFile();
+        }
+
+        log.info("Fetched: {} employees", employees.size());
+
+        model.addAttribute("employees", employees);
+        model.addAttribute("query", query);
+
+        return "employee/employees";
+    }
+
+
     @PostMapping("/generate-random-employees")
     public String generateRandomEmployee(RedirectAttributes redirectAttributes) throws IOException {
         employeeService.generateAnsSaveRandomEmployee(GENERATE_RANDOM_EMPLOYEE);
         redirectAttributes.addFlashAttribute("message", "Random employees generated successfully!");
         return "redirect:/employees";
     }
-    
+
     private String renderSuccessMessage(Employee employee, String action) {
         String successMessage = String.format("Successfully %s employee: %s %s",
                 action,
@@ -105,5 +130,5 @@ public class EmployeeController {
         log.info(successMessage);
         return successMessage;
     }
-    
+
 }

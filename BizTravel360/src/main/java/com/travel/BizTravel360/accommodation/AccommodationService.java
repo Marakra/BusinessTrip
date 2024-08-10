@@ -128,4 +128,14 @@ public class AccommodationService implements AccommodationRepository {
         accommodation.setNameAccommodation(accommodation.getNameAccommodation().trim());
         accommodation.setAddress(accommodation.getAddress().trim());
     }
+
+    public List<Accommodation> getFilteredAccommodations(String query) throws IOException {
+        return loadAccommodationFromFile().stream()
+                .filter(a -> (
+                        a.getNameAccommodation().toLowerCase().contains(query.toLowerCase()) ||
+                                a.getTypeAccommodation().toString().toLowerCase().contains(query.toLowerCase()) ||
+                                a.getAddress().toLowerCase().contains(query.toLowerCase())
+                ))
+                .collect(Collectors.toList());
+    }
 }
