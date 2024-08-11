@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -95,29 +96,34 @@ public class AccommodationController {
         redirectAttributes.addFlashAttribute("message", "Random accommodations generated successfully!");
         return "redirect:/accommodations";
     }
-
-
+    
+    @GetMapping("/search-accommodation")
+    public String searchAccommodation(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                      @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
+                                      @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                      @RequestParam(value = "type", required = false) TypeAccommodation type,
+                                      Model model) throws IOException {
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Accommodation> accommodations = accommodationService.searchAccommodation(keyword, type, pageable);
+        
+        model.addAttribute("accommodations", accommodations);
+        model.addAttribute("type", type);
+        
+        int totalPages = accommodations.getTotalPages();
+        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+        
+        return "accommodation/accommodations";
+    }
+    
+    
+    
     private String renderSuccessMessage(Accommodation accommodation, String action) {
         String successMessage = String.format("Successfully %s accommodation: %s",
                 action,
                 accommodation.getNameAccommodation());
         log.info(successMessage);
         return successMessage;
-    }
-
-    @GetMapping("/search/accommodation")
-    public String searchAccommodation(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Accommodation> accommodations;
-
-        if (query != null && !query.isEmpty()) {
-            accommodations = accommodationService.getFilteredAccommodations(query);
-        } else {
-            accommodations = accommodationService.loadAccommodationFromFile();
-        }
-
-        model.addAttribute("accommodations", accommodations);
-        model.addAttribute("query", query);
-
-        return "accommodation/accommodations";
     }
 }

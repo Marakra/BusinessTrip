@@ -115,7 +115,26 @@ public class EmployeeService implements EmployeeRepository {
         existingEmployees.addAll(randomEmployee);
         fileService.writerToFile(existingEmployees, employeeFilePath);
     }
-
+    
+    public Page<Employee> searchEmployee(String query, Pageable pageable) throws IOException {
+        List<Employee> filteredEmployees = loadEmployeeFromFile().stream()
+                .filter(e -> (
+                        e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
+                                e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
+                                e.getEmail().toLowerCase().contains(query.toLowerCase()) ||
+                                String.valueOf(e.getEmployeeId()).contains(query)
+                ))
+                .collect(Collectors.toList());
+        
+        int totalEmployees = filteredEmployees.size();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), totalEmployees);
+        
+        List<Employee> employeesOnPage = filteredEmployees.subList(start, end);
+        return new PageImpl<>(employeesOnPage, pageable, totalEmployees);
+    }
+    
+    
     private void validateEmployee(Employee employee) {
         Set<ConstraintViolation<Employee>> constraintViolations = validator.validate(employee);
 
@@ -130,17 +149,4 @@ public class EmployeeService implements EmployeeRepository {
         employee.setLastName(employee.getLastName().trim());
         employee.setEmail(employee.getEmail().trim());
     }
-
-
-    public List<Employee> getFilteredEmployees (String query) throws IOException {
-        return loadEmployeeFromFile().stream()
-                .filter(e -> (
-                        e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
-                                e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
-                                e.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                                String.valueOf(e.getEmployeeId()).contains(query)
-                ))
-                .collect(Collectors.toList());
-    }
-
 }

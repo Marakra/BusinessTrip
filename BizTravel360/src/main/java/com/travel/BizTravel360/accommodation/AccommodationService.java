@@ -116,6 +116,35 @@ public class AccommodationService implements AccommodationRepository {
         fileService.writerToFile(existingAccommodations, accommodationFilePath);
     }
     
+    public Page<Accommodation> searchAccommodation(String query, TypeAccommodation type, Pageable pageable) throws IOException {
+        // Load all accommodations from the file
+        List<Accommodation> allAccommodations = loadAccommodationFromFile();
+        
+        // Filter accommodations
+        List<Accommodation> filteredAccommodations = allAccommodations.stream()
+                .filter(accommodation ->
+                        (query == null || query.isEmpty() ||
+                                accommodation.getNameAccommodation().toLowerCase().contains(query.toLowerCase()) ||
+                                accommodation.getAddress().toLowerCase().contains(query.toLowerCase()) ||
+                                String.valueOf(accommodation.getAccommodationId()).contains(query)) &&
+                                (type == null || accommodation.getTypeAccommodation() == type)
+                ).toList();
+        
+        // Get total filtered results
+        int totalFiltered = filteredAccommodations.size();
+        
+        // Apply pagination
+        List<Accommodation> paginatedAccommodations = filteredAccommodations.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList());
+        
+        // Return as a page
+        return new PageImpl<>(paginatedAccommodations, pageable, totalFiltered);
+    }
+    
+    
+    
     private void validateAccommodation(Accommodation accommodation){
         Set<ConstraintViolation<Accommodation>> constraintViolations = validator.validate(accommodation);
         if (!constraintViolations.isEmpty()) {
@@ -127,15 +156,5 @@ public class AccommodationService implements AccommodationRepository {
     private void trimAccommodation(Accommodation accommodation) {
         accommodation.setNameAccommodation(accommodation.getNameAccommodation().trim());
         accommodation.setAddress(accommodation.getAddress().trim());
-    }
-
-    public List<Accommodation> getFilteredAccommodations(String query) throws IOException {
-        return loadAccommodationFromFile().stream()
-                .filter(a -> (
-                        a.getNameAccommodation().toLowerCase().contains(query.toLowerCase()) ||
-                                a.getTypeAccommodation().toString().toLowerCase().contains(query.toLowerCase()) ||
-                                a.getAddress().toLowerCase().contains(query.toLowerCase())
-                ))
-                .collect(Collectors.toList());
     }
 }

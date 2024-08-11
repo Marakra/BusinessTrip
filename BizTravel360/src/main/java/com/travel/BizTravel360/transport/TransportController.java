@@ -1,9 +1,12 @@
 package com.travel.BizTravel360.transport;
 
+import com.travel.BizTravel360.accommodation.Accommodation;
+import com.travel.BizTravel360.accommodation.TypeAccommodation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -98,6 +101,26 @@ public class TransportController {
         redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
         return "redirect:/transports";
     }
+    
+    @GetMapping("/search-transport")
+    public String searchAccommodation(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                      @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
+                                      @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                      @RequestParam(value = "type", required = false) TypeTransport type,
+                                      Model model) throws IOException {
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Transport> transports = transportService.searchTransport(keyword, type, pageable);
+        
+        model.addAttribute("transports", transports);
+        model.addAttribute("type", type);
+        
+        int totalPages = transports.getTotalPages();
+        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
+        
+        return "transport/transports";
+    }
 
     private String renderSuccessMessage(Transport transport, String action){
         String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
@@ -107,21 +130,5 @@ public class TransportController {
                 transport.getArrival());
         log.info(successMessage);
         return successMessage;
-    }
-
-    @GetMapping("/search/transport")
-    public String searchTransport(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Transport> transports;
-
-        if (query != null && !query.isEmpty()) {
-            transports = transportService.getFilteredTransports(query);
-        } else {
-            transports = transportService.loadTransportFromFile();
-        }
-
-        model.addAttribute("transports", transports);
-        model.addAttribute("query", query);
-
-        return "transport/transports";
     }
 }
