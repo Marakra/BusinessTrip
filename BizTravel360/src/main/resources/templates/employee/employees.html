@@ -4,15 +4,22 @@
 <div th:replace="~{fragments/header::header}"></div>
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-end mb-3">
-        <a href="/employee" class="btn btn-primary">Create New Employee</a>
+    <div class="d-flex flex-column align-items-end mb-3">
+        <div class="mb-3">
+            <a href="/employee" class="btn btn-primary">Create New Employee</a>
+        </div>
+        <div>
+            <form method="GET" action="/search-employee">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="keyword" placeholder="Search employee">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div class="container mt-4">
-        <form action="#" th:action="@{/search/employee}" method="get" class="d-flex justify-content-end mb-3">
-            <input type="text" name="query" placeholder="Search employee">
-            <button type="submit" class="btn btn-primary ml-2">Search</button>
-        </form>
+
     <div class="container-fluid mt-4">
         <h1 class="mb-4">Employee List</h1>
         <div class="table-responsive">
@@ -70,7 +77,6 @@
             </nav>
         </div>
     </div>
-</div>
 <div class="container-fluid mt-4">
     <form method="POST" action="/generate-random-employees">
         <button type="submit" class="custom-btn">Generate Random Accommodations</button>

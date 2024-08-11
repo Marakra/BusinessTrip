@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -95,26 +97,25 @@ public class EmployeeController {
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "deleted"));
         return "redirect:/employees";
     }
-
-    @GetMapping("/search/employee")
-    public String getAllEmployees(Model model, @RequestParam(required = false, defaultValue = "") String query) throws IOException {
-        List<Employee> employees;
-
-        if (query != null && !query.isEmpty()) {
-            employees = employeeService.getFilteredEmployees(query);
-        } else {
-            employees = employeeService.loadEmployeeFromFile();
-        }
-
-        log.info("Fetched: {} employees", employees.size());
-
+    
+    @GetMapping("/search-employee")
+    public String searchEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                  @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
+                                  @RequestParam String keyword, Model model) throws IOException {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Employee> employees = employeeService.searchEmployee(keyword, pageable);
+        
         model.addAttribute("employees", employees);
-        model.addAttribute("query", query);
-
+        model.addAttribute("keyword", keyword);
+        
+        int totalPages = employees.getTotalPages();
+    
+        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
+        model.addAttribute("pageNumbers", pageNumbers);
         return "employee/employees";
     }
-
-
+    
+    
     @PostMapping("/generate-random-employees")
     public String generateRandomEmployee(RedirectAttributes redirectAttributes) throws IOException {
         employeeService.generateAnsSaveRandomEmployee(GENERATE_RANDOM_EMPLOYEE);

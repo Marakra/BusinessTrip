@@ -3,19 +3,29 @@
 <head th:replace="~{fragments/header::head}"><title>Accommodations</title></head>
 <div th:replace="~{fragments/header::header}"></div>
 
-
-
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-end mb-3">
-        <a href="/accommodation" class="btn btn-primary">Create New Accommodation</a>
+<div class="container mt-4">
+    <div class="d-flex flex-column align-items-end mb-3">
+        <div class="mb-3">
+            <a href="/accommodation" class="btn btn-primary">Create New Accommodation</a>
+        </div>
+        <div>
+            <form method="GET" action="/search-accommodation">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="keyword" placeholder="Search Accommodation">
+                    <label>
+                        <select name="type" class="form-control">
+                            <option value="" th:selected="${type == null}">All Types</option>
+                            <option th:each="type : ${T(com.travel.BizTravel360.accommodation.TypeAccommodation).values()}"
+                                    th:value="${type}" th:text="${type}" th:selected="${type.equals(selectedType)}"></option>
+                        </select>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
-
-
+</div>
     <div class="container-fluid mt-4">
-        <form action="#" th:action="@{/search/accommodation}" method="get" class="d-flex justify-content-end mb-3">
-            <input type="text" name="query" placeholder="Search accommodation">
-            <button type="submit" class="btn btn-primary ml-2">Search</button>
-        </form>
         <h1 class="mb-4">Accommodation List</h1>
         <div class="table-responsive">
             <table class="table table-striped table-bordered table-hover">
@@ -78,8 +88,6 @@
             </nav>
         </div>
     </div>
-</div>
-
 <div class="container-fluid mt-4">
     <form method="POST" action="/generate-random-accommodation">
         <button type="submit" class="custom-btn">Generate Random Accommodations</button>

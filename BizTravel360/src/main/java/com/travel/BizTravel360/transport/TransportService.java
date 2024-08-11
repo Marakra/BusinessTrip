@@ -116,6 +116,28 @@ public class TransportService implements TransportRepository{
         existingTransports.addAll(randomTransports);
         fileService.writerToFile(existingTransports, transportFilePath);
     }
+    
+    public Page<Transport> searchTransport(String query, TypeTransport type, Pageable pageable) throws IOException {
+        List<Transport> allTransports = loadTransportFromFile();
+        List<Transport> filteredTransports = allTransports.stream()
+                .filter(transport ->
+                        (query == null || query.isEmpty() ||
+                                transport.getTransportIdentifier().toLowerCase().contains(query.toLowerCase()) ||
+                                transport.getDeparture().toLowerCase().contains(query.toLowerCase()) ||
+                                transport.getArrival().toLowerCase().contains(query.toLowerCase()) ||
+                                String.valueOf(transport.getTransportId()).contains(query)) &&
+                                (type == null || transport.getTypeTransport() == type)
+                        ) .toList();
+        
+        int totalFiltered = filteredTransports.size();
+        
+        List<Transport> paginatedTransports = filteredTransports.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList());
+        
+        return new PageImpl<>(paginatedTransports, pageable, totalFiltered);
+    }
 
     private void validateTransport(Transport transport) {
         Set<ConstraintViolation<Transport>> constraintViolations = validator.validate(transport);
@@ -130,16 +152,5 @@ public class TransportService implements TransportRepository{
         transport.setTransportIdentifier(transport.getTransportIdentifier().trim());
         transport.setDeparture(transport.getDeparture().trim());
         transport.setArrival(transport.getArrival().trim());
-    }
-
-
-
-    public List<Transport> getFilteredTransports(String query) throws IOException {
-        return loadTransportFromFile().stream()
-                .filter(t -> (t.getTypeTransportAsString() != null && t.getTypeTransportAsString().contains(query)
-                        || t.getTransportIdentifier().toLowerCase().contains(query.toLowerCase())
-                        || t.getDeparture().toLowerCase().contains(query.toLowerCase())
-                        || t.getArrival().toLowerCase().contains(query.toLowerCase())))
-                .collect(Collectors.toList());
     }
 }

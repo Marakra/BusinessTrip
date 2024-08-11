@@ -22,18 +22,28 @@ public class DataGeneratorEmployee {
     private static Employee generateRandomEmployee() {
         Employee employee = new Employee();
         employee.setEmployeeId((long) RANDOM.nextLong(100000));
-        employee.setFirstName("First Name" + RANDOM.nextInt(1000));
-        employee.setLastName("Last Name" + RANDOM.nextInt(1000));
         
-        String randomEmail = generateRandomEmail(employee.getFirstName(), employee.getLastName());
+        String firstName = "FirstName" + RANDOM.nextInt(1000);
+        String lastName = "LastName" + RANDOM.nextInt(1000);
+        
+        employee.setFirstName(firstName);
+        employee.setLastName(lastName);
+        
+        String randomEmail = generateRandomEmail(firstName, lastName);
         employee.setEmail(randomEmail);
+        
         return employee;
     }
     
     private static String generateRandomEmail(String firstName, String lastName) {
         String[] domains = {"example.com", "test.com", "biztravel.com", "email.com"};
         String domain = domains[RANDOM.nextInt(domains.length)];
-        String email = String.format("%s.%s%d@%s", firstName.toLowerCase(), lastName.toLowerCase(), RANDOM.nextInt(1000), domain);
+        
+        String email = String.format("%s.%s@%s",
+                firstName.replace("FirstName", "").toLowerCase(),
+                lastName.replace("LastName", "").toLowerCase(),
+                domain);
+        
         return email;
     }
 }
