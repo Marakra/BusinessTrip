@@ -54,3 +54,11 @@
     </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<script>
+    document.getElementById('checkIn').addEventListener('change', function() {
+        document.getElementById('checkOut').min = this.value;
+    });
+</script>
+
+</html>
