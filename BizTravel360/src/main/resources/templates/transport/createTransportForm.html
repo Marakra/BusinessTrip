@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/header :: head}"><title>Add Transport</title></head>
 <div th:replace="~{fragments/header :: header}"></div>
 
@@ -26,7 +26,8 @@
 
             <div class="form-group">
                 <label for="departureCity" class="color-text">Departure:</label>
-                <input type="text" id="departureCity" th:field="*{departure}" class="form-control">
+                <input type="text" id="departureCity" th:field="*{departure}" class="form-control"
+                       pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter departure">
                 <ul><li th:each="err : ${#fields.errors('departure')}" th:text="${err}" class="error"></li></ul>
             </div>
 
@@ -38,7 +39,8 @@
 
             <div class="form-group">
                 <label for="arrivalCity" class="color-text">Arrival:</label>
-                <input type="text" id="arrivalCity" th:field="*{arrival}" class="form-control">
+                <input type="text" id="arrivalCity" th:field="*{arrival}" class="form-control"
+                       pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter arrival">
                 <ul><li th:each="err : ${#fields.errors('arrival')}" th:text="${err}" class="error"></li></ul>
             </div>
 

@@ -22,6 +22,16 @@
                            pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter last name">
                     <ul><li th:each="err : ${#fields.errors('lastName')}" th:text="${err}" class="error"></li></ul>
                 </div>
+
+                <div class="form-group">
+                    <label for="position" class="color-text">Position:</label>
+                    <select id="position" th:field="*{position}" class="form-control color-text">
+                        <option th:each="cat : ${T(com.travel.BizTravel360.employee.PositionEmployee).values()}"
+                                th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
+                    </select>
+                    <ul><li th:each="err : ${#fields.errors('position')}" th:text="${err}" class="error"></li></ul>
+                </div>
+
                 <div class="form-group">
                     <label for="email" class="color-text">Email:</label>
                     <input type="email" th:field="*{email}" id="email" class="form-control"

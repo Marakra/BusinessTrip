@@ -90,7 +90,6 @@ public class AccommodationService implements AccommodationRepository {
     @Override
     public Accommodation findAccommodationById(Long accommodationId) throws IOException {
         List<Accommodation> accommodationList = loadAccommodationFromFile();
-        
         return accommodationList.stream()
                 .filter(a -> Objects.equals(a.getAccommodationId(), accommodationId))
                 .findFirst()
@@ -126,8 +125,8 @@ public class AccommodationService implements AccommodationRepository {
                         (query == null || query.isEmpty() ||
                                 accommodation.getNameAccommodation().toLowerCase().contains(query.toLowerCase()) ||
                                 accommodation.getAddress().toLowerCase().contains(query.toLowerCase()) ||
-                                String.valueOf(accommodation.getAccommodationId()).contains(query)) &&
-                                (type == null || accommodation.getTypeAccommodation() == type)
+                                String.valueOf(accommodation.getAccommodationId()).contains(query) &&
+                                (type == null || accommodation.getTypeAccommodation() == type))
                 ).toList();
         
         // Get total filtered results

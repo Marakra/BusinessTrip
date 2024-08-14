@@ -1,5 +1,6 @@
 package com.travel.BizTravel360.employee;
 
+import com.travel.BizTravel360.accommodation.TypeAccommodation;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class DataGeneratorEmployee {
         String firstName = "FirstName" + RANDOM.nextInt(1000);
         String lastName = "LastName" + RANDOM.nextInt(1000);
         
+        employee.setPosition(PositionEmployee.values()[RANDOM.nextInt(PositionEmployee.values().length)]);
         employee.setFirstName(firstName);
         employee.setLastName(lastName);
         
