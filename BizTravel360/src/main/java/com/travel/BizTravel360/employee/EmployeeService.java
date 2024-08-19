@@ -31,8 +31,7 @@ public class EmployeeService implements EmployeeRepository {
     private final Validator validator;
 
     public EmployeeService(@Value("${employees.file.path}") String employeeFilePath,
-                           FileService fileService,
-                           Validator validator) {
+                           FileService fileService, Validator validator) {
         this.fileService = fileService;
         this.employeeFilePath = employeeFilePath;
         this.validator = validator;
@@ -82,8 +81,8 @@ public class EmployeeService implements EmployeeRepository {
     @Override
     public void deleteEmployeeById(Long employeeId) throws IOException {
         List<Employee> employeeList = loadEmployeeFromFile();
-
         Employee existingEmployee = findEmployeeById(employeeId);
+        
         employeeList.remove(existingEmployee);
         fileService.writerToFile(employeeList, employeeFilePath);
     }
@@ -116,22 +115,27 @@ public class EmployeeService implements EmployeeRepository {
         fileService.writerToFile(existingEmployees, employeeFilePath);
     }
     
-    public Page<Employee> searchEmployee(String query, Pageable pageable) throws IOException {
-        List<Employee> filteredEmployees = loadEmployeeFromFile().stream()
-                .filter(e -> (
-                        e.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
-                                e.getLastName().toLowerCase().contains(query.toLowerCase()) ||
-                                e.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                                String.valueOf(e.getEmployeeId()).contains(query)
-                ))
-                .collect(Collectors.toList());
+    public Page<Employee> searchEmployee(String query, PositionEmployee position, Pageable pageable) throws IOException {
+        List<Employee> allEmployees = loadEmployeeFromFile();
+        
+        List<Employee> filteredEmployees = allEmployees.stream()
+                .filter(employee ->
+                        (query == null || query.isEmpty() ||
+                            employee.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
+                                employee.getLastName().toLowerCase().contains(query.toLowerCase()) ||
+                                employee.getEmail().toLowerCase().contains(query.toLowerCase()) ||
+                                String.valueOf(employee.getEmployeeId()).contains(query) &&
+                                        (position == null || employee.getPosition() == position))
+                ).toList();
         
         int totalEmployees = filteredEmployees.size();
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), totalEmployees);
         
-        List<Employee> employeesOnPage = filteredEmployees.subList(start, end);
-        return new PageImpl<>(employeesOnPage, pageable, totalEmployees);
+        List<Employee> paginatedEmployees = filteredEmployees.stream()
+                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
+                .limit(pageable.getPageSize())
+                .collect(Collectors.toList());
+        
+        return new PageImpl<>(paginatedEmployees, pageable, totalEmployees);
     }
     
     

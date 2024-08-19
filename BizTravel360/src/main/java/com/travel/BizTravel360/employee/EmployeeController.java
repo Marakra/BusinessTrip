@@ -101,9 +101,11 @@ public class EmployeeController {
     @GetMapping("/search-employee")
     public String searchEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
-                                  @RequestParam String keyword, Model model) throws IOException {
+                                  @RequestParam(value = "keyword", defaultValue = "") String keyword,
+                                  @RequestParam(value = "position", required = false) PositionEmployee position,
+                                  Model model) throws IOException {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Employee> employees = employeeService.searchEmployee(keyword, pageable);
+        Page<Employee> employees = employeeService.searchEmployee(keyword, position, pageable);
         
         model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
@@ -124,10 +126,11 @@ public class EmployeeController {
     }
 
     private String renderSuccessMessage(Employee employee, String action) {
-        String successMessage = String.format("Successfully %s employee: %s %s",
+        String successMessage = String.format("Successfully %s employee: %s %s, position: %s",
                 action,
                 employee.getFirstName(),
-                employee.getLastName());
+                employee.getLastName(),
+                employee.getPosition());
         log.info(successMessage);
         return successMessage;
     }

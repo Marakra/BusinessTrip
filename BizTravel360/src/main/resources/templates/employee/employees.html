@@ -29,6 +29,7 @@
                     <th scope="col">Number</th>
                     <th scope="col">First Name</th>
                     <th scope="col">Last Name</th>
+                    <th scope="col">Position</th>
                     <th scope="col">Email</th>
                     <th scope="col">Actions</th>
                 </tr>
@@ -38,6 +39,7 @@
                     <td th:text="${itr.index + 1}"></td>
                     <td th:text="${#strings.capitalize(employee.firstName.toLowerCase())}"></td>
                     <td th:text="${#strings.capitalize(employee.lastName.toLowerCase())}"></td>
+                    <td th:text="${#strings.toLowerCase(employee.position.toString())}"></td>
                     <td th:text="${employee.email.toLowerCase()}"></td>
                     <td>
                         <a th:href="@{/employee/{employeeId}(employeeId=${employee.employeeId})}" class="btn btn-sm btn-warning">Edit</a>
