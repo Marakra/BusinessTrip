@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex flex-column align-items-end mb-3">
         <div class="mb-3">
-            <a href="/transport" class="btn btn-primary">Create New Transport</a>
+            <a href="/transport/employee" class="btn btn-primary">Create New Transport</a>
         </div>
         <div>
             <form method="GET" action="/search-transport">
@@ -74,13 +74,13 @@
                 <ul class="pagination">
                     <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${transports.hasPrevious()} ? '' : 'disabled'">
-                        <a class="page-link" th:href="@{/transports(page=${transports.number - 1}, size=${transports.size})}" th:text="'Previous'" th:if="${transports.hasPrevious()}"></a>
+                        <a class="page-link" th:href="@{/transports/employee(page=${transports.number - 1}, size=${transports.size})}" th:text="'Previous'" th:if="${transports.hasPrevious()}"></a>
                         <span class="page-link" th:if="${!transports.hasPrevious()}">Previous</span>
                     </li>
 
                     <!-- Page Number Links -->
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, transports.totalPages - 1)}" th:classappend="${i == transports.number} ? 'active' : ''">
-                        <a class="page-link" th:href="@{/transports(page=${i}, size=${transports.size})}" th:text="${i + 1}"></a>
+                        <a class="page-link" th:href="@{/transports/employee(page=${i}, size=${transports.size})}" th:text="${i + 1}"></a>
                     </li>
 
                     <!-- Next Page Button -->

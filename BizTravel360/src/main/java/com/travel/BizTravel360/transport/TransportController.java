@@ -48,7 +48,7 @@ public class TransportController {
         return "transport/transportsForEmployee";
     }
 
-    @GetMapping("/transport")
+    @GetMapping("/transport/employee")
     public String showSaveTransportForm(Model model) {
         model.addAttribute("transport", new Transport());
         return "transport/createTransportForm";
@@ -62,7 +62,7 @@ public class TransportController {
         }
         transportService.saveTransport(transport);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "created"));
-        return "redirect:/transports";
+        return "redirect:/transports/employee";
     }
 
 
@@ -82,7 +82,7 @@ public class TransportController {
         }
         transportService.updateTransport(transport, transport.getTransportId());
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "updated"));
-        return "redirect:/transports";
+        return "redirect:/transports/employee";
     }
 
 
@@ -92,14 +92,14 @@ public class TransportController {
         Transport transport = transportService.findTransportById(transportId);
         transportService.deleteTransportById(transportId);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
-        return "redirect:/transports";
+        return "redirect:/transports/employee";
     }
 
     @PostMapping("/generate-random-transport")
     public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
         transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
         redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
-        return "redirect:/transports";
+        return "redirect:/transports/employee";
     }
     
     @GetMapping("/search-transport")
@@ -119,7 +119,7 @@ public class TransportController {
         List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
         model.addAttribute("pageNumbers", pageNumbers);
         
-        return "transport/transports";
+        return "transport/transportsForEmployee";
     }
 
     private String renderSuccessMessage(Transport transport, String action){

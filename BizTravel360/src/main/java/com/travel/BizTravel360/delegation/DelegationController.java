@@ -59,7 +59,7 @@ public class DelegationController {
         return "delegation/delegationsForEmployee";
     }
     
-    @GetMapping("/delegation")
+    @GetMapping("/delegation/employee")
     public String showCreateDelegationForm(Model model) throws IOException {
         model.addAttribute("delegation", new Delegation());
         model.addAttribute("employees", employeeService.loadEmployeeFromFile());
@@ -80,7 +80,7 @@ public class DelegationController {
         }
             delegationService.createDelegation(delegation);
             redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(delegation, "created"));
-            return "redirect:/delegations";
+            return "redirect:/delegations/employee";
         }
     
     private String renderSuccessMessage(Delegation delegation, String action) {

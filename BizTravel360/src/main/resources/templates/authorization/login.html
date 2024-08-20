@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/header::head}"><title>BizTravel</title></head>
-    <div th:replace="~{fragments/headerWithOutNav::header}"></div>
+    <div th:replace="~{fragments/headerBeforeAuth::header}"></div>
         <div class="overlay">
         <form class="login">
            <div class="con">
-           <header class="head-form">
-              <h2>Login</h2>
+           <div class="head-form">
+              <h2><b>Login</b></h2>
               <p>login here using your email and password</p>
-           </header>
+           </div>
            <br>
            <div class="field-set">
                <span class="input-item">
@@ -29,7 +29,7 @@
 
            <div class="other">
               <button class="btn submits frgt-pass button-login">Forgot Password</button>
-              <a class="btn submits sign-up" href="sing-up">Sign Up</a>
+              <a class="btn submits sign-up" href="sign-up">Sign Up</a>
               <i class="fa fa-user-plus" aria-hidden="true"></i>
               </button>
            </div>

@@ -4,7 +4,7 @@
 <div th:replace="~{fragments/headerEmployee::header}"></div>
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-end mb-3">
-        <a href="/delegation" class="btn btn-primary">Create New Delegation</a>
+        <a href="/delegation/employee" class="btn btn-primary">Create New Delegation</a>
     </div>
 
     <div class="container-fluid mt-4">
@@ -58,13 +58,13 @@
                 <ul class="pagination">
                     <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${delegations.hasPrevious()} ? '' : 'disabled'">
-                        <a class="page-link" th:href="@{/delegations(page=${delegations.number - 1}, size=${delegations.size})}" th:text="'Previous'" th:if="${delegations.hasPrevious()}"></a>
+                        <a class="page-link" th:href="@{/delegations/employee(page=${delegations.number - 1}, size=${delegations.size})}" th:text="'Previous'" th:if="${delegations.hasPrevious()}"></a>
                         <span class="page-link" th:if="${!delegations.hasPrevious()}">Previous</span>
                     </li>
 
                     <!-- Page Number Links -->
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, delegations.totalPages - 1)}" th:classappend="${i == delegations.number} ? 'active' : ''">
-                        <a class="page-link" th:href="@{/delegations(page=${i}, size=${delegations.size})}" th:text="${i + 1}"></a>
+                        <a class="page-link" th:href="@{/delegations/employee(page=${i}, size=${delegations.size})}" th:text="${i + 1}"></a>
                     </li>
 
                     <!-- Next Page Button -->

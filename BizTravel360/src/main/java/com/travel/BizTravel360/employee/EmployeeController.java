@@ -38,6 +38,11 @@ public class EmployeeController {
     public String hello(Model model) {
         return "employee/viewEmployee";
     }
+    
+    @GetMapping("/profile/employee")
+    public String profile() {
+        return "authorization/profileEmployee";
+    }
     @GetMapping("/employees")
     public String getAllEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,

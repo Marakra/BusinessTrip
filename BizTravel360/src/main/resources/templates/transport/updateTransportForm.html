@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head}"><title>Edit Transport</title></head>
-<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/headerEmployee :: header}"></div>
 
 <div class="container mt-4">
     <div class="form-container">
@@ -55,7 +55,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="/transports" class="btn btn-secondary" style="float: right;">Back to the list</a>
+            <a href="/transports/employee" class="btn btn-secondary" style="float: right;">Back to the list</a>
         </form>
     </div>
 </div>
