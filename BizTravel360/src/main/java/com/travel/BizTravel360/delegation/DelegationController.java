@@ -41,7 +41,7 @@ public class DelegationController {
         this.accommodationService = accommodationService;
     }
     
-    @GetMapping("/delegations")
+    @GetMapping("/delegations/employee")
     public String getAllDelegations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                     @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                     Model model) throws IOException {
@@ -56,7 +56,7 @@ public class DelegationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "delegation/delegations";
+        return "delegation/delegationsForEmployee";
     }
     
     @GetMapping("/delegation")

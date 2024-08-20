@@ -30,7 +30,7 @@ public class TransportController {
 
     public TransportController(TransportService transportService) {this.transportService = transportService;}
 
-    @GetMapping("/transports")
+    @GetMapping("/transports/employee")
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model) throws IOException {
@@ -45,7 +45,7 @@ public class TransportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "transport/transports";
+        return "transport/transportsForEmployee";
     }
 
     @GetMapping("/transport")

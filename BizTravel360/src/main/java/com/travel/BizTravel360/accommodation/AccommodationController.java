@@ -28,7 +28,7 @@ public class AccommodationController {
 
     public AccommodationController(AccommodationService accommodationService) {this.accommodationService = accommodationService;}
 
-    @GetMapping("/accommodations")
+    @GetMapping("accommodations/employee")
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                        Model model) throws IOException {
@@ -43,7 +43,7 @@ public class AccommodationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "accommodation/accommodations";
+        return "accommodation/accommodationsForEmployee";
     }
 
     @GetMapping("/accommodation")
