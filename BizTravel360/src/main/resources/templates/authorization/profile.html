@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments/header::head}"><title>BizTravel</title></head>
+    <div th:replace="~{fragments/headerBeforeAuth::header}"></div>
+<div class="profile">
+    <div class="container">
+    <div class="row gutters">
+    <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+    <div class="card h-100">
+    	<div class="card-body">
+    		<div class="account-settings">
+    			<div class="user-profile">
+    				<div class="user-avatar">
+    					<img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin">
+    				</div>
+    				<h5 class="user-name color-text"><b>Yuki Hayashi</b></h5>
+    				<h6 class="user-email">yuki@Maxwell.com</h6>
+    			</div>
+    			<div class="about">
+                    <div class="">
+                        <div class="form-group">
+                            <label for="password" class="color-text">Your Password</label>
+                        	<input type="text" class="form-control" id="password">
+                        </div>
+                    </div>
+                <button type="button" id="submit" name="submit" class="btn btn-primary">Change password</button>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    </div>
+    <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+    <div class="card h-100">
+    	<div class="card-body">
+    		<div class="row gutters">
+    			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    				<h6 class="mb-2 text-primary"><b>Personal Details</b></h6>
+    			</div>
+    			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+    				<div class="form-group">
+    					<label for="fullName" class="color-text">First Name</label>
+    					<input type="text" class="form-control" id="fullName">
+    				</div>
+    			</div>
+    			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+    				<div class="form-group">
+    					<label for="email" class="color-text">Last Name</label>
+    					<input type="email" class="form-control" id="email">
+    				</div>
+    			</div>
+    			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+    				<div class="form-group">
+                        <!--if average employee wanna change position to manager -> admin has to approve it-->
+    					<label for="phone" class="color-text">Position</label>
+    					<input type="text" class="form-control" id="phone">
+    				</div>
+    			</div>
+    			<div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+    				<div class="form-group">
+    					<label for="website" class="color-text">Email</label>
+    					<input type="url" class="form-control" id="website" >
+    				</div>
+    			</div>
+    		</div>
+    		<div class="row gutters">
+    			<div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+    				<div class="text-right">
+    					<a href="/hello"><button type="button" id="submit" name="submit" class="btn btn-secondary">Cancel</button></a>
+    					<button type="button" id="submit" name="submit" class="btn btn-primary">Update</button>
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    </div>
+    </div>
+    </div>
+    </div>
+</div>
+    <div th:replace="~{fragments/footer::footer}"></div>
+

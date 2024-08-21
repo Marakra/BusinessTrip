@@ -11,4 +11,15 @@ public class MenuController {
     public String index() {
         return "index";
     }
+    
+    @GetMapping("/login")
+    public String login() {
+        return "authorization/login";
+    }
+    
+    @GetMapping("/sign-up")
+    public String singUp() {
+        return "authorization/signUp";
+    }
+    
 }

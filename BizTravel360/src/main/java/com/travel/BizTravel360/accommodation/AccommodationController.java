@@ -28,7 +28,7 @@ public class AccommodationController {
 
     public AccommodationController(AccommodationService accommodationService) {this.accommodationService = accommodationService;}
 
-    @GetMapping("/accommodations")
+    @GetMapping("accommodations/employee")
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                        Model model) throws IOException {
@@ -43,10 +43,10 @@ public class AccommodationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "accommodation/accommodations";
+        return "accommodation/accommodationsForEmployee";
     }
 
-    @GetMapping("/accommodation")
+    @GetMapping("/accommodation/employee")
     public String showSaveAccommodationForm(Model model) {
         model.addAttribute("accommodation", new Accommodation());
         return "accommodation/createAccommodationForm";
@@ -60,7 +60,7 @@ public class AccommodationController {
         }
         accommodationService.saveAccommodation(accommodation);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "created"));
-        return "redirect:/accommodations";
+        return "redirect:/accommodations/employee";
     }
 
     @GetMapping("/accommodation/{accommodationId}")
@@ -78,7 +78,7 @@ public class AccommodationController {
         }
         accommodationService.updateAccommodation(accommodation, accommodation.getAccommodationId());
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "updated"));
-        return "redirect:/accommodations";
+        return "redirect:/accommodations/employee";
     }
 
     @PostMapping("/delete-accommodation/{accommodationId}")
@@ -87,14 +87,14 @@ public class AccommodationController {
         Accommodation accommodation = accommodationService.findAccommodationById(accommodationId);
         accommodationService.deleteAccommodationById(accommodationId);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "deleted"));
-        return "redirect:/accommodations";
+        return "redirect:/accommodations/employee";
     }
 
     @PostMapping("/generate-random-accommodation")
     public String generationRandomAccommodation(RedirectAttributes redirectAttributes) throws IOException {
         accommodationService.generateAndSaveRandomAccommodation(GENERATE_RANDOM_ACCOMMODATIONS);
         redirectAttributes.addFlashAttribute("message", "Random accommodations generated successfully!");
-        return "redirect:/accommodations";
+        return "redirect:/accommodations/employee";
     }
     
     @GetMapping("/search-accommodation")
@@ -114,7 +114,7 @@ public class AccommodationController {
         List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
         model.addAttribute("pageNumbers", pageNumbers);
         
-        return "accommodation/accommodations";
+        return "accommodation/accommodationsForEmployee";
     }
     
     

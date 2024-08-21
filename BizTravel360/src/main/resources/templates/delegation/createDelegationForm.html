@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head}"><title>Add Delegation</title></head>
-<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/headerEmployee :: header}"></div>
 
 <div class="container mt-4">
 
@@ -10,6 +10,7 @@
         <input type="hidden" th:field="*{delegationId}" />
 
         <div class="form-group">
+            <!--will be auto name employee-->
             <label for="nameDelegation" class="color-text">Name:</label>
             <input type="text" id="nameDelegation" th:field="*{nameDelegation}" class="form-control">
             <ul><li th:each="err : ${#fields.errors('nameDelegation')}" th:text="${err}" class="error"></li></ul>
@@ -68,7 +69,7 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Save Delegation</button>
-        <a href="/delegations" class="btn btn-secondary" style="float: right;">Back to the list</a>
+        <a href="/delegations/employee" class="btn btn-secondary" style="float: right;">Back to the list</a>
     </form>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>

@@ -41,7 +41,7 @@ public class DelegationController {
         this.accommodationService = accommodationService;
     }
     
-    @GetMapping("/delegations")
+    @GetMapping("/delegations/employee")
     public String getAllDelegations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                     @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                     Model model) throws IOException {
@@ -56,10 +56,10 @@ public class DelegationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "delegation/delegations";
+        return "delegation/delegationsForEmployee";
     }
     
-    @GetMapping("/delegation")
+    @GetMapping("/delegation/employee")
     public String showCreateDelegationForm(Model model) throws IOException {
         model.addAttribute("delegation", new Delegation());
         model.addAttribute("employees", employeeService.loadEmployeeFromFile());
@@ -80,7 +80,7 @@ public class DelegationController {
         }
             delegationService.createDelegation(delegation);
             redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(delegation, "created"));
-            return "redirect:/delegations";
+            return "redirect:/delegations/employee";
         }
     
     private String renderSuccessMessage(Delegation delegation, String action) {
