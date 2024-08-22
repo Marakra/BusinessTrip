@@ -16,6 +16,7 @@
             <ul><li th:each="err : ${#fields.errors('nameDelegation')}" th:text="${err}" class="error"></li></ul>
         </div>
 
+    <!--here will be name Employee that we will have in URL-->
         <div class="form-group">
             <label for="employee" class="color-text">Employee:</label>
             <select id="employee" th:field="*{employee.employeeId}" class="form-control color-text">

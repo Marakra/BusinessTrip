@@ -16,7 +16,7 @@ import java.util.Optional;
 @Component
 public class DateRangeValidatorDelegation implements ConstraintValidator <ValidDateRangeDelegation, Delegation> {
     
-    private AppConfig appConfig;
+    private final AppConfig appConfig;
     
     public DateRangeValidatorDelegation(AppConfig appConfig) {
         this.appConfig = appConfig;
