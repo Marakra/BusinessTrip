@@ -1,6 +1,4 @@
 target/
 out/
-.idea/
-.idea
 *.iml
-db_data/
+db-data/
