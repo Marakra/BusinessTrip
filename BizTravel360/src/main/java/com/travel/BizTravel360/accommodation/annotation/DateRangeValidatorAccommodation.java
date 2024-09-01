@@ -1,6 +1,6 @@
 package com.travel.BizTravel360.accommodation.annotation;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

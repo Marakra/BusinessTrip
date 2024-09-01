@@ -1,6 +1,6 @@
 package com.travel.BizTravel360.delegation;
 
-import com.travel.BizTravel360.accommodation.AccommodationService;
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.employee.EmployeeService;
 import com.travel.BizTravel360.transport.TransportService;
 import jakarta.validation.Valid;
@@ -64,7 +64,7 @@ public class DelegationController {
         model.addAttribute("delegation", new Delegation());
         model.addAttribute("employees", employeeService.loadEmployeeFromFile());
         model.addAttribute("transports", transportService.loadTransportFromFile());
-        model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
+      //  model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
         return "delegation/createDelegationForm";
     }
     
@@ -75,7 +75,7 @@ public class DelegationController {
             log.error("Validation errors occurred: {}", bindingResult.getAllErrors());
             model.addAttribute("employees", employeeService.loadEmployeeFromFile());
             model.addAttribute("transports", transportService.loadTransportFromFile());
-            model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
+          //  model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
             return "delegation/createDelegationForm";
         }
             delegationService.createDelegation(delegation);

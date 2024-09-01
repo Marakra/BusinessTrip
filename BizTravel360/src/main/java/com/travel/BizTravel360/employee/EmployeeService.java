@@ -43,7 +43,7 @@ public class EmployeeService implements EmployeeRepository {
             trimEmployee(employee);
             validateEmployee(employee);
 
-            employee.setEmployeeId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
+            employee.setId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
             List<Employee> employeeList = loadEmployeeFromFile();
             employeeList.add(employee);
 
@@ -72,7 +72,7 @@ public class EmployeeService implements EmployeeRepository {
         List<Employee> employeeList = loadEmployeeFromFile();
 
         int index = employeeList.indexOf(existingEmployee);
-        updateEmployee.setEmployeeId(employeeId);
+        updateEmployee.setId(employeeId);
         employeeList.set(index, updateEmployee);
 
         fileService.writerToFile(employeeList, employeeFilePath);
@@ -91,7 +91,7 @@ public class EmployeeService implements EmployeeRepository {
     public Employee findEmployeeById(Long employeeId) throws IOException {
         List<Employee> employeeList = loadEmployeeFromFile();
         return employeeList.stream()
-                .filter(e -> Objects.equals(e.getEmployeeId(), employeeId))
+                .filter(e -> Objects.equals(e.getId(), employeeId))
                 .findFirst()
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
     }
@@ -124,7 +124,7 @@ public class EmployeeService implements EmployeeRepository {
                             employee.getFirstName().toLowerCase().contains(query.toLowerCase()) ||
                                 employee.getLastName().toLowerCase().contains(query.toLowerCase()) ||
                                 employee.getEmail().toLowerCase().contains(query.toLowerCase()) ||
-                                String.valueOf(employee.getEmployeeId()).contains(query) &&
+                                String.valueOf(employee.getId()).contains(query) &&
                                         (position == null || employee.getPosition() == position))
                 ).toList();
         

@@ -1,8 +1,8 @@
 package com.travel.BizTravel360.delegation.annotation;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.delegation.Delegation;
-import com.travel.BizTravel360.delegation.configuration.AppConfig;
+import com.travel.BizTravel360._configuration.AppConfig;
 import com.travel.BizTravel360.transport.Transport;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

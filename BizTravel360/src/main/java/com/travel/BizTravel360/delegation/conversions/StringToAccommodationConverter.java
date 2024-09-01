@@ -1,14 +1,14 @@
 package com.travel.BizTravel360.delegation.conversions;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
-import com.travel.BizTravel360.accommodation.AccommodationService;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import java.util.Optional;
 
 @Component
-public class StringToAccommodationConverter implements Converter<String, Accommodation> {
+public class StringToAccommodationConverter implements Converter<String, Optional<Accommodation>> {
     
     private final AccommodationService accommodationService;
     
@@ -17,11 +17,11 @@ public class StringToAccommodationConverter implements Converter<String, Accommo
     }
     
     @Override
-    public Accommodation convert(String source) {
+    public Optional<Accommodation> convert(String source) {
         Long accommodationId = Long.parseLong(source);
         try {
             return accommodationService.findAccommodationById(accommodationId);
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

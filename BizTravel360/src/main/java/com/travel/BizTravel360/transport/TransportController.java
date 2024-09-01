@@ -1,7 +1,5 @@
 package com.travel.BizTravel360.transport;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
-import com.travel.BizTravel360.accommodation.TypeAccommodation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;

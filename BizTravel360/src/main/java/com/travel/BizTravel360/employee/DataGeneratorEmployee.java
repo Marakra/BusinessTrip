@@ -22,7 +22,7 @@ public class DataGeneratorEmployee {
     
     private static Employee generateRandomEmployee() {
         Employee employee = new Employee();
-        employee.setEmployeeId((long) RANDOM.nextLong(100000));
+        employee.setId((long) RANDOM.nextLong(100000));
         
         String firstName = "FirstName" + RANDOM.nextInt(1000);
         String lastName = "LastName" + RANDOM.nextInt(1000);

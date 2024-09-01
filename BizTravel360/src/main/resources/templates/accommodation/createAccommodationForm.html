@@ -7,7 +7,7 @@
     <div class="form-container">
         <h2 class="color-text">Add Accommodation</h2>
         <form method="POST" th:action="@{/accommodation}" th:object="${accommodation}">
-            <input type="hidden" th:field="*{accommodationId}" />
+            <input type="hidden" th:field="*{id}" />
 
             <div class="form-group">
                 <label for="nameAccommodation" class="color-text">Name:</label>

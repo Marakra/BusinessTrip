@@ -1,8 +1,8 @@
 package com.travel.BizTravel360.delegation;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.travel.BizTravel360.accommodation.Accommodation;
-import com.travel.BizTravel360.accommodation.AccommodationService;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.delegation.exeptions.DelegationSaveException;
 import com.travel.BizTravel360.employee.EmployeeService;
 import com.travel.BizTravel360.file.FileService;
@@ -62,7 +62,7 @@ public class DelegationService implements DelegationRepository {
             validateDelegation(delegation);
             
             //Convert and set associations
-            delegation.setEmployee(employeeService.findEmployeeById(delegation.getEmployee().getEmployeeId()));
+            delegation.setEmployee(employeeService.findEmployeeById(delegation.getEmployee().getId()));
             
             List<Transport> transports = fetchEntitiesByIds(delegation.getTransports().stream()
                     .map(Transport::getTransportId)
@@ -75,19 +75,19 @@ public class DelegationService implements DelegationRepository {
             });
             delegation.setTransports(transports);
             
-            List<Accommodation> accommodations = fetchEntitiesByIds(delegation.getAccommodations().stream()
-                    .map(Accommodation::getAccommodationId)
-                    .collect(Collectors.toList()), accommodationId -> {
-                try {
-                    return accommodationService.findAccommodationById(accommodationId);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            delegation.setAccommodations(accommodations);
+//            List<Accommodation> accommodations = fetchEntitiesByIds(delegation.getAccommodations().stream()
+//                    .map(Accommodation::getId)
+//                    .collect(Collectors.toList()), accommodationId -> {
+//                try {
+//                    return accommodationService.findAccommodationById(accommodationId);
+//                } catch (IOException e) {
+//                    throw new RuntimeException(e);
+//                }
+//            });
+           // delegation.setAccommodations(accommodations);
             
-            BigDecimal totalPrice = calculatorTotalPrice(transports, accommodations);
-            delegation.setTotalPrice(totalPrice);
+           // BigDecimal totalPrice = calculatorTotalPrice(transports, accommodations);
+           // delegation.setTotalPrice(totalPrice);
             
             validateDelegation(delegation);
             

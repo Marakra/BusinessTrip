@@ -91,7 +91,7 @@ public class EmployeeController {
         if (bindingResult.hasErrors()) {
             return "employee/updateEmployeeForm";
         }
-        employeeService.updateEmployee(employee, employee.getEmployeeId());
+        employeeService.updateEmployee(employee, employee.getId());
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "updated"));
         return "redirect:/employees";
     }

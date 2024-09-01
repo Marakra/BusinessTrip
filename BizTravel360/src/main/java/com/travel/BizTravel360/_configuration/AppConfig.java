@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.delegation.configuration;
+package com.travel.BizTravel360._configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

@@ -51,9 +51,9 @@
                     <td th:text="${#temporals.format(accommodation.checkOut, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#numbers.formatDecimal(accommodation.price, 2, 2) + ' zl'}"></td>
                     <td class="actions-column">
-                        <a th:href="@{/accommodation/{accommodationId}(accommodationId=${accommodation.accommodationId})}"
+                        <a th:href="@{/accommodation/employee/{id}(id=${accommodation.id})}"
                            class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/delete-accommodation/{accommodationId}(accommodationId=${accommodation.accommodationId})}"
+                        <form th:action="@{/delete-accommodation/{id}(id=${accommodation.id})}"
                               method="POST" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>

@@ -1,6 +1,7 @@
 package com.travel.BizTravel360.accommodation;
 
 
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.Random;
 @Component
 public class DataGeneratorAccommodation {
     
+    //TODO add task to do generator to accommodation
     private static final Random RANDOM = new Random();
     
     public static List<Accommodation> generateRandomAccommodationsList(int count) {
@@ -24,7 +26,7 @@ public class DataGeneratorAccommodation {
     
     private static Accommodation generateRandomAccommodation() {
         Accommodation accommodation = new Accommodation();
-        accommodation.setAccommodationId((long) RANDOM.nextInt(100000));
+        accommodation.setId((long) RANDOM.nextInt(100000));
         accommodation.setNameAccommodation("Accommodation " + RANDOM.nextInt(1000));
         accommodation.setTypeAccommodation(TypeAccommodation.values()[RANDOM.nextInt(TypeAccommodation.values().length)]);
         accommodation.setAddress("Address " + RANDOM.nextInt(1000));
