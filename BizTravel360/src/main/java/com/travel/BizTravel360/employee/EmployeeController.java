@@ -47,17 +47,17 @@ public class EmployeeController {
     public String getAllEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                   Model model) throws IOException {
-        Page<Employee> employees = employeeService.fetchEmployeePage(PageRequest.of(page, size));
-        log.info("Fetched: {} employees", employees.getTotalElements());
-        model.addAttribute("employees", employees);
-
-        int totalPages = employees.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.range(0, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        //Todo new task
+//        Page<Employee> employees = employeeService.fetchEmployeePage(PageRequest.of(page, size));
+//        log.info("Fetched: {} employees", employees.getTotalElements());
+//        model.addAttribute("employees", employees);
+//
+//        int totalPages = employees.getTotalPages();
+//        if (totalPages > 0) {
+//            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+//            model.addAttribute("pageNumbers", pageNumbers);}
         return "employee/employees";
     }
     
@@ -80,8 +80,8 @@ public class EmployeeController {
     
     @GetMapping("/employee/{employeeId}")
     public String showUpdateEmployeeForm(@PathVariable("employeeId") Long employeeId, Model model) throws IOException {
-        Employee employee = employeeService.findEmployeeById(employeeId);
-        model.addAttribute("employee", employee);
+       // Employee employee = employeeService.findEmployeeById(employeeId);
+      //  model.addAttribute("employee", employee);
         return "employee/updateEmployeeForm";
     }
     
@@ -91,7 +91,7 @@ public class EmployeeController {
         if (bindingResult.hasErrors()) {
             return "employee/updateEmployeeForm";
         }
-        employeeService.updateEmployee(employee, employee.getId());
+      //  employeeService.updateEmployee(employee, employee.getId());
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "updated"));
         return "redirect:/employees";
     }
@@ -99,9 +99,9 @@ public class EmployeeController {
     @PostMapping("/delete-employee/{employeeId}")
     public String deleteEmployee(@PathVariable("employeeId") Long employeeId,
                                  RedirectAttributes redirectAttributes) throws IOException {
-        Employee employee = employeeService.findEmployeeById(employeeId);
+    //    Employee employee = employeeService.findEmployeeById(employeeId);
         employeeService.deleteEmployeeById(employeeId);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "deleted"));
+       // redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employee, "deleted"));
         return "redirect:/employees";
     }
     
@@ -112,15 +112,14 @@ public class EmployeeController {
                                   @RequestParam(value = "position", required = false) PositionEmployee position,
                                   Model model) throws IOException {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Employee> employees = employeeService.searchEmployee(keyword, position, pageable);
+       // Page<Employee> employees = employeeService.searchEmployee(keyword, position, pageable);
         
-        model.addAttribute("employees", employees);
+       // model.addAttribute("employees", employees);
         model.addAttribute("keyword", keyword);
         
-        int totalPages = employees.getTotalPages();
-    
-        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
+       // int totalPages = employees.getTotalPages();
+        //List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
+       // model.addAttribute("pageNumbers", pageNumbers);
         return "employee/employees";
     }
     

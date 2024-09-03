@@ -1,17 +1,21 @@
 package com.travel.BizTravel360.accommodation.domain;
 
-import com.travel.BizTravel360.accommodation.DataGeneratorAccommodation;
 import com.travel.BizTravel360.accommodation.TypeAccommodation;
+import com.travel.BizTravel360.accommodation.exeptions.AccommodationSaveException;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,43 +26,51 @@ public class AccommodationService{
     private final AccommodationRepository accommodationRepository;
     private final Validator validator;
     
-    public Accommodation saveAccommodation(Accommodation accommodation) {
+    public Accommodation save(Accommodation accommodation) throws DataAccessException {
         try {
             trimAccommodation(accommodation);
             validateAccommodation(accommodation);
-            accommodation.setId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
             return accommodationRepository.save(accommodation);
-        } catch (Exception e) {
-            log.error("Failed to save accommodation {}", accommodation, e);
-            throw new RuntimeException(String.format("Failed to save accommodation %s.", accommodation), e);        }
+        } catch (DataAccessException exp) {
+            log.error("Failed to save accommodation {}", accommodation, exp);
+            throw new AccommodationSaveException(
+                    String.format("Failed to save accommodation: %s, message: %s.", accommodation, exp.getMessage()));
+        }
     }
     
-    public Page<Accommodation> fetchAccommodationPage(Pageable pageable) {
+    public Page<Accommodation> findAll(Pageable pageable) {
         return accommodationRepository.findAll(pageable);
     }
     
-    public Accommodation updateAccommodation(Accommodation updateAccommodation, Long accommodationId) {
-        accommodationRepository.existsById(accommodationId);
-        updateAccommodation.setId(accommodationId);
-        return accommodationRepository.save(updateAccommodation);
+    public void updateAccommodation(Accommodation updateAccommodation) {
+        Accommodation accommodation = accommodationRepository.findById(updateAccommodation.getId())
+                .orElseThrow(() -> new NoSuchElementException("Accommodation not found"));
+        
+        accommodation.setNameAccommodation(updateAccommodation.getNameAccommodation());
+        accommodation.setTypeAccommodation(updateAccommodation.getTypeAccommodation());
+        accommodation.setAddress(updateAccommodation.getAddress());
+        accommodation.setCheckIn(updateAccommodation.getCheckIn());
+        accommodation.setCheckOut(updateAccommodation.getCheckOut());
+        accommodation.setPrice(updateAccommodation.getPrice());
+        
+        accommodationRepository.save(accommodation);
     }
     
-    public void deleteAccommodationById(Long accommodationId) {
+    public void deleteById(Long accommodationId) {
         accommodationRepository.deleteById(accommodationId);
     }
     
-    public Optional<Accommodation> findAccommodationById(Long accommodationId) {
-        return accommodationRepository.findById(accommodationId);
-    }
-    
-    //TODO create new generator with correct data to DB
+    //TODO create new generator with correct data to DB in the new task
 //    public List<Accommodation> generateAndSaveRandomAccommodation(int count)  {
 //        List<Accommodation> randomAccommodations = DataGeneratorAccommodation.generateRandomAccommodationsList(count);
 //        return accommodationRepository.saveAll(randomAccommodations);
 //    }
     
     public Page<Accommodation> searchAccommodation(String query, TypeAccommodation type, Pageable pageable) {
-        return accommodationRepository.findByNameAccommodationContainingIgnoreCaseAndTypeAccommodation(query, type, pageable);
+        if (query == null || query.isEmpty()) {
+            return accommodationRepository.findAll(pageable);
+        }
+        return accommodationRepository.findByNameAccommodation(query, type, pageable);
     }
     
     private void validateAccommodation(Accommodation accommodation){
@@ -72,6 +84,10 @@ public class AccommodationService{
     private void trimAccommodation(Accommodation accommodation) {
         accommodation.setNameAccommodation(accommodation.getNameAccommodation().trim());
         accommodation.setAddress(accommodation.getAddress().trim());
+    }
+    
+    public Optional<Accommodation> getById(Long accommodationId) {
+        return accommodationRepository.findById(accommodationId);
     }
 }
 

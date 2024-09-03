@@ -9,6 +9,7 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 import java.time.LocalDateTime;
@@ -41,11 +42,13 @@ public class Accommodation extends BaseEntity {
     @NotNull(message = "CheckIn is a required field!")
     @Future(message = "CheckIn must be in the future")
     @Column(name = "CHECK_IN")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime checkIn;
     
     @NotNull(message = "CheckOut is a required field!")
     @Future(message = "checkOut must be in the future")
     @Column(name = "CHECK_OUT")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime checkOut;
     
     @NotNull(message = "Price is a required field!")

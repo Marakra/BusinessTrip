@@ -21,7 +21,8 @@ public class StringToTransportConverter implements Converter<String, Transport> 
         Long transportId = Long.parseLong(source);
         try {
             return transportService.findTransportById(transportId);
-        } catch (IOException e) {
+            //Todo change Exception to IOException in the next task TranaportDTO
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

@@ -61,13 +61,6 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 
-		<!-- Jakarta Persistence API -->
-		<dependency>
-			<groupId>jakarta.persistence</groupId>
-			<artifactId>jakarta.persistence-api</artifactId>
-			<version>3.2.0</version>
-		</dependency>
-
 		<!-- MySQL Connector -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -85,19 +78,7 @@
 		<!-- Flyway for database migrations -->
 		<dependency>
 			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>10.17.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
-		</dependency>
-
-		<!-- H2 Database (for testing purposes) -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>2.3.232</version>
 		</dependency>
 
 		<!-- Jackson for JSON handling -->

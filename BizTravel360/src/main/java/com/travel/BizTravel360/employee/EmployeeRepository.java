@@ -15,12 +15,7 @@ public  interface EmployeeRepository {
 
     //Crud
     void saveEmployee(Employee employee) throws IOException;
-    Page<Employee> fetchEmployeePage(Pageable pageable) throws IOException;
-    void updateEmployee(Employee updateEmployee, Long employeeId) throws IOException;
     void deleteEmployeeById(Long employeeId) throws IOException;
-
-    Employee findEmployeeById(Long employeeId) throws IOException;
-
-    List<Employee> loadEmployeeFromFile() throws IOException;
+    
     void generateAnsSaveRandomEmployee(int count) throws IOException;
 }

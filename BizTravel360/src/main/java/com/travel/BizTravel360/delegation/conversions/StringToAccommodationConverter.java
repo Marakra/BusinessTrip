@@ -20,7 +20,7 @@ public class StringToAccommodationConverter implements Converter<String, Optiona
     public Optional<Accommodation> convert(String source) {
         Long accommodationId = Long.parseLong(source);
         try {
-            return accommodationService.findAccommodationById(accommodationId);
+            return accommodationService.getById(accommodationId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

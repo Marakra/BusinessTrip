@@ -5,15 +5,10 @@ import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
-
+@Repository
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
-    Accommodation save(Accommodation accommodation);
-    void deleteById(Long accommodationId);
-    Page<Accommodation> findByNameAccommodationContainingIgnoreCaseAndTypeAccommodation(String query, TypeAccommodation type, Pageable pageable);
-    Page<Accommodation> findAll(Pageable pageable);
-    @Override
-    Optional<Accommodation> findById(Long id);
+    Page<Accommodation> findByNameAccommodation(String name, TypeAccommodation type, Pageable pageable);
+    
 }

@@ -39,7 +39,7 @@
 
             <div class="form-group">
                 <label for="checkIn" class="color-text">CheckIn:</label>
-                <input type="datetime-local" id="checkIn" th:field="*{checkIn}"
+                <input type="datetime-local" id="checkIn" th:field="*{checkIn}" th:value="${#temporals.format(accommodation.checkIn, 'yyyy-MM-dd HH:mm')}"
                 class="form-control color-text">
                 <ul>
                     <li th:each="err : ${#fields.errors('checkIn')}" th:text="${err}" class="error"></li>
@@ -48,7 +48,7 @@
 
             <div class="form-group">
                 <label for="checkOut" class="color-text">CheckOut:</label>
-                <input type="datetime-local" id="checkOut" th:field="*{checkOut}" class="form-control color-text">
+                <input type="datetime-local" id="checkOut" th:field="*{checkOut}" th:value="${#temporals.format(accommodation.checkOut, 'yyyy-MM-dd HH:mm')}" class="form-control color-text">
                 <ul>
                     <li th:each="err : ${#fields.errors('checkOut')}" th:text="${err}" class="error"></li>
                 </ul>

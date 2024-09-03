@@ -7,6 +7,7 @@ import com.travel.BizTravel360.transport.exeptions.TransportSaveException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -23,121 +24,42 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional
 @Service
+@RequiredArgsConstructor
 public class TransportService implements TransportRepository{
-
-    private final FileService fileService;
-    private String transportFilePath;
-
+    
     private  final Validator validator;
 
-    public TransportService(@Value("${transports.file.path}") String transportFilePath,
-                            FileService fileService, Validator validator) {
-        this.fileService = fileService;
-        this.transportFilePath = transportFilePath;
-        this.validator = validator;
-    }
+   
 
     @Override
     public void saveTransport(Transport transport) throws IOException {
         try {
             trimTransport(transport);
             validateTransport(transport);
-
-            transport.setTransportId(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE);
-            List<Transport> transportList = loadTransportFromFile();
-            transportList.add(transport);
-
-            fileService.writerToFile(transportList, transportFilePath);
-        } catch (IOException e) {
+            
+        } catch (Exception e) {
             log.error("Failed to save transport {}", transport, e);
             throw new TransportSaveException(String.format("Failed to save transport %s", transport), e);
         }
     }
-
-    @Override
-    public Page<Transport> fetchTransportPage(Pageable pageable) throws IOException {
-        List<Transport> transportList = loadTransportFromFile();
-        int totalTransportSize = transportList.size();
-
-        return transportList.stream()
-                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-                .limit(pageable.getPageSize())
-                .collect(Collectors.collectingAndThen(
-                        Collectors.toList(), list -> new PageImpl<>(list, pageable, totalTransportSize)));
-    }
+    
 
 
     @Override
     public void updateTransport(Transport updateTransport, Long transportId) throws IOException {
-        Transport existingTransport = findTransportById(transportId);
-        List<Transport> transportList = loadTransportFromFile();
-
-        int index = transportList.indexOf(existingTransport);
-        updateTransport.setTransportId(transportId);
-        transportList.set(index, updateTransport);
-
-        fileService.writerToFile(transportList, transportFilePath);
     }
 
     @Override
     public void deleteTransportById(Long transportId) throws IOException {
-        List<Transport> transportList = loadTransportFromFile();
-        Transport existingTransport = findTransportById(transportId);
-
-        transportList.remove(existingTransport);
-        fileService.writerToFile(transportList, transportFilePath);
     }
-
-    @Override
-    public Transport findTransportById (Long transportId) throws IOException {
-        List<Transport> transportList = loadTransportFromFile();
-
-        return transportList.stream()
-                .filter(t -> Objects.equals(t.getTransportId(), transportId))
-                .findFirst()
-                .orElseThrow(() -> new TransportNotFoundException(transportId));
-    }
-
-    @Override
-    public List<Transport> loadTransportFromFile() throws IOException {
-        if (Files.exists(Paths.get(transportFilePath))) {
-            List<Transport> transportList = fileService.readFromFile(transportFilePath,
-                    new TypeReference<List<Transport>>() {});
-            Collections.reverse(transportList);
-            return transportList;
-        }
-        return new ArrayList<>();
-    }
+    
+    
 
     @Override
     public void generateAndSaveRandomTransport(int count) throws IOException {
         List<Transport> randomTransports = DataGeneratorTransport.generateRandomTransportList(count);
-        List<Transport> existingTransports = loadTransportFromFile();
-        existingTransports.addAll(randomTransports);
-        fileService.writerToFile(existingTransports, transportFilePath);
     }
     
-    public Page<Transport> searchTransport(String query, TypeTransport type, Pageable pageable) throws IOException {
-        List<Transport> allTransports = loadTransportFromFile();
-        List<Transport> filteredTransports = allTransports.stream()
-                .filter(transport ->
-                        (query == null || query.isEmpty() ||
-                                transport.getTransportIdentifier().toLowerCase().contains(query.toLowerCase()) ||
-                                transport.getDeparture().toLowerCase().contains(query.toLowerCase()) ||
-                                transport.getArrival().toLowerCase().contains(query.toLowerCase()) ||
-                                String.valueOf(transport.getTransportId()).contains(query)) &&
-                                (type == null || transport.getTypeTransport() == type)
-                        ) .toList();
-        
-        int totalFiltered = filteredTransports.size();
-        
-        List<Transport> paginatedTransports = filteredTransports.stream()
-                .skip((long) pageable.getPageNumber() * pageable.getPageSize())
-                .limit(pageable.getPageSize())
-                .collect(Collectors.toList());
-        
-        return new PageImpl<>(paginatedTransports, pageable, totalFiltered);
-    }
 
     private void validateTransport(Transport transport) {
         Set<ConstraintViolation<Transport>> constraintViolations = validator.validate(transport);
@@ -152,5 +74,9 @@ public class TransportService implements TransportRepository{
         transport.setTransportIdentifier(transport.getTransportIdentifier().trim());
         transport.setDeparture(transport.getDeparture().trim());
         transport.setArrival(transport.getArrival().trim());
+    }
+    
+    public Transport findTransportById(Long transportId) {
+        return null;
     }
 }

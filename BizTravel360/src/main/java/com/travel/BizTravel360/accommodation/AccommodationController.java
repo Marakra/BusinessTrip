@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 public class AccommodationController {
 
     private  static final String PAGE_DEFAULT_VALUE = "0";
-    private static final String SIZE_DEFAULT_VALUE = "10";
+    private static final String SIZE_DEFAULT_VALUE = "1";
     private static final int GENERATE_RANDOM_ACCOMMODATIONS = 15;
 
     private final AccommodationService accommodationService;
@@ -35,7 +35,7 @@ public class AccommodationController {
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                        Model model) {
-        Page<Accommodation> accommodations = accommodationService.fetchAccommodationPage(PageRequest.of(page, size));
+        Page<Accommodation> accommodations = accommodationService.findAll(PageRequest.of(page, size));
         log.info("Fetched accommodationList: {}", accommodations.getTotalElements());
         model.addAttribute("accommodations", accommodations);
 
@@ -61,7 +61,7 @@ public class AccommodationController {
         if (bindingResult.hasErrors()) {
             return "accommodation/createAccommodationForm";
         }
-        accommodationService.saveAccommodation(accommodation);
+        accommodationService.save(accommodation);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "created"));
         
         return "redirect:/accommodations/employee";
@@ -69,8 +69,8 @@ public class AccommodationController {
 
     @GetMapping("/accommodation/employee/{id}")
     public String showUpdateAccommodationForm(@PathVariable("id") Long accommodationId, Model model) {
-        Optional<Accommodation> optionalAccommodation = accommodationService.findAccommodationById(accommodationId);
-        Accommodation accommodation = optionalAccommodation.get();
+        Optional<Accommodation> accommodations = accommodationService.getById(accommodationId);
+        Accommodation accommodation = accommodations.get();
         
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         model.addAttribute("formattedCheckIn", formatter.format(accommodation.getCheckIn()));
@@ -86,17 +86,16 @@ public class AccommodationController {
         if (bindingResult.hasErrors()) {
             return "accommodation/updateAccommodationForm";
         }
-        accommodationService.updateAccommodation(accommodation, accommodation.getId());
+        accommodationService.updateAccommodation(accommodation);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "updated"));
         return "redirect:/accommodations/employee";
     }
 
     @PostMapping("/delete-accommodation/{accommodationId}")
-    public String deleteAccommodation(@PathVariable("accommodationId") Long accommodationId,
+    public String deleteAccommodation(@PathVariable("accommodationId") Accommodation accommodationId,
                                       RedirectAttributes redirectAttributes) {
-        Optional<Accommodation> accommodation = accommodationService.findAccommodationById(accommodationId);
-        accommodationService.deleteAccommodationById(accommodationId);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation.orElse(null), "deleted"));
+        accommodationService.deleteById(accommodationId.getId());
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodationId, "deleted"));
         return "redirect:/accommodations/employee";
     }
 
