@@ -1,5 +1,6 @@
 package com.travel.BizTravel360.accommodation;
 
+import ch.qos.logback.core.joran.conditional.IfAction;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import jakarta.validation.Valid;
@@ -114,14 +115,13 @@ public class AccommodationController {
                                       Model model) {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Accommodation> accommodations = accommodationService.searchAccommodation(keyword, type, pageable);
+        Page<Accommodation> accommodations = accommodationService.searchAccommodation(keyword, pageable);
         
         model.addAttribute("accommodations", accommodations);
         model.addAttribute("type", type);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalPages", accommodations.getTotalPages());
         
-        int totalPages = accommodations.getTotalPages();
-        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
         
         return "accommodation/accommodationsForEmployee";
     }

@@ -66,11 +66,8 @@ public class AccommodationService{
 //        return accommodationRepository.saveAll(randomAccommodations);
 //    }
     
-    public Page<Accommodation> searchAccommodation(String query, TypeAccommodation type, Pageable pageable) {
-        if (query == null || query.isEmpty()) {
-            return accommodationRepository.findAll(pageable);
-        }
-        return accommodationRepository.findByNameAccommodation(query, type, pageable);
+    public Page<Accommodation> searchAccommodation(String keyword, Pageable pageable) {
+        return accommodationRepository.findByKeyword(keyword, pageable);
     }
     
     private void validateAccommodation(Accommodation accommodation){
