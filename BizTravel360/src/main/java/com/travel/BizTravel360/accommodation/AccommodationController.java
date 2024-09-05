@@ -1,6 +1,5 @@
 package com.travel.BizTravel360.accommodation;
 
-import ch.qos.logback.core.joran.conditional.IfAction;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import jakarta.validation.Valid;
@@ -25,8 +24,7 @@ import java.util.stream.IntStream;
 public class AccommodationController {
 
     private  static final String PAGE_DEFAULT_VALUE = "0";
-    private static final String SIZE_DEFAULT_VALUE = "1";
-    private static final int GENERATE_RANDOM_ACCOMMODATIONS = 15;
+    private static final String SIZE_DEFAULT_VALUE = "10";
 
     private final AccommodationService accommodationService;
 
@@ -97,13 +95,6 @@ public class AccommodationController {
                                       RedirectAttributes redirectAttributes) {
         accommodationService.deleteById(accommodationId.getId());
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodationId, "deleted"));
-        return "redirect:/accommodations/employee";
-    }
-
-    @PostMapping("/generate-random-accommodation")
-    public String generationRandomAccommodation(RedirectAttributes redirectAttributes) {
-      //  accommodationService.generateAndSaveRandomAccommodation(GENERATE_RANDOM_ACCOMMODATIONS);
-        redirectAttributes.addFlashAttribute("message", "Random accommodations generated successfully!");
         return "redirect:/accommodations/employee";
     }
     

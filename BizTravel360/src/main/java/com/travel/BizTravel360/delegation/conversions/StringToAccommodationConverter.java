@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.delegation.conversions;
 
-import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 

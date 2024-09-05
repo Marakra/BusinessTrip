@@ -48,7 +48,7 @@ public class DelegationService implements DelegationRepository {
             validateDelegation(delegation);
             
         }catch (Exception e) {
-            log.error("Failed to create delegation {}", delegation, e);
+            log.error("Failed to create delegation {}", delegation);
             throw new DelegationSaveException(String.format("Failed to create delegation: %s", delegation), e);
         }
     }

@@ -59,7 +59,4 @@ public class Accommodation extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "DELEGATION_ID")
     private Delegation delegation;
-    
-    @Transient
-    private String description;
 }
