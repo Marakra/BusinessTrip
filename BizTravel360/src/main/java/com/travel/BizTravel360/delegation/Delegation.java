@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.travel.BizTravel360.delegation.annotation.ValidDateRangeDelegation;
 import com.travel.BizTravel360.accommodation.Accommodation;
 import com.travel.BizTravel360.employee.Employee;
-import com.travel.BizTravel360.transport.Transport;
+import com.travel.BizTravel360.transport.model.Transport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Getter;

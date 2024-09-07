@@ -3,7 +3,7 @@ package com.travel.BizTravel360.delegation.annotation;
 import com.travel.BizTravel360.accommodation.Accommodation;
 import com.travel.BizTravel360.delegation.Delegation;
 import com.travel.BizTravel360.delegation.configuration.AppConfig;
-import com.travel.BizTravel360.transport.Transport;
+import com.travel.BizTravel360.transport.model.Transport;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.stereotype.Component;

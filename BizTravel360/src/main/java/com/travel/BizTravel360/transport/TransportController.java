@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.transport;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
-import com.travel.BizTravel360.accommodation.TypeAccommodation;
+import com.travel.BizTravel360.transport.domain.TransportService;
+import com.travel.BizTravel360.transport.model.Transport;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,7 +35,7 @@ public class TransportController {
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model) throws IOException {
-        Page<Transport> transports = transportService.fetchTransportPage(PageRequest.of(page, size));
+        Page<Transport> transports = transportService.findAll(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
         model.addAttribute("transports", transports);
 
@@ -60,18 +61,18 @@ public class TransportController {
         if (bindingResult.hasErrors()) {
             return "transport/createTransportForm";
         }
-        transportService.saveTransport(transport);
+        transportService.save(transport);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "created"));
         return "redirect:/transports/employee";
     }
 
 
-    @GetMapping("/transport/{transportId}")
-    public String showUpdateTransportForm(@PathVariable("transportId") Long transportId, Model model) throws IOException {
-        Transport transport = transportService.findTransportById(transportId);
-        model.addAttribute("transport", transport);
-        return "transport/updateTransportForm";
-    }
+//    @GetMapping("/transport/{transport/{id}}")
+//    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model) throws IOException {
+//        Optional<Transport> transport = transportService.findTransportById(transportId);
+//        model.addAttribute("transport", transport);
+//        return "transport/updateTransportForm";
+//    }
 
 
     @PostMapping("/update-transport")
@@ -80,24 +81,23 @@ public class TransportController {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
-        transportService.updateTransport(transport, transport.getTransportId());
+        transportService.updateTransport(transport);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "updated"));
         return "redirect:/transports/employee";
     }
 
 
     @PostMapping("/delete-transport/{transportId}")
-    public String deleteTransport(@PathVariable("transportId") Long transportId,
+    public String deleteTransport(@PathVariable("transportId") Transport transportId,
                                   RedirectAttributes redirectAttributes) throws IOException {
-        Transport transport = transportService.findTransportById(transportId);
-        transportService.deleteTransportById(transportId);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
+        transportService.deleteById(transportId.getId());
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transportId, "deleted"));
         return "redirect:/transports/employee";
     }
 
     @PostMapping("/generate-random-transport")
     public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
-        transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
+       // transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
         redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
         return "redirect:/transports/employee";
     }
@@ -107,17 +107,15 @@ public class TransportController {
                                       @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                       @RequestParam(value = "keyword", defaultValue = "") String keyword,
                                       @RequestParam(value = "type", required = false) TypeTransport type,
-                                      Model model) throws IOException {
+                                      Model model)  {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Transport> transports = transportService.searchTransport(keyword, type, pageable);
-        
-        model.addAttribute("transports", transports);
+        Page<Transport> transports = transportService.searchATransport(keyword, pageable);
+
+        model.addAttribute("accommodations", transports);
         model.addAttribute("type", type);
-        
-        int totalPages = transports.getTotalPages();
-        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalPages", transports.getTotalPages());
         
         return "transport/transportsForEmployee";
     }

@@ -1,6 +1,6 @@
 package com.travel.BizTravel360.transport.annotation;
 
-import com.travel.BizTravel360.transport.Transport;
+import com.travel.BizTravel360.transport.model.Transport;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -16,10 +16,11 @@ public class DateRangeValidatorTransport implements ConstraintValidator <ValidDa
         if (transport == null) {
             return true; // or false if you want to validate non-null objects
         }
-        
+
         boolean isValid = transport.getDepartureDateTime() != null
                 && transport.getArrivalDateTime() != null
                 && transport.getDepartureDateTime().isBefore(transport.getArrivalDateTime());
+
         
         if (!isValid) {
             constraint.disableDefaultConstraintViolation();
