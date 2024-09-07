@@ -1,10 +1,10 @@
 package com.travel.BizTravel360.accommodation.annotation;
 
-import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class DateRangeValidatorAccommodation implements ConstraintValidator <ValidDateRangeAccommodation, Accommodation> {
+public class DateRangeValidatorAccommodation implements ConstraintValidator <ValidDateRangeAccommodation, AccommodationDTO> {
     
     @Override
     public void initialize(ValidDateRangeAccommodation constraintAnnotation) {
@@ -12,14 +12,14 @@ public class DateRangeValidatorAccommodation implements ConstraintValidator <Val
     }
     
     @Override
-    public boolean isValid(Accommodation accommodation, ConstraintValidatorContext constraint) {
-        if (accommodation == null) {
+    public boolean isValid(AccommodationDTO dto, ConstraintValidatorContext constraint) {
+        if (dto == null) {
             return true; // or false if you want to validate non-null objects
         }
         
-        boolean isValid = accommodation.getCheckIn() != null &&
-                accommodation.getCheckOut() != null &&
-                accommodation.getCheckIn().isBefore(accommodation.getCheckOut());
+        boolean isValid = dto.getCheckIn() != null &&
+                dto.getCheckOut() != null &&
+                dto.getCheckIn().isBefore(dto.getCheckOut());
         
         if (!isValid) {
             constraint.disableDefaultConstraintViolation();

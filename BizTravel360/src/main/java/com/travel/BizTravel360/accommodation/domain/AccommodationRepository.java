@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
     //Custom query
-    @Query(value = "SELECT * FROM accommodation acc WHERE (acc.name LIKE %:keyword%) and (:type IS NULL OR acc.type = :type)", nativeQuery = true)
+    @Query(value = "SELECT * FROM accommodation acc WHERE (acc.name LIKE %:keyword% or acc.address LIKE %:keyword%) and (:type IS NULL OR acc.type = :type)", nativeQuery = true)
     Page<Accommodation> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeAccommodation type, Pageable pageable);
 }

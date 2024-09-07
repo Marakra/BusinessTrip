@@ -13,11 +13,6 @@
                 <div class="input-group">
                     <input type="text" class="form-control" name="keyword" placeholder="Search Accommodation" th:value="${param.keyword}">
                     <label>
-                        <select name="type" class="form-control">
-                            <option value="" th:selected="${param.type == null}">All Types</option>
-                            <option th:each="type : ${T(com.travel.BizTravel360.accommodation.TypeAccommodation).values()}"
-                                    th:value="${type}" th:text="${type}" th:selected="${param.type == type}"></option>
-                        </select>
                     </label>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>

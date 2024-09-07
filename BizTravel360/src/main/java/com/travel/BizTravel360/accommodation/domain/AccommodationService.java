@@ -14,7 +14,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.*;
 
 @Slf4j
@@ -70,8 +69,10 @@ public class AccommodationService{
     private void validateAccommodation(AccommodationDTO accommodationDTO){
         Set<ConstraintViolation<AccommodationDTO>> constraintViolations = validator.validate(accommodationDTO);
         if (!constraintViolations.isEmpty()) {
-            constraintViolations.forEach(validation -> log.error(validation.getMessage()));
-            throw new IllegalArgumentException("Invalid accommodation data");
+            StringBuilder errorMessage = new StringBuilder("CheckIn must be before CheckOut date!");
+            constraintViolations.forEach(violation -> errorMessage.append("\n").append(violation.getMessage()));
+            log.error(errorMessage.toString());
+            throw new IllegalArgumentException(errorMessage.toString());
         }
     }
     
@@ -83,8 +84,10 @@ public class AccommodationService{
     public AccommodationDTO getById(Long accommodationId) {
         return accommodationRepository.findById(accommodationId)
                 .map(mapper::toAccommodation)
-                .orElseThrow(() -> new AccommodationNotFoundException(accommodationId));
-        
+                .orElseThrow(() -> {
+                    log.error("Accommodation with ID {} not found", accommodationId);
+                    return new AccommodationNotFoundException(accommodationId);
+                });
     }
 }
 
