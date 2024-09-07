@@ -29,7 +29,9 @@ public class TransportController {
 
     private final TransportService transportService;
 
-    public TransportController(TransportService transportService) {this.transportService = transportService;}
+    public TransportController(TransportService transportService) {
+        this.transportService = transportService;
+    }
 
     @GetMapping("/transports/employee")
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
@@ -67,12 +69,12 @@ public class TransportController {
     }
 
 
-//    @GetMapping("/transport/{transport/{id}}")
-//    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model) throws IOException {
-//        Optional<Transport> transport = transportService.findTransportById(transportId);
-//        model.addAttribute("transport", transport);
-//        return "transport/updateTransportForm";
-//    }
+    @GetMapping("/transport/{transport/{id}}")
+    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model) throws IOException {
+        Optional<Transport> transport = transportService.getById(transportId);
+        model.addAttribute("transport", transport);
+        return "transport/updateTransportForm";
+    }
 
 
     @PostMapping("/update-transport")
@@ -97,18 +99,18 @@ public class TransportController {
 
     @PostMapping("/generate-random-transport")
     public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
-       // transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
+        // transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
         redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
         return "redirect:/transports/employee";
     }
-    
+
     @GetMapping("/search-transport")
     public String searchAccommodation(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                       @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                       @RequestParam(value = "keyword", defaultValue = "") String keyword,
                                       @RequestParam(value = "type", required = false) TypeTransport type,
-                                      Model model)  {
-        
+                                      Model model) {
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Transport> transports = transportService.searchATransport(keyword, pageable);
 
@@ -116,11 +118,11 @@ public class TransportController {
         model.addAttribute("type", type);
         model.addAttribute("keyword", keyword);
         model.addAttribute("totalPages", transports.getTotalPages());
-        
+
         return "transport/transportsForEmployee";
     }
 
-    private String renderSuccessMessage(Transport transport, String action){
+    private String renderSuccessMessage(Transport transport, String action) {
         String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
                 action,
                 transport.getTypeTransport(),
