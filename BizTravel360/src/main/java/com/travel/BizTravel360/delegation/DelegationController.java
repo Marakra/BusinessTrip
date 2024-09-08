@@ -1,6 +1,6 @@
 package com.travel.BizTravel360.delegation;
 
-import com.travel.BizTravel360.accommodation.AccommodationService;
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.employee.EmployeeService;
 import com.travel.BizTravel360.transport.TransportService;
 import jakarta.validation.Valid;
@@ -45,26 +45,28 @@ public class DelegationController {
     public String getAllDelegations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                     @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                     Model model) throws IOException {
-        Page<Delegation> delegations = delegationService.fetchDelegationPage(PageRequest.of(page, size));
-        log.info("Fetched {} delegation size: ", delegations.getTotalElements());
-        model.addAttribute("delegations", delegations);
         
-        int totalPages = delegations.getTotalPages();
-        if (totalPages > 0){
-            List<Integer> pageNumbers = IntStream.range(0, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        //Todo change this in the new task
+     //   Page<Delegation> delegations = delegationService.fetchDelegationPage(PageRequest.of(page, size));
+       // log.info("Fetched {} delegation size: ", delegations.getTotalElements());
+       // model.addAttribute("delegations", delegations);
+        
+//        int totalPages = delegations.getTotalPages();
+//        if (totalPages > 0){
+//            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+//            model.addAttribute("pageNumbers", pageNumbers);
+//        }
         return "delegation/delegationsForEmployee";
     }
     
     @GetMapping("/delegation/employee")
     public String showCreateDelegationForm(Model model) throws IOException {
         model.addAttribute("delegation", new Delegation());
-        model.addAttribute("employees", employeeService.loadEmployeeFromFile());
-        model.addAttribute("transports", transportService.loadTransportFromFile());
-        model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
+     //   model.addAttribute("employees", employeeService.loadEmployeeFromFile());
+     //   model.addAttribute("transports", transportService.loadTransportFromFile());
+      //  model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
         return "delegation/createDelegationForm";
     }
     
@@ -73,9 +75,9 @@ public class DelegationController {
                                  BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model) throws IOException {
         if (bindingResult.hasErrors()) {
             log.error("Validation errors occurred: {}", bindingResult.getAllErrors());
-            model.addAttribute("employees", employeeService.loadEmployeeFromFile());
-            model.addAttribute("transports", transportService.loadTransportFromFile());
-            model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
+          //  model.addAttribute("employees", employeeService.loadEmployeeFromFile());
+           // model.addAttribute("transports", transportService.loadTransportFromFile());
+          //  model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
             return "delegation/createDelegationForm";
         }
             delegationService.createDelegation(delegation);

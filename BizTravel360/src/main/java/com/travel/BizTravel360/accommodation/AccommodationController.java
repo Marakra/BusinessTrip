@@ -1,5 +1,10 @@
 package com.travel.BizTravel360.accommodation;
 
+import com.travel.BizTravel360.accommodation.domain.AccommodationMapper;
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
+import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -11,7 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -22,22 +27,21 @@ public class AccommodationController {
 
     private  static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
-    private static final int GENERATE_RANDOM_ACCOMMODATIONS = 15;
 
     private final AccommodationService accommodationService;
-
+    
     public AccommodationController(AccommodationService accommodationService) {this.accommodationService = accommodationService;}
-
+    
     @GetMapping("accommodations/employee")
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
-                                       Model model) throws IOException {
-        Page<Accommodation> accommodations = accommodationService.fetchAccommodationPage(PageRequest.of(page, size));
+                                       Model model) {
+        Page<AccommodationDTO> accommodations = accommodationService.findAll(PageRequest.of(page, size));
         log.info("Fetched accommodationList: {}", accommodations.getTotalElements());
         model.addAttribute("accommodations", accommodations);
 
         int totalPages = accommodations.getTotalPages();
-        if (totalPages == 0) {
+        if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.range(0, totalPages)
                     .boxed()
                     .collect(Collectors.toList());
@@ -48,52 +52,50 @@ public class AccommodationController {
 
     @GetMapping("/accommodation/employee")
     public String showSaveAccommodationForm(Model model) {
-        model.addAttribute("accommodation", new Accommodation());
+        model.addAttribute("accommodation", new AccommodationDTO());
         return "accommodation/createAccommodationForm";
     }
 
     @PostMapping("/accommodation")
-    public String saveAccommodation(@Valid @ModelAttribute("accommodation") Accommodation accommodation,
-                                    BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+    public String saveAccommodation(@Valid @ModelAttribute("accommodation") AccommodationDTO accommodationDTO,
+                                    BindingResult bindingResult, RedirectAttributes redirectAttributes){
         if (bindingResult.hasErrors()) {
             return "accommodation/createAccommodationForm";
         }
-        accommodationService.saveAccommodation(accommodation);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "created"));
+        accommodationService.save(accommodationDTO);//accDTO -> acc map acc save to DB
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodationDTO, "created"));
+        
         return "redirect:/accommodations/employee";
     }
 
-    @GetMapping("/accommodation/{accommodationId}")
-    public String showUpdateAccommodationForm(@PathVariable("accommodationId") Long accommodationId, Model model) throws IOException {
-        Accommodation accommodation = accommodationService.findAccommodationById(accommodationId);
+    @GetMapping("/accommodation/employee/{id}")
+    public String showUpdateAccommodationForm(@PathVariable("id") Long accommodationId, Model model) {
+        AccommodationDTO accommodation = accommodationService.getById(accommodationId);
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        model.addAttribute("formattedCheckIn", formatter.format(accommodation.getCheckIn()));
+        model.addAttribute("formattedCheckOut", formatter.format(accommodation.getCheckOut()));
         model.addAttribute("accommodation", accommodation);
+        
         return "accommodation/updateAccommodationForm";
     }
 
-    @PostMapping("/update-accommodation")
-    public String updateAccommodation(@Valid @ModelAttribute("accommodation") Accommodation accommodation,
-                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+    @PostMapping("/update-accommodation/employee")
+    public String updateAccommodation(@Valid @ModelAttribute("accommodation") AccommodationDTO accommodationDTO,
+                                      BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "accommodation/updateAccommodationForm";
         }
-        accommodationService.updateAccommodation(accommodation, accommodation.getAccommodationId());
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "updated"));
+        accommodationService.updateAccommodation(accommodationDTO);
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodationDTO, "updated"));
         return "redirect:/accommodations/employee";
     }
 
     @PostMapping("/delete-accommodation/{accommodationId}")
     public String deleteAccommodation(@PathVariable("accommodationId") Long accommodationId,
-                                      RedirectAttributes redirectAttributes) throws IOException {
-        Accommodation accommodation = accommodationService.findAccommodationById(accommodationId);
-        accommodationService.deleteAccommodationById(accommodationId);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(accommodation, "deleted"));
-        return "redirect:/accommodations/employee";
-    }
-
-    @PostMapping("/generate-random-accommodation")
-    public String generationRandomAccommodation(RedirectAttributes redirectAttributes) throws IOException {
-        accommodationService.generateAndSaveRandomAccommodation(GENERATE_RANDOM_ACCOMMODATIONS);
-        redirectAttributes.addFlashAttribute("message", "Random accommodations generated successfully!");
+                                      RedirectAttributes redirectAttributes) {
+        accommodationService.deleteById(accommodationId);
+        redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted accommodation with ID: %s", accommodationId));
         return "redirect:/accommodations/employee";
     }
     
@@ -102,27 +104,31 @@ public class AccommodationController {
                                       @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                       @RequestParam(value = "keyword", defaultValue = "") String keyword,
                                       @RequestParam(value = "type", required = false) TypeAccommodation type,
-                                      Model model) throws IOException {
+                                      Model model) {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Accommodation> accommodations = accommodationService.searchAccommodation(keyword, type, pageable);
+        Page<AccommodationDTO> accommodations = accommodationService.searchAccommodation(keyword, type, pageable);
         
         model.addAttribute("accommodations", accommodations);
         model.addAttribute("type", type);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("totalPages", accommodations.getTotalPages());
+        model.addAttribute("currentPage", page);
         
         int totalPages = accommodations.getTotalPages();
-        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
-        
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "accommodation/accommodationsForEmployee";
     }
     
-    
-    
-    private String renderSuccessMessage(Accommodation accommodation, String action) {
+    private String renderSuccessMessage(AccommodationDTO accommodationDTO, String action) {
         String successMessage = String.format("Successfully %s accommodation: %s",
                 action,
-                accommodation.getNameAccommodation());
+                accommodationDTO.getName());
         log.info(successMessage);
         return successMessage;
     }

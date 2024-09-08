@@ -1,7 +1,5 @@
 package com.travel.BizTravel360.transport;
 
-import com.travel.BizTravel360.accommodation.Accommodation;
-import com.travel.BizTravel360.accommodation.TypeAccommodation;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,17 +32,18 @@ public class TransportController {
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model) throws IOException {
-        Page<Transport> transports = transportService.fetchTransportPage(PageRequest.of(page, size));
-        log.info("Fetched {} transport", transports.getTotalElements());
-        model.addAttribute("transports", transports);
-
-        int totalPages = transports.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.range(0, totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
-        }
+        //Todo new task
+      //  Page<Transport> transports = transportService.fetchTransportPage(PageRequest.of(page, size));
+//        log.info("Fetched {} transport", transports.getTotalElements());
+//        model.addAttribute("transports", transports);
+//
+//        int totalPages = transports.getTotalPages();
+//        if (totalPages > 0) {
+//            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+//                    .boxed()
+//                    .collect(Collectors.toList());
+//            model.addAttribute("pageNumbers", pageNumbers);
+//        }
         return "transport/transportsForEmployee";
     }
 
@@ -68,8 +67,8 @@ public class TransportController {
 
     @GetMapping("/transport/{transportId}")
     public String showUpdateTransportForm(@PathVariable("transportId") Long transportId, Model model) throws IOException {
-        Transport transport = transportService.findTransportById(transportId);
-        model.addAttribute("transport", transport);
+       // Transport transport = transportService.findTransportById(transportId);
+       // model.addAttribute("transport", transport);
         return "transport/updateTransportForm";
     }
 
@@ -89,9 +88,9 @@ public class TransportController {
     @PostMapping("/delete-transport/{transportId}")
     public String deleteTransport(@PathVariable("transportId") Long transportId,
                                   RedirectAttributes redirectAttributes) throws IOException {
-        Transport transport = transportService.findTransportById(transportId);
+      //  Transport transport = transportService.findTransportById(transportId);
         transportService.deleteTransportById(transportId);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
+     //   redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "deleted"));
         return "redirect:/transports/employee";
     }
 
@@ -110,14 +109,14 @@ public class TransportController {
                                       Model model) throws IOException {
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<Transport> transports = transportService.searchTransport(keyword, type, pageable);
+       // Page<Transport> transports = transportService.searchTransport(keyword, type, pageable);
         
-        model.addAttribute("transports", transports);
-        model.addAttribute("type", type);
-        
-        int totalPages = transports.getTotalPages();
-        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
-        model.addAttribute("pageNumbers", pageNumbers);
+//        model.addAttribute("transports", transports);
+//        model.addAttribute("type", type);
+//
+//        int totalPages = transports.getTotalPages();
+//        List<Integer> pageNumbers = IntStream.range(0, totalPages).boxed().collect(Collectors.toList());
+//        model.addAttribute("pageNumbers", pageNumbers);
         
         return "transport/transportsForEmployee";
     }

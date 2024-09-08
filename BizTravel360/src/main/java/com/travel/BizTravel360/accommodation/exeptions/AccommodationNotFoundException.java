@@ -1,9 +1,7 @@
 package com.travel.BizTravel360.accommodation.exeptions;
 
-import java.io.IOException;
-
-public class AccommodationNotFoundException extends IOException {
+public class AccommodationNotFoundException extends RuntimeException {
     public AccommodationNotFoundException(Long accommodationId) {
-        super(String.format("No found delegation with property id: %d", accommodationId));
+        super(String.format("No found accommodation with property id: %d", accommodationId));
     }
 }

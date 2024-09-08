@@ -12,7 +12,4 @@ import java.util.Optional;
 public interface DelegationRepository {
     
     void createDelegation(Delegation delegation) throws IOException;
-    Page<Delegation> fetchDelegationPage(Pageable pageable) throws IOException;
-    List<Delegation> loadDelegationFromFile() throws IOException;
-    Optional<Delegation> fetchDelegationById(Long id) throws IOException;
 }
