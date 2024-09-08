@@ -14,5 +14,5 @@ public enum TypeAccommodation {
     LODGE,
     FARM_STAY,
     CABIN,
-    TREEHOUSE
+    TREEHOUSE;
 }
