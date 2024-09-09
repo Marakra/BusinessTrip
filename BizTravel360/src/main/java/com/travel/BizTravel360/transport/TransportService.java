@@ -1,25 +1,16 @@
 package com.travel.BizTravel360.transport;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.travel.BizTravel360.file.FileService;
-import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.exeptions.TransportSaveException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Slf4j
 @Transactional

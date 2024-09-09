@@ -6,28 +6,28 @@
     <div class="container mt-4">
         <div class="form-container">
             <h2 class="color-text">Edit Employee</h2><br/>
-            <form method="POST" th:action="@{/update-employee}" th:object="${employee}">
-                <input type="hidden" th:field="*{employeeId}" />
+            <form method="POST" th:action="@{/update-employee/employee}" th:object="${employee}">
+                <input type="hidden" th:field="*{id}" />
 
                 <div class="form-group">
                     <label for="firstName" class="color-text">First Name:</label>
                     <input type="text" id="firstName" th:field="*{firstName}" class="form-control"
-                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter first name">
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$">
                     <ul><li th:each="err : ${#fields.errors('firstName')}" th:text="${err}" class="error"></li></ul>
                 </div>
 
                 <div class="form-group">
                     <label for="lastName" class="color-text">Last name:</label>
                     <input type="text" th:field="*{lastName}" id="lastName" class="form-control"
-                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter last name">
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$">
                     <ul><li th:each="err : ${#fields.errors('lastName')}" th:text="${err}" class="error"></li></ul>
                 </div>
 
                 <div class="form-group">
-                    <label for="position" class="color-text">Position:</label>
+                    <label for="position" class="color-text">Type of Accommodation:</label>
                     <select id="position" th:field="*{position}" class="form-control color-text">
                         <option th:each="cat : ${T(com.travel.BizTravel360.employee.PositionEmployee).values()}"
-                                th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
+                            th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
                     </select>
                     <ul><li th:each="err : ${#fields.errors('position')}" th:text="${err}" class="error"></li></ul>
                 </div>
@@ -35,12 +35,19 @@
                 <div class="form-group">
                     <label for="email" class="color-text">Email:</label>
                     <input type="email" th:field="*{email}" id="email" class="form-control"
-                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter email">
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$">
                     <ul><li th:each="err : ${#fields.errors('email')}" th:text="${err}" class="error"></li></ul>
                 </div>
 
+                <div class="form-group">
+                    <label for="password" class="color-text">Password:</label>
+                    <input type="password" th:field="*{password}" id="password" class="form-control"
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$">
+                    <ul><li th:each="err : ${#fields.errors('password')}" th:text="${err}" class="error"></li></ul>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Save Employee</button>
-                <a href="/employees" class="btn btn-secondary" style="float: right;">Back to the list</a>
+                <a href="/employees/employee" class="btn btn-secondary" style="float: right;">Back to the list</a>
             </form>
         </div>
     </div>
