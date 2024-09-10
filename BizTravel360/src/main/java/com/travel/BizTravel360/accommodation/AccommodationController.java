@@ -1,9 +1,7 @@
 package com.travel.BizTravel360.accommodation;
 
-import com.travel.BizTravel360.accommodation.domain.AccommodationMapper;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
-import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +45,7 @@ public class AccommodationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "accommodation/accommodationsForEmployee";
+        return "accommodation/accommodations";
     }
 
     @GetMapping("/accommodation/employee")
@@ -122,7 +120,7 @@ public class AccommodationController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "accommodation/accommodationsForEmployee";
+        return "accommodation/accommodations";
     }
     
     private String renderSuccessMessage(AccommodationDTO accommodationDTO, String action) {

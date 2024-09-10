@@ -1,6 +1,7 @@
 package com.travel.BizTravel360.employee;
 
 public enum PositionEmployee {
+    ADMINISTRATOR,
     MANAGER,
     HR,
     ACCOUNTANT,

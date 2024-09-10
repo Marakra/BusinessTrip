@@ -19,7 +19,6 @@ public class AccommodationMapper {
          accommodationDTO.setCheckIn(accommodation.getCheckIn());
          accommodationDTO.setCheckOut(accommodation.getCheckOut());
          accommodationDTO.setPrice(accommodation.getPrice());
-         
          return accommodationDTO;
     }
     

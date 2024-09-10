@@ -1,6 +1,6 @@
 package com.travel.BizTravel360.employee;
 
-import com.travel.BizTravel360.accommodation.TypeAccommodation;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

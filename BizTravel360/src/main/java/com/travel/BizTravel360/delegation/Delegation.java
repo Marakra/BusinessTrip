@@ -1,24 +1,19 @@
 package com.travel.BizTravel360.delegation;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.travel.BizTravel360.delegation.annotation.ValidDateRangeDelegation;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
-import com.travel.BizTravel360.employee.Employee;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import com.travel.BizTravel360.transport.Transport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Entity
