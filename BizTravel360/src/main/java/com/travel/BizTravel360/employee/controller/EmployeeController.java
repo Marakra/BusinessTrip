@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.employee;
+package com.travel.BizTravel360.employee.controller;
 
 import com.travel.BizTravel360.employee.domain.EmployeeService;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
@@ -126,6 +126,24 @@ public class EmployeeController {
         return "employee/employees";
     }
     
+    @GetMapping("/sending-password/{token}")
+    public String showCreatePasswordForm(@PathVariable("token") String employeeToken, Model model) {
+        EmployeeDTO employee = employeeService.getEmployeeByToken(employeeToken);
+        model.addAttribute("employee", employee);
+        return "email/formToSendPassword";
+    }
+    
+    @PostMapping("/sending-password/password")
+    public String sendPassword(@Valid @ModelAttribute("token") EmployeeDTO employeeDTO, BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            return "email/formToSendPassword";
+        }
+        employeeService.sendEmployeePassword(employeeDTO);
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employeeDTO, "send password"));
+        return "redirect:/employees/employee";
+    }
+    
     private String renderSuccessMessage(EmployeeDTO employeeDTO, String action) {
         String successMessage = String.format("Successfully %s accommodation: %s",
                 action,
@@ -135,4 +153,3 @@ public class EmployeeController {
         return successMessage;
     }
 }
-

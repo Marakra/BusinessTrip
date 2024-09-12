@@ -29,6 +29,7 @@
                     <th scope="col">Last Name</th>
                     <th scope="col">Position</th>
                     <th scope="col">Email</th>
+                    <th scope="col">Link to Employee</th>
                     <th scope="col">Actions</th>
                 </tr>
                 </thead>
@@ -39,7 +40,8 @@
                     <td th:text="${#strings.capitalize(employee.lastName.toLowerCase())}"></td>
                     <td th:text="${#strings.toLowerCase(employee.position.toString())}"></td>
                     <td th:text="${#strings.capitalize(employee.email.toLowerCase())}"></td>
-
+                    <td>
+                        <button class="btn btn-sm btn-success" th:attr="data-token=${employee.token}" onclick="copyTokenLink(this)">Click here</button>                    </td>
                     <td>
                     <a th:href="@{/employee/employee/{id}(id=${employee.id})}" class="btn btn-sm btn-warning">Edit</a>
                         <form th:action="@{/delete-employee/{id}(id=${employee.id})}" method="post" style="display:inline">
@@ -81,4 +83,5 @@
         </div>
     </div>
 <div th:replace="~{fragments/footer::footer}"></div>
+<script src="/copyTokenLink.js"></script>
 </html>

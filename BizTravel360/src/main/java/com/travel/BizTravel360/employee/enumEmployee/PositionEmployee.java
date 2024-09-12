@@ -1,4 +1,4 @@
-package com.travel.BizTravel360.employee;
+package com.travel.BizTravel360.employee.enumEmployee;
 
 public enum PositionEmployee {
     ADMINISTRATOR,

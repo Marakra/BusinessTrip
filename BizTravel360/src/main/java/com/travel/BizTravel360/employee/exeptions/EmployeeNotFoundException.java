@@ -6,4 +6,8 @@ public class EmployeeNotFoundException extends RuntimeException {
     public EmployeeNotFoundException(Long employeeId) {
         super(String.format("No found employee with property id: %d", employeeId));
     }
+    
+    public EmployeeNotFoundException(String message) {
+        super(message);
+    }
 }
