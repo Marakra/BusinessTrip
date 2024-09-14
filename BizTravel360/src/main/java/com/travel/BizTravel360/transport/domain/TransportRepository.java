@@ -1,18 +1,18 @@
 package com.travel.BizTravel360.transport.domain;
-
-import com.travel.BizTravel360.transport.model.Transport;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.transport.TypeTransport;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 
 @Repository
-public interface TransportRepository extends JpaRepository<Transport, Long> {
+public interface TransportRepository extends JpaRepository<TransportDTO, Long> {
 
-    Page<Transport> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
-
+    @Query(value = "SELECT * FROM transport tra WHERE (tra.name LIKE %:keyword% or tra.address LIKE %:keyword%) and (:type IS NULL OR tra.type = :type)", nativeQuery = true)
+    Page<Accommodation> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeTransport type, Pageable pageable);
 }

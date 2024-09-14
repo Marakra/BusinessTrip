@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.transport;
 
 import com.travel.BizTravel360.transport.domain.TransportService;
-import com.travel.BizTravel360.transport.model.Transport;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class TransportController {
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model) throws IOException {
-        Page<Transport> transports = transportService.findAll(PageRequest.of(page, size));
+        Page<TransportDTO> transports = transportService.findAll(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
         model.addAttribute("transports", transports);
 
@@ -53,56 +54,58 @@ public class TransportController {
 
     @GetMapping("/transport/employee")
     public String showSaveTransportForm(Model model) {
-        model.addAttribute("transport", new Transport());
+        model.addAttribute("transport", new TransportDTO());
         return "transport/createTransportForm";
     }
 
     @PostMapping("/transport")
-    public String saveTransport(@Valid @ModelAttribute("transport") Transport transport,
-                                BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+    public String saveTransport(@Valid @ModelAttribute("transport") TransportDTO transportDTO,
+                                BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "transport/createTransportForm";
         }
-        transportService.save(transport);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "created"));
+
+        transportService.save(transportDTO);//accDTO -> acc map acc save to DB
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transportDTO, "created"));
         return "redirect:/transports/employee";
     }
 
 
     @GetMapping("/transport/{transport/{id}}")
-    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model) throws IOException {
-        Optional<Transport> transport = transportService.getById(transportId);
+    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model)  {
+       TransportDTO transport = transportService.getById(transportId);
+
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        model.addAttribute("formattedDepartureDateTime", formatter.format(transport.getDepartureDateTime()));
+        model.addAttribute("formattedArrivalDateTime", formatter.format(transport.getArrivalDateTime()));
         model.addAttribute("transport", transport);
+
+
         return "transport/updateTransportForm";
     }
 
 
     @PostMapping("/update-transport")
-    public String updateTransport(@Valid @ModelAttribute("transport") Transport transport,
+    public String updateTransport(@Valid @ModelAttribute("transport") TransportDTO transportDTO,
                                   BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
-        transportService.updateTransport(transport);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transport, "updated"));
+        transportService.updateTransport(transportDTO);
+        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transportDTO, "updated"));
         return "redirect:/transports/employee";
     }
 
 
     @PostMapping("/delete-transport/{transportId}")
-    public String deleteTransport(@PathVariable("transportId") Transport transportId,
-                                  RedirectAttributes redirectAttributes) throws IOException {
-        transportService.deleteById(transportId.getId());
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(transportId, "deleted"));
+    public String deleteTransport(@PathVariable("transportId") Long transportId,
+                                  RedirectAttributes redirectAttributes)  {
+        transportService.deleteById(transportId);
+        redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted trasport with ID: %s", "deleted with ID: %s", transportId));
         return "redirect:/transports/employee";
     }
 
-    @PostMapping("/generate-random-transport")
-    public String generateRandomTransport(RedirectAttributes redirectAttributes) throws IOException {
-        // transportService.generateAndSaveRandomTransport(GENERATE_RANDOM_TRANSPORT);
-        redirectAttributes.addFlashAttribute("message", "Random transports generated successfully!");
-        return "redirect:/transports/employee";
-    }
 
     @GetMapping("/search-transport")
     public String searchAccommodation(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
@@ -112,22 +115,29 @@ public class TransportController {
                                       Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Transport> transports = transportService.searchATransport(keyword, pageable);
+        Page<TransportDTO> transports = transportService.searchTransport(keyword,type, pageable);
 
-        model.addAttribute("accommodations", transports);
+        model.addAttribute("transports", transports);
         model.addAttribute("type", type);
         model.addAttribute("keyword", keyword);
         model.addAttribute("totalPages", transports.getTotalPages());
-
+        model.addAttribute("currentPage", page);
+        int totalPages = transports.getTotalPages();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.range(0, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
         return "transport/transportsForEmployee";
     }
 
-    private String renderSuccessMessage(Transport transport, String action) {
+    private String renderSuccessMessage(TransportDTO transportDTO, String action) {
         String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
                 action,
-                transport.getTypeTransport(),
-                transport.getDeparture(),
-                transport.getArrival());
+                transportDTO.getTypeTransport(),
+                transportDTO.getDeparture(),
+                transportDTO.getArrival());
         log.info(successMessage);
         return successMessage;
     }

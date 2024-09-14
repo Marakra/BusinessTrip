@@ -1,28 +1,20 @@
 package com.travel.BizTravel360.delegation;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.delegation.exeptions.DelegationSaveException;
 import com.travel.BizTravel360.employee.EmployeeService;
-import com.travel.BizTravel360.file.FileService;
-import com.travel.BizTravel360.transport.model.Transport;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import com.travel.BizTravel360.transport.domain.TransportService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,7 +65,7 @@ public class DelegationService implements DelegationRepository {
         delegation.setNameDelegation(delegation.getNameDelegation().trim());
     }
     
-    private BigDecimal calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
+    private BigDecimal calculatorTotalPrice(List<TransportDTO> transports, List<Accommodation> accommodations) {
         BigDecimal transportPrice = transports.stream()
                 .map(transport -> BigDecimal.valueOf(transport.getPrice()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

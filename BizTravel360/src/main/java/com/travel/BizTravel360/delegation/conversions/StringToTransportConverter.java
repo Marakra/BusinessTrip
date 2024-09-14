@@ -1,14 +1,12 @@
 package com.travel.BizTravel360.delegation.conversions;
 
-import com.travel.BizTravel360.transport.model.Transport;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import com.travel.BizTravel360.transport.domain.TransportService;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-
 @Component
-public class StringToTransportConverter implements Converter<String, Transport> {
+public class StringToTransportConverter implements Converter<String, TransportDTO> {
     
     private final TransportService transportService;
     
@@ -17,7 +15,7 @@ public class StringToTransportConverter implements Converter<String, Transport> 
     }
     
     @Override
-    public Transport convert(String source) {
+    public TransportDTO convert(String source) {
         Long transportId = Long.parseLong(source);
         try {
             return transportService.findTransportById(transportId);

@@ -1,10 +1,10 @@
 package com.travel.BizTravel360.transport.annotation;
 
-import com.travel.BizTravel360.transport.model.Transport;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class DateRangeValidatorTransport implements ConstraintValidator <ValidDateRangeTransport, Transport>{
+public class DateRangeValidatorTransport implements ConstraintValidator <ValidDateRangeTransport, TransportDTO>{
     
     @Override
     public void initialize(ValidDateRangeTransport constraintAnnotation) {
@@ -12,7 +12,7 @@ public class DateRangeValidatorTransport implements ConstraintValidator <ValidDa
     }
     
     @Override
-    public boolean isValid(Transport transport, ConstraintValidatorContext constraint) {
+    public boolean isValid(TransportDTO transport, ConstraintValidatorContext constraint) {
         if (transport == null) {
             return true; // or false if you want to validate non-null objects
         }
