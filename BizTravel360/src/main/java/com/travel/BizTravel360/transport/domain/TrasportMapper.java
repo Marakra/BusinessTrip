@@ -13,8 +13,8 @@ public class TrasportMapper {
     public TransportDTO toTrasport(Trasport trasport) {
         TransportDTO transportDTO = new TransportDTO();
         transportDTO.setId(trasport.getId());
-        transportDTO.setTypeTransport(trasport.getTypeTransport());
-        transportDTO.setTransportIdentifier(trasport.getTransportIdentifier());
+        transportDTO.setType(trasport.getTypeTransport());
+        transportDTO.setIdentifier(trasport.getTransportIdentifier());
         transportDTO.setDeparture(trasport.getDeparture());
         transportDTO.setDepartureDateTime(trasport.getDepartureDateTime());
         transportDTO.setArrival(trasport.getArrival());
@@ -32,8 +32,8 @@ public class TrasportMapper {
     public Trasport fromTrasportDTO(TransportDTO transportDTO) {
         Trasport trasport = new Trasport();
         transportDTO.setId(transportDTO.getId());
-        transportDTO.setTypeTransport(transportDTO.getTypeTransport());
-        transportDTO.setTransportIdentifier(transportDTO.getTransportIdentifier());
+        transportDTO.setType(transportDTO.getType());
+        transportDTO.setIdentifier(transportDTO.getIdentifier());
         transportDTO.setDeparture(transportDTO.getDeparture());
         transportDTO.setDepartureDateTime(transportDTO.getDepartureDateTime());
         transportDTO.setArrival(transportDTO.getArrival());
