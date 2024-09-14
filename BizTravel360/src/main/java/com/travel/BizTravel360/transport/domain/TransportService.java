@@ -1,9 +1,6 @@
 package com.travel.BizTravel360.transport.domain;
 
-
-import com.travel.BizTravel360.accommodation.exeptions.AccommodationNotFoundException;
 import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
-import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
@@ -18,8 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -66,24 +62,18 @@ public class TransportService  {
         transportRepository.delete(trasport);
     }
 
-    public void deleteById(Long accommodationId) {
-        Accommodation accommodation = accommodationRepository.findById(accommodationId)
-                .orElseThrow(() -> new AccommodationNotFoundException(accommodationId));
-        accommodationRepository.delete(accommodation);
-    }
-
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {
         return transportRepository.findByKeywordAndType(keyword, type, pageable)
                 .map(mapper::toTrasport);
     }
 
-
-    private void validateTransport(TransportDTO transportDTO) {
+    private void validateTransport(TransportDTO transportDTO){
         Set<ConstraintViolation<TransportDTO>> constraintViolations = validator.validate(transportDTO);
-
-        if (!constraintViolations.isEmpty()){
-            constraintViolations.forEach(validation -> log.error(validation.getMessage()));
-            throw new IllegalArgumentException("Invalid transport data");
+        if (!constraintViolations.isEmpty()) {
+            StringBuilder errorMessage = new StringBuilder("CheckIn must be before CheckOut date!");
+            constraintViolations.forEach(violation -> errorMessage.append("\n").append(violation.getMessage()));
+            log.error(errorMessage.toString());
+            throw new IllegalArgumentException(errorMessage.toString());
         }
     }
 

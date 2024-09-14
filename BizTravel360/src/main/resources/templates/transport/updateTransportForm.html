@@ -7,21 +7,21 @@
     <div class="form-container">
         <h2 class="color-text">Edit Transport</h2>
         <form method="POST" th:action="@{/update-transport}" th:object="${transport}">
-            <input type="hidden" th:field="*{transportId}" />
+            <input type="hidden" th:field="*{id}" />
 
             <div class="form-group">
                 <label for="typeTransport" class="color-text">Type of Transport:</label>
-                <select id="typeTransport" th:field="*{typeTransport}" class="form-control color-text">
+                <select id="typeTransport" th:field="*{type}" class="form-control color-text">
                     <option th:each="cat : ${T(com.travel.BizTravel360.transport.TypeTransport).values()}"
                             th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
                 </select>
-                <ul><li th:each="err : ${#fields.errors('typeTransport')}" th:text="${err}" class="error"></li></ul>
+                <ul><li th:each="err : ${#fields.errors('type')}" th:text="${err}" class="error"></li></ul>
             </div>
 
             <div class="form-group">
                 <label for="transportIdentifier" class="color-text">Route number (optional):</label>
-                <input type="text" id="transportIdentifier" th:field="*{transportIdentifier}" class="form-control">
-                <ul><li th:each="err : ${#fields.errors('transportIdentifier')}" th:text="${err}" class="error"></li></ul>
+                <input type="text" id="transportIdentifier" th:field="*{identifier}" class="form-control">
+                <ul><li th:each="err : ${#fields.errors('identifier')}" th:text="${err}" class="error"></li></ul>
             </div>
 
             <div class="form-group">

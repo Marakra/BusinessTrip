@@ -54,9 +54,9 @@
                     <td th:text="${#temporals.format(transport.arrivalDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#numbers.formatDecimal(transport.price, 2, 2) + ' zl'}"></td>
                     <td class="actions-column">
-                        <a th:href="@{/transport/{transportId}(transportId=${transport.transportId})}"
+                        <a th:href="@{/transport/{id}(id=${transport.id})}"
                            class="btn btn-sm btn-warning">Edit</a>
-                        <form th:action="@{/delete-transport/{transportId}(transportId=${transport.transportId})}"
+                        <form th:action="@{/delete-transport/{id}(id=${transport.id})}"
                               method="POST" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
