@@ -26,7 +26,6 @@ public class TransportController {
 
     private static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
-    private static final int GENERATE_RANDOM_TRANSPORT = 15;
 
     private final TransportService transportService;
 
@@ -37,7 +36,7 @@ public class TransportController {
     @GetMapping("/transports/employee")
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
-                                   Model model) throws IOException {
+                                   Model model)  {
         Page<TransportDTO> transports = transportService.findAll(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
         model.addAttribute("transports", transports);
@@ -49,7 +48,7 @@ public class TransportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "transport/transportsForEmployee";
+        return "transport/transports";
     }
 
     @GetMapping("/transport/employee")
@@ -71,9 +70,9 @@ public class TransportController {
     }
 
 
-    @GetMapping("/transport/{transport/{id}}")
-    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model)  {
-       TransportDTO transport = transportService.getById(transportId);
+    @GetMapping("/transport/employee/{id}")
+    public String showUpdateTransportForm(@PathVariable("id") Long transportId, Model model) {
+        TransportDTO transport = transportService.getById(transportId);
 
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -88,7 +87,7 @@ public class TransportController {
 
     @PostMapping("/update-transport")
     public String updateTransport(@Valid @ModelAttribute("transport") TransportDTO transportDTO,
-                                  BindingResult bindingResult, RedirectAttributes redirectAttributes) throws IOException {
+                                  BindingResult bindingResult, RedirectAttributes redirectAttributes)  {
         if (bindingResult.hasErrors()) {
             return "transport/updateTransportForm";
         }
@@ -98,11 +97,11 @@ public class TransportController {
     }
 
 
-    @PostMapping("/delete-transport/{transportId}")
-    public String deleteTransport(@PathVariable("transportId") Long transportId,
-                                  RedirectAttributes redirectAttributes)  {
+    @PostMapping("/delete-transport/{id}")
+    public String deleteTransport(@PathVariable("id") Long transportId,
+                                  RedirectAttributes redirectAttributes) {
         transportService.deleteById(transportId);
-        redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted trasport with ID: %s", "deleted with ID: %s", transportId));
+        redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted transport with ID: %s", transportId));
         return "redirect:/transports/employee";
     }
 
@@ -115,7 +114,7 @@ public class TransportController {
                                       Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<TransportDTO> transports = transportService.searchTransport(keyword,type, pageable);
+        Page<TransportDTO> transports = transportService.searchTransport(keyword, type, pageable);
 
         model.addAttribute("transports", transports);
         model.addAttribute("type", type);
@@ -129,13 +128,13 @@ public class TransportController {
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);
         }
-        return "transport/transportsForEmployee";
+        return "transport/transports";
     }
 
     private String renderSuccessMessage(TransportDTO transportDTO, String action) {
         String successMessage = String.format("Successfully %s transport. Type: %s, Departure: %s Arrival: %s.",
                 action,
-                transportDTO.getTypeTransport(),
+                transportDTO.getType(),
                 transportDTO.getDeparture(),
                 transportDTO.getArrival());
         log.info(successMessage);

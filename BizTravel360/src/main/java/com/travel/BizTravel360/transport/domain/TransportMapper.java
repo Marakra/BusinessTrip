@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class TrasportMapper {
+public class TransportMapper {
 
-    public TransportDTO toTrasport(Trasport trasport) {
+    public TransportDTO toTransport(Trasport trasport) {
         TransportDTO transportDTO = new TransportDTO();
         transportDTO.setId(trasport.getId());
         transportDTO.setType(trasport.getTypeTransport());
@@ -25,20 +25,20 @@ public class TrasportMapper {
     }
     public List<TransportDTO> toTransportList(List<Trasport> transports) {
         return transports.stream()
-                .map(this::toTrasport)
+                .map(this::toTransport)
                 .collect(Collectors.toList());
     }
 
-    public Trasport fromTrasportDTO(TransportDTO transportDTO) {
+    public Trasport fromTransportDTO(TransportDTO transportDTO) {
         Trasport trasport = new Trasport();
-        transportDTO.setId(transportDTO.getId());
-        transportDTO.setType(transportDTO.getType());
-        transportDTO.setIdentifier(transportDTO.getIdentifier());
-        transportDTO.setDeparture(transportDTO.getDeparture());
-        transportDTO.setDepartureDateTime(transportDTO.getDepartureDateTime());
-        transportDTO.setArrival(transportDTO.getArrival());
-        transportDTO.setArrivalDateTime(transportDTO.getArrivalDateTime());
-        transportDTO.setPrice(transportDTO.getPrice());
+        trasport.setId(transportDTO.getId());
+        trasport.setTypeTransport(transportDTO.getType());
+        trasport.setTransportIdentifier(transportDTO.getIdentifier());
+        trasport.setDeparture(transportDTO.getDeparture());
+        trasport.setDepartureDateTime(transportDTO.getDepartureDateTime());
+        trasport.setArrival(transportDTO.getArrival());
+        trasport.setArrivalDateTime(transportDTO.getArrivalDateTime());
+        trasport.setPrice(transportDTO.getPrice());
         return trasport;
     }
 

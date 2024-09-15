@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex flex-column align-items-end mb-3">
         <div class="mb-3">
-            <a href="/transport" class="btn btn-primary">Create New Transport</a>
+            <a href="/transport/employee" class="btn btn-primary">Create New Transport</a>
         </div>
         <div>
             <form method="GET" action="/search-transport">
@@ -46,15 +46,15 @@
                 <tbody>
                 <tr class="color-text" th:each="transport, itr : ${transports}" th:if="${transport != null}">
                     <td th:text="${itr.index + 1}"></td>
-                    <td th:text="${#strings.toLowerCase(transport.typeTransport.toString())}"></td>
-                    <td th:text="${#strings.toUpperCase(transport.transportIdentifier)}"></td>
+                    <td th:text="${#strings.toLowerCase(transport.type.toString())}"></td>
+                    <td th:text="${#strings.toUpperCase(transport.identifier)}"></td>
                     <td th:text="${#strings.capitalize(transport.departure.toLowerCase())}"></td>
                     <td th:text="${#temporals.format(transport.departureDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#strings.capitalize(transport.arrival.toLowerCase())}"></td>
                     <td th:text="${#temporals.format(transport.arrivalDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#numbers.formatDecimal(transport.price, 2, 2) + ' zl'}"></td>
                     <td class="actions-column">
-                        <a th:href="@{/transport/{id}(id=${transport.id})}"
+                        <a th:href="@{/transport/employee/{id}(id=${transport.id})}"
                            class="btn btn-sm btn-warning">Edit</a>
                         <form th:action="@{/delete-transport/{id}(id=${transport.id})}"
                               method="POST" style="display:inline">

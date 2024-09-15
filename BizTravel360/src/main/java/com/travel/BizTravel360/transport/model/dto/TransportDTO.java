@@ -13,14 +13,12 @@ import java.time.LocalDateTime;
 public class TransportDTO {
     private Long id;
 
-    @NotNull(message = "Identifier transport is a required field!")
     @Size(max = 20, message = "Number of transport must be at most 20 characters")
-    private String Identifier;
+    private String identifier;
 
-    @NotNull(message = "Type transport is a required field!")
     private TypeTransport type;
 
-    @NotNull(message = "Departure transport is a required field!")
+    @NotBlank(message = "Departure transport is a required field!")
     private String departure;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -28,13 +26,14 @@ public class TransportDTO {
     @Future(message = "Departure Date Time must be in the future")
     private LocalDateTime departureDateTime;
 
-    @NotNull(message = "Arrival transport is a required field!")
+    @NotBlank(message = "Arrival transport is a required field!")
     private String arrival;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     @NotNull(message = "Arrival Date Time Date Time is a required field!")
     @Future(message = "Arrival Date Time Date Time must be in the future")
     private LocalDateTime arrivalDateTime;
+
 
     @NotNull(message = "Price is a required field!")
     @Positive(message = "Price must be positive")

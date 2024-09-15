@@ -1,6 +1,5 @@
 package com.travel.BizTravel360.transport.domain;
 
-import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
 import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
@@ -25,14 +24,14 @@ public class TransportService  {
 
     private final TransportRepository transportRepository;
     private final Validator validator;
-    private final TrasportMapper mapper;
+    private final TransportMapper mapper;
 
     public void save(TransportDTO transportDTO) throws DataAccessException {
         try {
             trimTransport(transportDTO);
             validateTransport(transportDTO);
 
-            Trasport trasport = mapper.fromTrasportDTO(transportDTO);
+            Trasport trasport = mapper.fromTransportDTO(transportDTO);
             transportRepository.save(trasport);
         }catch (DataAccessException exp) {
                 log.error("Failed to save transport {}", transportDTO);
@@ -51,7 +50,7 @@ public class TransportService  {
         Trasport existingTrasport = transportRepository.findById(updatedTransportDTO.getId())
                 .orElseThrow(() -> new TransportNotFoundException(updatedTransportDTO.getId()));
 
-        Trasport updatedTrasport = mapper.fromTrasportDTO(updatedTransportDTO);
+        Trasport updatedTrasport = mapper.fromTransportDTO(updatedTransportDTO);
         updatedTrasport.setId(existingTrasport.getId());
         transportRepository.save(updatedTrasport);
     }
@@ -64,7 +63,7 @@ public class TransportService  {
 
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {
         return transportRepository.findByKeywordAndType(keyword, type, pageable)
-                .map(mapper::toTrasport);
+                .map(mapper::toTransport);
     }
 
     private void validateTransport(TransportDTO transportDTO){
@@ -85,7 +84,7 @@ public class TransportService  {
 
     public TransportDTO getById(Long transportId) {
         return transportRepository.findById(transportId)
-                .map(mapper::toTrasport)
+                .map(mapper::toTransport)
                 .orElseThrow(() -> {
                     log.error("Transport with ID {} not found", transportId);
                     return new TransportNotFoundException(transportId);

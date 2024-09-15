@@ -14,6 +14,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransportRepository extends JpaRepository<Trasport, Long> {
 
-    @Query(value = "SELECT * FROM transport tra WHERE (tra.name LIKE %:keyword% or tra.address LIKE %:keyword%) and (:type IS NULL OR tra.type = :type)", nativeQuery = true)
+    @Query(value = "SELECT * FROM transport tra WHERE (tra.identifier LIKE %:keyword% ) and (:type IS NULL OR tra.type = :type)", nativeQuery = true)
     Page<Trasport> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeTransport type, Pageable pageable);
 }

@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.transport.model.entity;
 
 import com.travel.BizTravel360.common.model.entity.BaseEntity;
-import com.travel.BizTravel360.delegation.Delegation;
+//import com.travel.BizTravel360.delegation.Delegation;
 import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.annotation.ValidDateRangeTransport;
 import jakarta.persistence.*;
