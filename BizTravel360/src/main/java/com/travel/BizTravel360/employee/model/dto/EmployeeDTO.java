@@ -1,10 +1,8 @@
 package com.travel.BizTravel360.employee.model.dto;
 
-import com.travel.BizTravel360.employee.PositionEmployee;
-import com.travel.BizTravel360.employee.RoleEmployee;
+import com.travel.BizTravel360.employee.enumEmployee.PositionEmployee;
+import com.travel.BizTravel360.employee.component.RandomStringToGenerateNameToken;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -13,23 +11,21 @@ import lombok.Data;
 public class EmployeeDTO {
     private Long id;
     
-    @NotBlank(message = "First name is a required field!")
-    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters")
+    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters in length.")
     private String firstName;
     
-    @NotBlank(message = "Last name is a required field!")
-    @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters")
+    @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters in length")
     private String lastName;
     
-    @NotNull(message = "Position is a required field!")
     private PositionEmployee position;
     
-    @NotBlank(message = "Email is a required field!")
     @Email(message = "Email should be valid")
     private String email;
     
-    @NotBlank(message = "Password is a required field!")
-    @Size(min = 6, message = "Password must be longer than 6 characters")
     private String password;
+    private String token;
     
+    public EmployeeDTO() {
+        this.token = RandomStringToGenerateNameToken.generateRandomNameToken();
+    }
 }

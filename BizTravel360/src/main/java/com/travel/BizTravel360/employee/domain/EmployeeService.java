@@ -1,7 +1,6 @@
 package com.travel.BizTravel360.employee.domain;
 
 
-import com.travel.BizTravel360.employee.DataGeneratorEmployee;
 import com.travel.BizTravel360.employee.exeptions.EmployeeNotFoundException;
 import com.travel.BizTravel360.employee.exeptions.EmployeeSaveException;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
@@ -16,9 +15,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.io.IOException;
 
 import java.util.*;
 
@@ -31,6 +29,7 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final Validator validator;
     private final EmployeeMapper mapper;
+    private final PasswordEncoder passwordEncoder;
     
     public void  save(EmployeeDTO employeeDTO) throws DataAccessException {
         try {
@@ -38,6 +37,7 @@ public class EmployeeService {
             
             Employee employee = mapper.formEmployeeDTO(employeeDTO);
             validateEmployee(employeeDTO);
+            
             employeeRepository.save(employee);
         } catch (DataAccessException exp) {
             log.error("Failed to save employee {}", employeeDTO);
@@ -92,5 +92,32 @@ public class EmployeeService {
                     log.error("Employee with id {} not found", employeeId);
                     return new EmployeeNotFoundException(employeeId);
                 });
+    }
+    
+    public EmployeeDTO getEmployeeByToken(String token) {
+        return employeeRepository.findByToken(token)
+                .map(mapper::toEmployee)
+                .orElseThrow(() -> {
+                    log.error("Employee with token {} not found", token);
+                    return new EmployeeNotFoundException("Employee with this token not found");
+                });
+    }
+    
+    public void sendEmployeePassword(EmployeeDTO employeeDTO) {
+        Employee employee = employeeRepository.findByToken(employeeDTO.getToken())
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee with this token not found"));
+        
+        validatePassword(employeeDTO.getPassword());
+        String encodedPassword = passwordEncoder.encode(employeeDTO.getPassword());
+        
+        employee.setPassword(encodedPassword);
+        employeeRepository.save(employee);
+        log.info("Encrypting and saving password for employee with token {}", employeeDTO.getToken());
+    }
+    
+    private void validatePassword(String password) {
+        if (password == null || password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
     }
 }

@@ -12,21 +12,21 @@
                 <div class="form-group">
                     <label for="firstName" class="color-text">First Name:</label>
                     <input type="text" id="firstName" th:field="*{firstName}" class="form-control"
-                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter first name">
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter first name" required title="First name cannot be empty! Please provide your first name.">
                     <ul><li th:each="err : ${#fields.errors('firstName')}" th:text="${err}" class="error"></li></ul>
                 </div>
 
                 <div class="form-group">
                     <label for="lastName" class="color-text">Last name:</label>
                     <input type="text" th:field="*{lastName}" id="lastName" class="form-control"
-                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter last name">
+                           pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter last name" required title="Last name cannot be empty! Please provide your first name.">
                     <ul><li th:each="err : ${#fields.errors('lastName')}" th:text="${err}" class="error"></li></ul>
                 </div>
 
             <div class="form-group">
                 <label for="position" class="color-text">Position Employee:</label>
                 <select id="position" th:field="*{position}" class="form-control color-text">
-                    <option th:each="cat : ${T(com.travel.BizTravel360.employee.PositionEmployee).values()}"
+                    <option th:each="cat : ${T(com.travel.BizTravel360.employee.enumEmployee.PositionEmployee).values()}"
                             th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
                 </select>
                 <ul><li th:each="err : ${#fields.errors('position')}" th:text="${err}" class="error"></li></ul>
@@ -35,17 +35,9 @@
             <div class="form-group">
                 <label for="email" class="color-text">Email:</label>
                 <input type="email" th:field="*{email}" id="email" class="form-control"
-                       pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter email">
+                       pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter email" required>
                 <ul><li th:each="err : ${#fields.errors('email')}" th:text="${err}" class="error"></li></ul>
             </div>
-
-            <div class="form-group">
-                <label for="password" class="color-text">Password:</label>
-                <input type="password" th:field="*{password}" id="password" class="form-control"
-                       pattern="^\s*\S+(?:\s+\S+)*\s*$" placeholder="Enter password">
-                <ul><li th:each="err : ${#fields.errors('password')}" th:text="${err}" class="error"></li></ul>
-            </div>
-
                 <button type="submit" class="btn btn-primary">Save Employee</button>
                 <a href="/employees/employee" class="btn btn-secondary" style="float: right;">Back to the list</a>
             </form>

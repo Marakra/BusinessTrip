@@ -1,9 +1,14 @@
 package com.travel.BizTravel360._configuration;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-@Component
+@Setter
+@Getter
+@Configuration
 public class AppConfig {
     
     private int timeBufferHours;
@@ -12,11 +17,4 @@ public class AppConfig {
         this.timeBufferHours = timeBufferHours;
     }
     
-    public int getTimeBufferHours() {
-        return timeBufferHours;
-    }
-    
-    public void setTimeBufferHours(int timeBufferHours) {
-        this.timeBufferHours = timeBufferHours;
-    }
 }
