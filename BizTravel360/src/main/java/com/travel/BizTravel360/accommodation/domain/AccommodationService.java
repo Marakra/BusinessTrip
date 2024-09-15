@@ -29,9 +29,9 @@ public class AccommodationService{
     public void save(AccommodationDTO accommodationDTO) throws DataAccessException {
         try {
             trimAccommodation(accommodationDTO);
-            validateAccommodation(accommodationDTO);
             
             Accommodation accommodation = mapper.fromAccommodationDTO(accommodationDTO);
+            validateAccommodation(accommodationDTO);
             accommodationRepository.save(accommodation);
         } catch (DataAccessException exp) {
             log.error("Failed to save accommodation {}", accommodationDTO);
@@ -77,8 +77,12 @@ public class AccommodationService{
     }
     
     private void trimAccommodation(AccommodationDTO accommodationDTO) {
-        accommodationDTO.setName(accommodationDTO.getName().trim());
-        accommodationDTO.setAddress(accommodationDTO.getAddress().trim());
+        if (accommodationDTO.getName() != null) {
+            accommodationDTO.setName(accommodationDTO.getName().trim());
+        }
+        if (accommodationDTO.getAddress() != null) {
+            accommodationDTO.setAddress(accommodationDTO.getAddress().trim());
+        }
     }
     
     public AccommodationDTO getById(Long accommodationId) {

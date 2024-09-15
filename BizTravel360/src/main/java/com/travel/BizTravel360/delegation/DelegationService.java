@@ -3,9 +3,9 @@ package com.travel.BizTravel360.delegation;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.delegation.exeptions.DelegationSaveException;
-import com.travel.BizTravel360.employee.EmployeeService;
-import com.travel.BizTravel360.transport.model.dto.TransportDTO;
-import com.travel.BizTravel360.transport.domain.TransportService;
+import com.travel.BizTravel360.employee.domain.EmployeeService;
+import com.travel.BizTravel360.transport.Transport;
+import com.travel.BizTravel360.transport.TransportService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -65,7 +65,7 @@ public class DelegationService implements DelegationRepository {
         delegation.setNameDelegation(delegation.getNameDelegation().trim());
     }
     
-    private BigDecimal calculatorTotalPrice(List<TransportDTO> transports, List<Accommodation> accommodations) {
+    private BigDecimal calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
         BigDecimal transportPrice = transports.stream()
                 .map(transport -> BigDecimal.valueOf(transport.getPrice()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

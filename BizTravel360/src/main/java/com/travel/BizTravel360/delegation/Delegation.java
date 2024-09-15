@@ -2,8 +2,8 @@ package com.travel.BizTravel360.delegation;
 
 import com.travel.BizTravel360.delegation.annotation.ValidDateRangeDelegation;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
-import com.travel.BizTravel360.employee.Employee;
-import com.travel.BizTravel360.transport.model.dto.TransportDTO;
+import com.travel.BizTravel360.employee.model.entity.Employee;
+import com.travel.BizTravel360.transport.Transport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -35,7 +35,7 @@ public class Delegation {
     
     @NotEmpty(message = "Transport list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)
-    private List<TransportDTO> transports;
+    private List<Transport> transports;
     
     @NotEmpty(message = "Accommodation list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)
