@@ -140,7 +140,7 @@ public class EmployeeController {
             return "email/formToSendPassword";
         }
         employeeService.sendEmployeePassword(employeeDTO);
-        redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(employeeDTO, "send password"));
+        redirectAttributes.addFlashAttribute("successMessage", "Successfully add employee password" );
         return "redirect:/employees/employee";
     }
     
