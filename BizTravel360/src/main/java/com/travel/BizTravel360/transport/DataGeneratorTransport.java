@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.transport;
 
 
-import com.travel.BizTravel360.accommodation.TypeAccommodation;
+import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -14,17 +14,17 @@ public class DataGeneratorTransport {
     
     private static final Random RANDOM = new Random();
     
-    public static List<Transport> generateRandomTransportList(int count) {
-        List<Transport> transportList = new ArrayList<>();
+    public static List<TransportDTO> generateRandomTransportList(int count) {
+        List<TransportDTO> transportList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             transportList.add(generateRandomTransport());
         }
         return transportList;
     }
     
-    private static Transport generateRandomTransport() {
-        Transport transport = new Transport();
-        transport.setTransportId((long) RANDOM.nextLong(100000));
+    private static TransportDTO generateRandomTransport() {
+        TransportDTO transport = new TransportDTO();
+//        transport.setTransportId((long) RANDOM.nextLong(100000));
         transport.setTypeTransport(TypeTransport.values()[RANDOM.nextInt(TypeTransport.values().length)]);
         transport.setTransportIdentifier("Identifier" + RANDOM.nextLong(1000));
         transport.setDeparture("Delegation" + RANDOM.nextInt(1000));
