@@ -1,7 +1,7 @@
 package com.travel.BizTravel360.employee.model.entity;
 
 import com.travel.BizTravel360.common.model.entity.BaseEntity;
-import com.travel.BizTravel360.delegation.Delegation;
+//import com.travel.BizTravel360.delegation.Delegation;
 import com.travel.BizTravel360.employee.enumEmployee.PositionEmployee;
 import com.travel.BizTravel360.employee.enumEmployee.RoleEmployee;
 import jakarta.persistence.*;
@@ -38,9 +38,9 @@ public class Employee extends BaseEntity {
     @Column(name = "PASSWORD")
     private String password;
     
-    @Column(name = "DELEGATIONS")
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
-    private List<Delegation> delegations;
+//    @Column(name = "DELEGATIONS")
+//    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+//    private List<Delegation> delegations;
     
     @Column(name = "TOKEN")
     private String token;

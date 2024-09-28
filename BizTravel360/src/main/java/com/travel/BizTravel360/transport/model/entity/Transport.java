@@ -2,8 +2,8 @@ package com.travel.BizTravel360.transport.model.entity;
 
 import com.travel.BizTravel360.common.model.entity.BaseEntity;
 //import com.travel.BizTravel360.delegation.Delegation;
+import com.travel.BizTravel360.delegation.model.entity.Delegation;
 import com.travel.BizTravel360.transport.TypeTransport;
-import com.travel.BizTravel360.transport.annotation.ValidDateRangeTransport;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @TableGenerator(name = "id_gen", initialValue = 2, allocationSize = 40,
         table = "id_gen", pkColumnName = "ENTITY", pkColumnValue = "transport", valueColumnName = "NEXT_ID")
-public class Trasport extends BaseEntity {
+public class Transport extends BaseEntity {
 
     @Column(name = "TYPE")
     private TypeTransport typeTransport;

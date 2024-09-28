@@ -3,7 +3,7 @@ package com.travel.BizTravel360.accommodation.model.entity;
 import com.travel.BizTravel360.accommodation.TypeAccommodation;
 import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
 import com.travel.BizTravel360.common.model.entity.BaseEntity;
-import com.travel.BizTravel360.delegation.Delegation;
+import com.travel.BizTravel360.delegation.model.entity.Delegation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -40,7 +40,7 @@ public class Accommodation extends BaseEntity {
     
     @Column(name = "PRICE")
     private Double price;
-    
+
     @ManyToOne
     @JoinColumn(name = "DELEGATION_ID")
     private Delegation delegation;

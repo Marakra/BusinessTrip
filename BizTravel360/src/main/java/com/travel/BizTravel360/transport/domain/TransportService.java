@@ -4,7 +4,7 @@ import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import com.travel.BizTravel360.transport.exeptions.TransportSaveException;
-import com.travel.BizTravel360.transport.model.entity.Trasport;
+import com.travel.BizTravel360.transport.model.entity.Transport;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -31,7 +31,7 @@ public class TransportService  {
             trimTransport(transportDTO);
             validateTransport(transportDTO);
 
-            Trasport trasport = mapper.fromTransportDTO(transportDTO);
+            Transport trasport = mapper.fromTransportDTO(transportDTO);
             transportRepository.save(trasport);
         }catch (DataAccessException exp) {
                 log.error("Failed to save transport {}", transportDTO);
@@ -41,22 +41,22 @@ public class TransportService  {
     }
 
     public Page<TransportDTO> findAll(Pageable pageable) {
-        Page<Trasport> trasportPage = transportRepository.findAll(pageable);
+        Page<Transport> trasportPage = transportRepository.findAll(pageable);
         List<TransportDTO> transportDTOS = mapper.toTransportList(trasportPage.getContent());
         return new PageImpl<>(transportDTOS, pageable, trasportPage.getTotalElements());
     }
 
     public void updateTransport(TransportDTO updatedTransportDTO) {
-        Trasport existingTrasport = transportRepository.findById(updatedTransportDTO.getId())
+        Transport existingTrasport = transportRepository.findById(updatedTransportDTO.getId())
                 .orElseThrow(() -> new TransportNotFoundException(updatedTransportDTO.getId()));
 
-        Trasport updatedTrasport = mapper.fromTransportDTO(updatedTransportDTO);
+        Transport updatedTrasport = mapper.fromTransportDTO(updatedTransportDTO);
         updatedTrasport.setId(existingTrasport.getId());
         transportRepository.save(updatedTrasport);
     }
 
     public void deleteById(Long transportId) {
-        Trasport trasport = transportRepository.findById(transportId)
+        Transport trasport = transportRepository.findById(transportId)
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
         transportRepository.delete(trasport);
     }
