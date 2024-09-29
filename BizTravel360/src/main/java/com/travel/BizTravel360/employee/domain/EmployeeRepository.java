@@ -17,4 +17,6 @@ public  interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Page<Employee> findByKeyword(@Param("keyword") String keyWord, Pageable pageable);
     
     Optional<Employee> findByToken(String token);
+    
+    Optional<Employee> findByEmail(String email);
 }
