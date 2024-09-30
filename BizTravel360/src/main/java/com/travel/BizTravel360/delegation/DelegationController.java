@@ -2,7 +2,6 @@ package com.travel.BizTravel360.delegation;
 
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.employee.domain.EmployeeService;
-import com.travel.BizTravel360.transport.TransportService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,18 +22,17 @@ public class DelegationController {
     private  static final String PAGE_DEFAULT_VALUE = "0";
     private static final String SIZE_DEFAULT_VALUE = "10";
     
-    private final DelegationService delegationService;
-    private final EmployeeService employeeService;
-    private final TransportService transportService;
-    private final AccommodationService accommodationService;
-    
-    public DelegationController(DelegationService delegationService, EmployeeService employeeService,
-                                TransportService transportService, AccommodationService accommodationService) {
-        this.delegationService = delegationService;
-        this.employeeService = employeeService;
-        this.transportService = transportService;
-        this.accommodationService = accommodationService;
-    }
+//    private final DelegationService delegationService;
+//    private final EmployeeService employeeService;
+//    private final AccommodationService accommodationService;
+//
+//    public DelegationController(DelegationService delegationService, EmployeeService employeeService,
+//                                TransportService transportService, AccommodationService accommodationService) {
+//        this.delegationService = delegationService;
+//        this.employeeService = employeeService;
+//        this.transportService = transportService;
+//        this.accommodationService = accommodationService;
+//    }
     
     @GetMapping("/delegations/employee")
     public String getAllDelegations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
@@ -75,7 +73,7 @@ public class DelegationController {
           //  model.addAttribute("accommodations", accommodationService.loadAccommodationFromFile());
             return "delegation/createDelegationForm";
         }
-            delegationService.createDelegation(delegation);
+           // delegationService.createDelegation(delegation);
             redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(delegation, "created"));
             return "redirect:/delegations/employee";
         }
