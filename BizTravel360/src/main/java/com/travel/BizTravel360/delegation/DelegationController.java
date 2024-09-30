@@ -2,7 +2,7 @@ package com.travel.BizTravel360.delegation;
 
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.employee.domain.EmployeeService;
-import com.travel.BizTravel360.transport.TransportService;
+import com.travel.BizTravel360.transport.domain.TransportService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

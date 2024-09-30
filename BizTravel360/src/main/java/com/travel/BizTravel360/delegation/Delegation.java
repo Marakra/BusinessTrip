@@ -1,9 +1,9 @@
 package com.travel.BizTravel360.delegation;
 
-import com.travel.BizTravel360.delegation.annotation.ValidDateRangeDelegation;
+import com.sun.jdi.connect.Transport;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.employee.model.entity.Employee;
-import com.travel.BizTravel360.transport.Transport;
+import com.travel.BizTravel360.transport.model.entity.Trasport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -18,7 +18,6 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-@ValidDateRangeDelegation
 public class Delegation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +34,7 @@ public class Delegation {
     
     @NotEmpty(message = "Transport list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)
-    private List<Transport> transports;
+    private List<Trasport> transports;
     
     @NotEmpty(message = "Accommodation list is a required field!")
     @OneToMany(mappedBy = "delegation", cascade = CascadeType.ALL)

@@ -44,6 +44,8 @@ public class EmployeeController {
         return "authorization/profileEmployee";
     }
     
+    
+    
     @GetMapping("/employees/employee")
     public String getAllEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                   @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,

@@ -1,11 +1,9 @@
 package com.travel.BizTravel360.accommodation.model.entity;
 
 import com.travel.BizTravel360.accommodation.TypeAccommodation;
-import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
 import com.travel.BizTravel360.common.model.entity.BaseEntity;
 import com.travel.BizTravel360.delegation.Delegation;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

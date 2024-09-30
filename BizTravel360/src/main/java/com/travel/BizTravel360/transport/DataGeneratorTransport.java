@@ -25,8 +25,8 @@ public class DataGeneratorTransport {
     private static TransportDTO generateRandomTransport() {
         TransportDTO transport = new TransportDTO();
 //        transport.setTransportId((long) RANDOM.nextLong(100000));
-        transport.setTypeTransport(TypeTransport.values()[RANDOM.nextInt(TypeTransport.values().length)]);
-        transport.setTransportIdentifier("Identifier" + RANDOM.nextLong(1000));
+//        transport.setTypeTransport(TypeTransport.values()[RANDOM.nextInt(TypeTransport.values().length)]);
+//        transport.setTransportIdentifier("Identifier" + RANDOM.nextLong(1000));
         transport.setDeparture("Delegation" + RANDOM.nextInt(1000));
         transport.setDepartureDateTime(LocalDateTime.now().plusDays(RANDOM.nextInt(10)).withMinute(RANDOM.nextInt(60)).withSecond(RANDOM.nextInt(60)));
         transport.setArrival("Arrival" + RANDOM.nextInt(1000));
