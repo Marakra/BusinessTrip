@@ -16,8 +16,8 @@ import java.util.Set;
 
 @Component
 public class EmployeeDetailsService implements UserDetailsService {
-
-    private EmployeeRepository employeeRepository;
+    
+    private final EmployeeRepository employeeRepository;
     
     public EmployeeDetailsService(EmployeeRepository employeeRepository) {this.employeeRepository = employeeRepository;}
     
@@ -25,12 +25,9 @@ public class EmployeeDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Employee> optionalEmployee = employeeRepository.findByEmail(username);
         
-        System.out.println(optionalEmployee);
-
         if (!optionalEmployee.isPresent()) {
-            throw new UsernameNotFoundException("Employee with such email address not found");
+            throw new UsernameNotFoundException(String.format("Not found employee with username: %s", username));
         }
-        
         Employee employee = optionalEmployee.get();
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         
