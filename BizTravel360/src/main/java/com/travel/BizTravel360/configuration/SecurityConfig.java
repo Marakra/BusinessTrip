@@ -1,4 +1,4 @@
-package com.travel.BizTravel360._configuration;
+package com.travel.BizTravel360.configuration;
 
 import com.travel.BizTravel360.employee.component.EmployeeDetailsService;
 import org.springframework.context.annotation.Bean;

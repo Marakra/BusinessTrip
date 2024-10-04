@@ -17,9 +17,4 @@ public class MenuController {
         return "authorization/login";
     }
     
-    @GetMapping("/sign-up")
-    public String singUp() {
-        return "authorization/signUp";
-    }
-    
 }

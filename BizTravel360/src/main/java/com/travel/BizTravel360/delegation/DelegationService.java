@@ -4,8 +4,7 @@ import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.delegation.exeptions.DelegationSaveException;
 import com.travel.BizTravel360.employee.domain.EmployeeService;
-import com.travel.BizTravel360.transport.Transport;
-import com.travel.BizTravel360.transport.TransportService;
+
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class DelegationService implements DelegationRepository {
     
     private final EmployeeService employeeService;
-    private final TransportService transportService;
     private final AccommodationService accommodationService;
     
     private final Validator validator;
@@ -65,21 +63,21 @@ public class DelegationService implements DelegationRepository {
         delegation.setNameDelegation(delegation.getNameDelegation().trim());
     }
     
-    private BigDecimal calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
-        BigDecimal transportPrice = transports.stream()
-                .map(transport -> BigDecimal.valueOf(transport.getPrice()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+//    private BigDecimal calculatorTotalPrice(List<Transport> transports, List<Accommodation> accommodations) {
+//        BigDecimal transportPrice = transports.stream()
+//                .map(transport -> BigDecimal.valueOf(transport.getPrice()))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
         
-        BigDecimal accommodationPrice = accommodations.stream()
-                .map(accommodation -> BigDecimal.valueOf(accommodation.getPrice()))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
-        return transportPrice.add(accommodationPrice);
+//        BigDecimal accommodationPrice = accommodations.stream()
+//                .map(accommodation -> BigDecimal.valueOf(accommodation.getPrice()))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
+//
+//        return transportPrice.add(accommodationPrice);
     }
-    
-    private <T> List<T> fetchEntitiesByIds(List<Long> ids, Function<Long, T> fetchFunction) throws IOException {
-        return ids.stream()
-                .map(fetchFunction::apply)
-                .collect(Collectors.toList());
-}
-}
+//
+//    private <T> List<T> fetchEntitiesByIds(List<Long> ids, Function<Long, T> fetchFunction) throws IOException {
+//        return ids.stream()
+//                .map(fetchFunction::apply)
+//                .collect(Collectors.toList());
+//}
+//}
