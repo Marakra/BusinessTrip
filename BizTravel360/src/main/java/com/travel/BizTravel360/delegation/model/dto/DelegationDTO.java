@@ -2,7 +2,6 @@ package com.travel.BizTravel360.delegation.model.dto;
 
 import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
 import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
-import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -28,7 +27,7 @@ public class DelegationDTO {
     private List<TransportDTO> transports;
 
     @NotEmpty(message = "Accommodation list is a required field!")
-    private List<AccommodationDTO> accommodationIds;
+    private List<AccommodationDTO> accommodations;
 
     @NotNull(message = "Departure date is a required field!")
     @FutureOrPresent(message = "Departure date must be in the present or future")

@@ -42,7 +42,7 @@ public class TransportService  {
 
     public Page<TransportDTO> findAll(Pageable pageable) {
         Page<Transport> trasportPage = transportRepository.findAll(pageable);
-        List<TransportDTO> transportDTOS = mapper.toTransportList(trasportPage.getContent());
+        List<TransportDTO> transportDTOS = mapper.toTransportDtoList(trasportPage.getContent());
         return new PageImpl<>(transportDTOS, pageable, trasportPage.getTotalElements());
     }
 
@@ -63,7 +63,7 @@ public class TransportService  {
 
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {
         return transportRepository.findByKeywordAndType(keyword, type, pageable)
-                .map(mapper::toTransport);
+                .map(mapper::toTransportDto);
     }
 
     private void validateTransport(TransportDTO transportDTO){
@@ -84,7 +84,7 @@ public class TransportService  {
 
     public TransportDTO getById(Long transportId) {
         return transportRepository.findById(transportId)
-                .map(mapper::toTransport)
+                .map(mapper::toTransportDto)
                 .orElseThrow(() -> {
                     log.error("Transport with ID {} not found", transportId);
                     return new TransportNotFoundException(transportId);

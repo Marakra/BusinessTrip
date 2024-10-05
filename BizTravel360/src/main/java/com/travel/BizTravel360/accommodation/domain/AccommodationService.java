@@ -42,7 +42,7 @@ public class AccommodationService{
 
     public Page<AccommodationDTO> findAll(Pageable pageable) {
         Page<Accommodation> accommodationPage = accommodationRepository.findAll(pageable);
-        List<AccommodationDTO> accommodationDTOs = mapper.toAccommodationList(accommodationPage.getContent());
+        List<AccommodationDTO> accommodationDTOs = mapper.toAccommodationDtoList(accommodationPage.getContent());
         return new PageImpl<>(accommodationDTOs, pageable, accommodationPage.getTotalElements());
     }
     
@@ -63,7 +63,7 @@ public class AccommodationService{
     
     public Page<AccommodationDTO> searchAccommodation(String keyword, TypeAccommodation type, Pageable pageable) {
         return accommodationRepository.findByKeywordAndType(keyword, type, pageable)
-                .map(mapper::toAccommodation);
+                .map(mapper::toAccommodationDto);
     }
     
     private void validateAccommodation(AccommodationDTO accommodationDTO){
@@ -87,7 +87,7 @@ public class AccommodationService{
     
     public AccommodationDTO getById(Long accommodationId) {
         return accommodationRepository.findById(accommodationId)
-                .map(mapper::toAccommodation)
+                .map(mapper::toAccommodationDto)
                 .orElseThrow(() -> {
                     log.error("Accommodation with ID {} not found", accommodationId);
                     return new AccommodationNotFoundException(accommodationId);

@@ -1,27 +1,38 @@
 package com.travel.BizTravel360.delegation.domain;
 
+import com.travel.BizTravel360.accommodation.domain.AccommodationMapper;
 import com.travel.BizTravel360.delegation.model.dto.DelegationDTO;
 import com.travel.BizTravel360.delegation.model.entity.Delegation;
 
+import com.travel.BizTravel360.employee.domain.EmployeeMapper;
+import com.travel.BizTravel360.transport.domain.TransportMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Component
 public class DelegationMapper {
 
-    public Delegation toDelegation(DelegationDTO dto ) {
+    private final TransportMapper transportMapper;
+    private final AccommodationMapper accommodationMapper;
+
+
+    public Delegation toDelegationDto(DelegationDTO dto) {
         Delegation delegation = new Delegation();
         delegation.setId(dto.getId());
         delegation.setNameDelegation(dto.getNameDelegation());
         delegation.setEmployeeId(dto.getEmployeeId());
+        var accommodationList  = accommodationMapper.toAccommodationList(dto.getAccommodations());
+        var transportList  = transportMapper.toTransportList(dto.getTransports());
 
-        delegation.setAccommodations(dto.getAccommodationIds());
-        delegation.setTransports(dto.getTransports());
-
+        delegation.setAccommodations(accommodationList);
+        delegation.setTransports(transportList);
         delegation.setDepartureDateTime(dto.getDepartureDateTime());
         delegation.setArrivalDateTime(dto.getArrivalDateTime());
+
         delegation.setTotalPrice(dto.getTotalPrice());
 
         delegation.setIsAccepted(dto.getIsAccepted());
@@ -31,20 +42,23 @@ public class DelegationMapper {
         return delegation;
     }
 
-    public List<Delegation> toDelegationList(List<Delegation> delegations) {
+    public List<DelegationDTO> toDelegationList(List<Delegation> delegations) {
         return delegations.stream()
-                .map(this::toDelegation)
+                .map(this::fromDelegationDto)
                 .collect(Collectors.toList());
     }
 
-    public DelegationDTO fromDelegation(Delegation delegation ) {
+    public DelegationDTO fromDelegationDto(Delegation delegation ) {
         DelegationDTO delegationDTO = new DelegationDTO();
         delegationDTO.setId(delegation.getId());
         delegationDTO.setNameDelegation(delegation.getNameDelegation());
         delegationDTO.setEmployeeId(delegation.getEmployeeId());
 
-        delegationDTO.setTransports(delegation.getTransports());
-        delegationDTO.setAccommodationIds(delegation.getAccommodations());
+        var accommodationListDto  = accommodationMapper.toAccommodationDtoList(delegation.getAccommodations());
+        var transportListDto  = transportMapper.toTransportDtoList(delegation.getTransports());
+
+        delegationDTO.setTransports(transportListDto);
+        delegationDTO.setAccommodations(accommodationListDto);
 
         delegationDTO.setDepartureDateTime(delegation.getDepartureDateTime());
         delegationDTO.setArrivalDateTime(delegation.getArrivalDateTime());
@@ -57,5 +71,9 @@ public class DelegationMapper {
         return delegationDTO;
     }
 
-
+    public List<Delegation> toDelegationDetList(List<DelegationDTO> delegations) {
+        return delegations.stream()
+                .map(this::toDelegationDto)
+                .collect(Collectors.toList());
+    }
 }

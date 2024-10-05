@@ -10,22 +10,22 @@ import java.util.stream.Collectors;
 @Component
 public class TransportMapper {
 
-    public TransportDTO toTransport(Transport trasport) {
+    public TransportDTO toTransportDto(Transport transport) {
         TransportDTO transportDTO = new TransportDTO();
-        transportDTO.setId(trasport.getId());
-        transportDTO.setType(trasport.getTypeTransport());
-        transportDTO.setIdentifier(trasport.getTransportIdentifier());
-        transportDTO.setDeparture(trasport.getDeparture());
-        transportDTO.setDepartureDateTime(trasport.getDepartureDateTime());
-        transportDTO.setArrival(trasport.getArrival());
-        transportDTO.setArrivalDateTime(trasport.getArrivalDateTime());
-        transportDTO.setPrice(trasport.getPrice());
+        transportDTO.setId(transport.getId());
+        transportDTO.setType(transport.getTypeTransport());
+        transportDTO.setIdentifier(transport.getTransportIdentifier());
+        transportDTO.setDeparture(transport.getDeparture());
+        transportDTO.setDepartureDateTime(transport.getDepartureDateTime());
+        transportDTO.setArrival(transport.getArrival());
+        transportDTO.setArrivalDateTime(transport.getArrivalDateTime());
+        transportDTO.setPrice(transport.getPrice());
 
         return transportDTO;
     }
-    public List<TransportDTO> toTransportList(List<Transport> transports) {
+    public List<Transport> toTransportList(List<TransportDTO> transports) {
         return transports.stream()
-                .map(this::toTransport)
+                .map(this::fromTransportDTO)
                 .collect(Collectors.toList());
     }
 
@@ -40,6 +40,12 @@ public class TransportMapper {
         trasport.setArrivalDateTime(transportDTO.getArrivalDateTime());
         trasport.setPrice(transportDTO.getPrice());
         return trasport;
+    }
+
+    public List<TransportDTO> toTransportDtoList(List<Transport> transports) {
+        return transports.stream()
+                .map(this::toTransportDto)
+                .collect(Collectors.toList());
     }
 
 }

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 @Component
 public class AccommodationMapper {
     
-    public AccommodationDTO toAccommodation(Accommodation accommodation) {
+    public AccommodationDTO toAccommodationDto(Accommodation accommodation) {
          AccommodationDTO accommodationDTO = new AccommodationDTO();
          accommodationDTO.setId(accommodation.getId());
          accommodationDTO.setName(accommodation.getNameAccommodation());
@@ -22,9 +22,9 @@ public class AccommodationMapper {
          return accommodationDTO;
     }
     
-    public List<AccommodationDTO> toAccommodationList(List<Accommodation> accommodations) {
+    public List<Accommodation> toAccommodationList(List<AccommodationDTO> accommodations) {
         return accommodations.stream()
-                .map(this::toAccommodation)
+                .map(this::fromAccommodationDTO)
                 .collect(Collectors.toList());
     }
     
@@ -38,5 +38,11 @@ public class AccommodationMapper {
         accommodation.setCheckOut(accommodationDTO.getCheckOut());
         accommodation.setPrice(accommodationDTO.getPrice());
         return accommodation;
+    }
+
+    public List<AccommodationDTO> toAccommodationDtoList(List<Accommodation> accommodations) {
+        return accommodations.stream()
+                .map(this::toAccommodationDto)
+                .collect(Collectors.toList());
     }
 }
