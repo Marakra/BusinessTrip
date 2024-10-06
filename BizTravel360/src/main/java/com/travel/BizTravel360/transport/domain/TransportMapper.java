@@ -30,16 +30,16 @@ public class TransportMapper {
     }
 
     public Transport fromTransportDTO(TransportDTO transportDTO) {
-        Transport trasport = new Transport();
-        trasport.setId(transportDTO.getId());
-        trasport.setTypeTransport(transportDTO.getType());
-        trasport.setTransportIdentifier(transportDTO.getIdentifier());
-        trasport.setDeparture(transportDTO.getDeparture());
-        trasport.setDepartureDateTime(transportDTO.getDepartureDateTime());
-        trasport.setArrival(transportDTO.getArrival());
-        trasport.setArrivalDateTime(transportDTO.getArrivalDateTime());
-        trasport.setPrice(transportDTO.getPrice());
-        return trasport;
+        Transport transport = new Transport();
+        transport.setId(transportDTO.getId());
+        transport.setTypeTransport(transportDTO.getType());
+        transport.setTransportIdentifier(transportDTO.getIdentifier());
+        transport.setDeparture(transportDTO.getDeparture());
+        transport.setDepartureDateTime(transportDTO.getDepartureDateTime());
+        transport.setArrival(transportDTO.getArrival());
+        transport.setArrivalDateTime(transportDTO.getArrivalDateTime());
+        transport.setPrice(transportDTO.getPrice());
+        return transport;
     }
 
     public List<TransportDTO> toTransportDtoList(List<Transport> transports) {

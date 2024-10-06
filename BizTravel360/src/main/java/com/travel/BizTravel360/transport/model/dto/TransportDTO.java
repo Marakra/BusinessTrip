@@ -16,6 +16,7 @@ public class TransportDTO {
     @Size(max = 20, message = "Number of transport must be at most 20 characters")
     private String identifier;
 
+    @NotNull(message = "Type accommodation is a required field!")
     private TypeTransport type;
 
     @NotBlank(message = "Departure transport is a required field!")

@@ -20,9 +20,9 @@ import java.time.LocalDateTime;
         table = "id_gen", pkColumnName = "ENTITY", pkColumnValue = "transport", valueColumnName = "NEXT_ID")
 public class Transport extends BaseEntity {
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "TYPE")
     private TypeTransport typeTransport;
-
 
     @Column(name = "IDENTIFIER")
     private String transportIdentifier;

@@ -10,8 +10,8 @@
             <input type="hidden" th:field="*{id}" />
 
             <div class="form-group">
-                <label for="type" class="color-text">Type of Transport:</label>
-                <select id="type" th:field="*{type}" class="form-control color-text">
+                <label for="TypeTransport" class="color-text">Type of Transport:</label>
+                <select id="TypeTransport" th:field="*{type}" class="form-control color-text">
                     <option th:each="cat : ${T(com.travel.BizTravel360.transport.TypeTransport).values()}"
                             th:value="${cat}" th:text="${#strings.toLowerCase(cat.toString())}"></option>
                 </select>

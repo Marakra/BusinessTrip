@@ -31,8 +31,8 @@ public class TransportService  {
             trimTransport(transportDTO);
             validateTransport(transportDTO);
 
-            Transport trasport = mapper.fromTransportDTO(transportDTO);
-            transportRepository.save(trasport);
+            Transport transport = mapper.fromTransportDTO(transportDTO);
+            transportRepository.save(transport);
         }catch (DataAccessException exp) {
                 log.error("Failed to save transport {}", transportDTO);
                 throw new TransportSaveException(
@@ -41,24 +41,24 @@ public class TransportService  {
     }
 
     public Page<TransportDTO> findAll(Pageable pageable) {
-        Page<Transport> trasportPage = transportRepository.findAll(pageable);
-        List<TransportDTO> transportDTOS = mapper.toTransportDtoList(trasportPage.getContent());
-        return new PageImpl<>(transportDTOS, pageable, trasportPage.getTotalElements());
+        Page<Transport> transportPage = transportRepository.findAll(pageable);
+        List<TransportDTO> transportDTOS = mapper.toTransportDtoList(transportPage.getContent());
+        return new PageImpl<>(transportDTOS, pageable, transportPage.getTotalElements());
     }
 
     public void updateTransport(TransportDTO updatedTransportDTO) {
-        Transport existingTrasport = transportRepository.findById(updatedTransportDTO.getId())
+        Transport existingTransport = transportRepository.findById(updatedTransportDTO.getId())
                 .orElseThrow(() -> new TransportNotFoundException(updatedTransportDTO.getId()));
 
-        Transport updatedTrasport = mapper.fromTransportDTO(updatedTransportDTO);
-        updatedTrasport.setId(existingTrasport.getId());
-        transportRepository.save(updatedTrasport);
+        Transport updatedTransport = mapper.fromTransportDTO(updatedTransportDTO);
+        updatedTransport.setId(existingTransport.getId());
+        transportRepository.save(updatedTransport);
     }
 
     public void deleteById(Long transportId) {
-        Transport trasport = transportRepository.findById(transportId)
+        Transport transport = transportRepository.findById(transportId)
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
-        transportRepository.delete(trasport);
+        transportRepository.delete(transport);
     }
 
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {

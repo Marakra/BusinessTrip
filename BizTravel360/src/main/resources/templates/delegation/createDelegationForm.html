@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/header :: head}"><title>Add Delegation</title></head>
-<div th:replace="~{fragments/headerEmployee :: header}"></div>
+<div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container mt-4">
     <div class="form-container">
@@ -16,17 +16,6 @@
             <ul><li th:each="err : ${#fields.errors('nameDelegation')}" th:text="${err}" class="error"></li></ul>
         </div>
 
-<!--    &lt;!&ndash;here will be name Employee that we will have in URL&ndash;&gt;-->
-<!--        <div class="form-group">-->
-<!--            <label for="employee" class="color-text">Employee:</label>-->
-<!--            <select id="employee" th:field="*{employee.employeeId}" class="form-control color-text">-->
-<!--                <option th:each="emp : ${employees}" th:value="${emp.employeeId}"-->
-<!--                        th:text="${emp.firstName} + ' ' + ${emp.lastName}"></option>-->
-<!--            </select>-->
-<!--            <ul>-->
-<!--                <li th:each="err : ${#fields.errors('employee')}" th:text="${err}" class="error"></li>-->
-<!--            </ul>-->
-<!--        </div>-->
 
         <div class="form-group">
             <label for="transports" class="color-text">Transport(s):</label>
