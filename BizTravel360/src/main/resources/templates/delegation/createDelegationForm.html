@@ -4,10 +4,10 @@
 <div th:replace="~{fragments/headerEmployee :: header}"></div>
 
 <div class="container mt-4">
-
+    <div class="form-container">
     <h2 class="color-text">Add Delegation</h2>
     <form method="POST" th:action="@{/delegation}" th:object="${delegation}">
-        <input type="hidden" th:field="*{delegationId}" />
+        <input type="hidden" th:field="*{id}" />
 
         <div class="form-group">
             <!--will be auto name employee-->
@@ -16,17 +16,17 @@
             <ul><li th:each="err : ${#fields.errors('nameDelegation')}" th:text="${err}" class="error"></li></ul>
         </div>
 
-    <!--here will be name Employee that we will have in URL-->
-        <div class="form-group">
-            <label for="employee" class="color-text">Employee:</label>
-            <select id="employee" th:field="*{employee.employeeId}" class="form-control color-text">
-                <option th:each="emp : ${employees}" th:value="${emp.employeeId}"
-                        th:text="${emp.firstName} + ' ' + ${emp.lastName}"></option>
-            </select>
-            <ul>
-                <li th:each="err : ${#fields.errors('employee')}" th:text="${err}" class="error"></li>
-            </ul>
-        </div>
+<!--    &lt;!&ndash;here will be name Employee that we will have in URL&ndash;&gt;-->
+<!--        <div class="form-group">-->
+<!--            <label for="employee" class="color-text">Employee:</label>-->
+<!--            <select id="employee" th:field="*{employee.employeeId}" class="form-control color-text">-->
+<!--                <option th:each="emp : ${employees}" th:value="${emp.employeeId}"-->
+<!--                        th:text="${emp.firstName} + ' ' + ${emp.lastName}"></option>-->
+<!--            </select>-->
+<!--            <ul>-->
+<!--                <li th:each="err : ${#fields.errors('employee')}" th:text="${err}" class="error"></li>-->
+<!--            </ul>-->
+<!--        </div>-->
 
         <div class="form-group">
             <label for="transports" class="color-text">Transport(s):</label>

@@ -2,10 +2,24 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:replace="~{fragments/header::head}"><title>Delegations</title></head>
 <div th:replace="~{fragments/header::header}"></div>
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-end mb-3">
-        <a href="/delegation" class="btn btn-primary">Create New Delegation</a>
+
+<div class="container mt-4">
+    <div class="d-flex flex-column align-items-end mb-3">
+        <div class="mb-3">
+            <a href="/delegation/employee" class="btn btn-primary">Create New Delegation</a>
+        </div>
+        <div>
+            <form method="GET" action="/search-delegation">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="keyword" placeholder="Search Delegation" th:value="${param.keyword}">
+                    <label>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 
     <div class="container-fluid mt-4">
         <h1 class="mb-4">Delegation List</h1>
@@ -14,36 +28,38 @@
                 <thead>
                 <tr>
                     <th scope="col">Number</th>
-                    <th scope="col"> Delegation</th>
+                    <th scope="col">Delegation</th>
                     <th scope="col">Employee</th>
                     <th scope="col">Transport</th>
                     <th scope="col">Accommodation</th>
                     <th scope="col">Start</th>
                     <th scope="col">Finish</th>
                     <th scope="col">Total Price</th>
+                    <th scope="col" class="actions-column">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr class="color-text" th:each="delegation, itr : ${delegations}" th:if="${delegation != null}">
+                <tr class="color-text" th:each="delegation, itr : ${delegations.content}">
                     <td th:text="${itr.index + 1}"></td>
                     <td th:text="${#strings.capitalize(delegation.nameDelegation.toLowerCase())}"></td>
                     <td th:text="${#strings.capitalize(delegation.employee.firstName.toLowerCase()
-                                    + ' ' + delegation.employee.lastName.toString())}"></td>
-                    <td>
-                        <ul>
-                            <li th:each="transport : ${delegation.transports}"
-                                th:text="${#strings.toLowerCase(transport.typeTransport.toString())}"></li>
-                        </ul>
+            + ' ' + delegation.employee.lastName.toLowerCase())}"></td>
+                    <td th:each="transport : ${delegation.transports}">
+                        <ul><li th:text="${#strings.toLowerCase(transport.typeTransport.toString())}"></li></ul>
                     </td>
-                    <td>
-                        <ul>
-                            <li th:each="accommodation : ${delegation.accommodations}"
-                                th:text="${#strings.capitalize(accommodation.nameAccommodation.toLowerCase())}"></li>
-                        </ul>
+                    <td th:each="accommodation : ${delegation.accommodations}">
+                        <ul><li th:text="${#strings.capitalize(accommodation.nameAccommodation.toLowerCase())}"></li></ul>
                     </td>
                     <td th:text="${#temporals.format(delegation.departureDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#temporals.format(delegation.arrivalDateTime, 'dd-MM-yyyy HH:mm')}"></td>
                     <td th:text="${#numbers.formatDecimal(delegation.totalPrice, 2, 2) + ' zl'}"></td>
+                    <td class="actions-column">
+                        <a th:href="@{/delegation/edit/{id}(id=${delegation.id})}" class="btn btn-sm btn-warning">Edit</a>
+                        <form th:action="@{/delegation/delete/{id}(id=${delegation.id})}" method="POST" style="display:inline">
+                            <input type="hidden" name="_method" value="DELETE"/>
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -58,18 +74,18 @@
                 <ul class="pagination">
                     <!-- Previous Page Button -->
                     <li class="page-item" th:classappend="${delegations.hasPrevious()} ? '' : 'disabled'">
-                        <a class="page-link" th:href="@{/delegations(page=${delegations.number - 1}, size=${delegations.size})}" th:text="'Previous'" th:if="${delegations.hasPrevious()}"></a>
+                        <a class="page-link" th:href="@{/delegations/employee(page=${delegations.number - 1}, size=${delegations.size})}" th:text="'Previous'" th:if="${delegations.hasPrevious()}"></a>
                         <span class="page-link" th:if="${!delegations.hasPrevious()}">Previous</span>
                     </li>
 
                     <!-- Page Number Links -->
                     <li class="page-item" th:each="i : ${#numbers.sequence(0, delegations.totalPages - 1)}" th:classappend="${i == delegations.number} ? 'active' : ''">
-                        <a class="page-link" th:href="@{/delegations(page=${i}, size=${delegations.size})}" th:text="${i + 1}"></a>
+                        <a class="page-link" th:href="@{/delegations/employee(page=${i}, size=${delegations.size})}" th:text="${i + 1}"></a>
                     </li>
 
                     <!-- Next Page Button -->
                     <li class="page-item" th:classappend="${delegations.hasNext()} ? '' : 'disabled'">
-                        <a class="page-link" th:href="@{/delegations(page=${delegations.number + 1}, size=${delegations.size})}" th:text="'Next'" th:if="${delegations.hasNext()}"></a>
+                        <a class="page-link" th:href="@{/delegations/employee(page=${delegations.number + 1}, size=${delegations.size})}" th:text="'Next'" th:if="${delegations.hasNext()}"></a>
                         <span class="page-link" th:if="${!delegations.hasNext()}">Next</span>
                     </li>
                 </ul>

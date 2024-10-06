@@ -1,6 +1,7 @@
 package com.travel.BizTravel360.delegation.domain;
 
 
+import com.travel.BizTravel360.accommodation.exeptions.AccommodationNotFoundException;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.delegation.exeptions.DelegationNotFoundException;
 import com.travel.BizTravel360.delegation.model.dto.DelegationDTO;
@@ -26,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class DelegationService  {
+public class DelegationService {
 
 
     private final DelegationRepository delegationRepository;
@@ -34,13 +35,13 @@ public class DelegationService  {
     private final DelegationMapper mapper;
 
 
-    public void save(DelegationDTO delegationDTO) throws DataAccessException  {
+    public void save(DelegationDTO delegationDTO) throws DataAccessException {
         try {
             trimDelegation(delegationDTO);
             Delegation delegation = mapper.toDelegationDto(delegationDTO);
-            validateDelegation(delegationDTO);
+
             delegationRepository.save(delegation);
-        }catch (DataAccessException exp) {
+        } catch (DataAccessException exp) {
             log.error("Failed to save transport {}", delegationDTO);
             throw new TransportSaveException(
                     String.format("Failed to save transport: %s, message: %s.", delegationDTO, exp.getMessage()));
@@ -62,30 +63,39 @@ public class DelegationService  {
             log.error(errorMessage.toString());
             throw new IllegalArgumentException(errorMessage.toString());
         }
-        }
+    }
 
 
     public void updateDelegation(DelegationDTO updateDelegationDTO) {
-        Delegation existingDelegation = updateDelegationDTO.findById(updateDelegationDTO.getId())
+        Delegation existingDelegation = delegationRepository.findById(updateDelegationDTO.getId())
                 .orElseThrow(() -> new DelegationNotFoundException(updateDelegationDTO.getId()));
 
-        Delegation updatedDelegation = mapper.fromDelegationDto(updateDelegationDTO);
+        Delegation updatedDelegation = mapper.toDelegationDto(updateDelegationDTO);
         updateDelegationDTO.setId(existingDelegation.getId());
         delegationRepository.save(updatedDelegation);
     }
 
+    public void deleteById(Long delegationId) {
+        Delegation delegation = delegationRepository.findById(delegationId)
+                .orElseThrow(() -> new DelegationNotFoundException(delegationId));
+        delegationRepository.delete(delegation);
+    }
+
     public Page<DelegationDTO> searchDelegation(String keyword, Pageable pageable) {
         return delegationRepository.findByKeywordAndType(keyword, pageable)
-                .map(mapper::toDelegationDto);
+                .map(mapper::fromDelegationDto);
     }
+
     public DelegationDTO getById(Long delegationId) {
         return delegationRepository.findById(delegationId)
-                .map(mapper::toDelegationDto)
+                .map(mapper::fromDelegationDto)
                 .orElseThrow(() -> {
-                    log.error("Accommodation with ID {} not found", delegationId);
+                    log.error("Delegation with ID {} not found", delegationId);
                     return new DelegationNotFoundException(delegationId);
                 });
     }
+
+
 
     private void trimDelegation(DelegationDTO delegationDTO) {
         if (delegationDTO.getNameDelegation() != null) {
@@ -105,10 +115,10 @@ public class DelegationService  {
         return transportPrice.add(accommodationPrice);
     }
 
-    private <T> List<T> fetchEntitiesByIds(List<Long> ids, Function<Long, T> fetchFunction){
+    private <T> List<T> fetchEntitiesByIds(List<Long> ids, Function<Long, T> fetchFunction) {
         return ids.stream()
                 .map(fetchFunction::apply)
                 .collect(Collectors.toList());
-}
+    }
 }
 
