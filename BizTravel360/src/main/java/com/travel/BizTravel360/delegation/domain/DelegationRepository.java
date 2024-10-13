@@ -16,6 +16,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DelegationRepository extends JpaRepository<Delegation, Long> {
 
-    @Query(value = "SELECT * FROM delegation del WHERE (del.nameDelegation LIKE %:keyword% ) and (:type IS NULL OR del.nameDelegation = :nameDelegation)", nativeQuery = true)
+    @Query(value = "SELECT * FROM delegation del WHERE (del.nameDelegation LIKE %:keyword% ) ", nativeQuery = true)
     Page<Delegation> findByKeywordAndType(@Param("keyword") String keyword, Pageable pageable);
 }

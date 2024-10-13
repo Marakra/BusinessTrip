@@ -1,7 +1,11 @@
 package com.travel.BizTravel360.delegation;
 
+import com.travel.BizTravel360.accommodation.domain.AccommodationService;
 import com.travel.BizTravel360.delegation.domain.DelegationService;
 import com.travel.BizTravel360.delegation.model.dto.DelegationDTO;
+import com.travel.BizTravel360.employee.domain.EmployeeService;
+import com.travel.BizTravel360.employee.model.entity.Employee;
+import com.travel.BizTravel360.transport.domain.TransportService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,7 +17,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -26,9 +29,15 @@ public class DelegationController {
     private static final String SIZE_DEFAULT_VALUE = "10";
 
     private final DelegationService delegationService;
+    private final TransportService transportService;
+    private final AccommodationService accommodationService;
+    private final EmployeeService employeeService;
 
-    public DelegationController(DelegationService delegationService) {
+    public DelegationController(DelegationService delegationService, TransportService transportService, AccommodationService accommodationService, EmployeeService employeeService) {
         this.delegationService = delegationService;
+        this.transportService = transportService;
+        this.accommodationService = accommodationService;
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/delegations/employee")
@@ -52,8 +61,13 @@ public class DelegationController {
 
 
     @GetMapping("/delegation/employee")
-    public String showCreateDelegationForm(Model model) {
+    public String showCreateDelegationForm(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
+                                           @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
+                                           Model model) {
         model.addAttribute("delegation", new DelegationDTO());
+        model.addAttribute("employees", employeeService.findAll(PageRequest.of(page, size)));
+        model.addAttribute("transports", transportService.findAll(PageRequest.of(page, size)));
+        model.addAttribute("accommodations", accommodationService.findAll(PageRequest.of(page, size)));
         return "delegation/createDelegationForm";
     }
 

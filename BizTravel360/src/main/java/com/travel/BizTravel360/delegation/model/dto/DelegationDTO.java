@@ -2,6 +2,7 @@ package com.travel.BizTravel360.delegation.model.dto;
 
 import com.travel.BizTravel360.accommodation.annotation.ValidDateRangeAccommodation;
 import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
+import com.travel.BizTravel360.delegation.annotation.ValidDateRangeDelegation;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@ValidDateRangeAccommodation
+@ValidDateRangeDelegation
 public class DelegationDTO {
 
     private Long id;

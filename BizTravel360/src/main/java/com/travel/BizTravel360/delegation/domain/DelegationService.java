@@ -39,7 +39,7 @@ public class DelegationService {
         try {
             trimDelegation(delegationDTO);
             Delegation delegation = mapper.toDelegationDto(delegationDTO);
-
+            validateDelegation(delegationDTO);
             delegationRepository.save(delegation);
         } catch (DataAccessException exp) {
             log.error("Failed to save transport {}", delegationDTO);

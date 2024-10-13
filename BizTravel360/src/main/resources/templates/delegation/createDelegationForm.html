@@ -21,7 +21,7 @@
             <label for="transports" class="color-text">Transport(s):</label>
             <select multiple id="transports" name="transports" th:field="*{transports}" class="form-control color-text">
                 <option th:each="trans : ${transports}"
-                        th:value="${trans.transportId}"
+                        th:value="${trans.id}"
                         th:text="${#temporals.format(trans.departureDateTime, 'dd-MM-yyyy HH:mm')}
                         + ' |***| ' + ${#temporals.format(trans.arrivalDateTime, 'dd-MM-yyyy HH:mm')}
                         + ' |***| ' + ${trans.departure}
@@ -36,10 +36,10 @@
             <label for="accommodations" class="color-text">Accommodation(s):</label>
             <select multiple id="accommodations" name="accommodations" th:field="*{accommodations}" class="form-control color-text">
                 <option th:each="acc : ${accommodations}"
-                        th:value="${acc.accommodationId}"
+                        th:value="${acc.id}"
                         th:text="${#temporals.format(acc.checkIn, 'dd-MM-yyyy HH:mm')}
                         + ' |***| ' + ${#temporals.format(acc.checkOut, 'dd-MM-yyyy HH:mm')}
-                        + ' |***| ' + ${acc.nameAccommodation}"></option>
+                        + ' |***| ' + ${acc.name}"></option>
             </select>
             <small class="form-text text-muted">You can select multiple accommodations by holding down the Ctrl (Windows) or Command (Mac) key while clicking.</small>
 
