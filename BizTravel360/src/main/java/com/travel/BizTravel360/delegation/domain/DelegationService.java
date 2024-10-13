@@ -2,6 +2,7 @@ package com.travel.BizTravel360.delegation.domain;
 
 
 import com.travel.BizTravel360.accommodation.exeptions.AccommodationNotFoundException;
+import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.delegation.exeptions.DelegationNotFoundException;
 import com.travel.BizTravel360.delegation.model.dto.DelegationDTO;

@@ -22,10 +22,10 @@
             <select multiple id="transports" name="transports" th:field="*{transports}" class="form-control color-text">
                 <option th:each="trans : ${transports}"
                         th:value="${trans.id}"
-                        th:text="${#temporals.format(trans.departureDateTime, 'dd-MM-yyyy HH:mm')}
-                        + ' |***| ' + ${#temporals.format(trans.arrivalDateTime, 'dd-MM-yyyy HH:mm')}
-                        + ' |***| ' + ${trans.departure}
-                        + ' -> ' + ${trans.arrival}">
+                th:text="${#temporals.format(trans.departureDateTime, 'dd-MM-yyyy HH:mm')}
+                + ' |***| ' + ${#temporals.format(trans.arrivalDateTime, 'dd-MM-yyyy HH:mm')}
+                + ' |***| ' + ${trans.departure}
+                + ' -> ' + ${trans.arrival}">
                 </option>
             </select>
             <small class="form-text text-muted">You can select multiple transports by holding down the Ctrl (Windows) or Command (Mac) key while clicking.</small>
@@ -38,8 +38,8 @@
                 <option th:each="acc : ${accommodations}"
                         th:value="${acc.id}"
                         th:text="${#temporals.format(acc.checkIn, 'dd-MM-yyyy HH:mm')}
-                        + ' |***| ' + ${#temporals.format(acc.checkOut, 'dd-MM-yyyy HH:mm')}
-                        + ' |***| ' + ${acc.name}"></option>
+                + ' |***| ' + ${#temporals.format(acc.checkOut, 'dd-MM-yyyy HH:mm')}
+                + ' |***| ' + ${acc.name}"></option>
             </select>
             <small class="form-text text-muted">You can select multiple accommodations by holding down the Ctrl (Windows) or Command (Mac) key while clicking.</small>
 
@@ -61,6 +61,7 @@
         <button type="submit" class="btn btn-primary">Save Delegation</button>
         <a href="/delegations/employee" class="btn btn-secondary" style="float: right;">Back to the list</a>
     </form>
+    </div>
 </div>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </html>

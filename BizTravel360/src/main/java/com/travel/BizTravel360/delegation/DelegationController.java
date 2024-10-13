@@ -92,7 +92,7 @@ public class DelegationController {
         }
         delegationService.updateDelegation(delegationDTO);
         redirectAttributes.addFlashAttribute("successMessage", renderSuccessMessage(delegationDTO, "updated"));
-        return "redirect:/accommodations/employee";
+        return "redirect:/delegations/employee";
     }
 
     @PostMapping("/delete-delegation/{delegationId}")

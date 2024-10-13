@@ -31,11 +31,14 @@ public class DelegationDTO {
     private List<AccommodationDTO> accommodations;
 
     @NotNull(message = "Departure date is a required field!")
-    @FutureOrPresent(message = "Departure date must be in the present or future")
+//    @FutureOrPresent(message = "Departure date must be in the present or future")
     private LocalDateTime departureDateTime;
 
-    @NotNull(message = "Arrival date is a required field!")
-    @Future(message = "Arrival date must be in the future")
+//    @NotNull(message = "Arrival date is a required field!")
+//    @Future(message = "Arrival date must be in the future")
+
+    private List<Long> accommodationIds;
+    private List<Long> transportIds;
 
     private LocalDateTime arrivalDateTime;
     private BigDecimal totalPrice;
