@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,10 +31,12 @@ public class SecurityConfig {
     }
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png", "/employees/employee", "/employee/employee", "/employee", "/sending-password/**")
+                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png") // + "/employees/employee", "/employee/employee", "/employee", "/sending-password/**" to create test employee
                         .permitAll()
                         .anyRequest().authenticated()
                 )
@@ -51,8 +54,7 @@ public class SecurityConfig {
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
                                 .permitAll()
-                        )
-                .csrf(csrf -> csrf.disable());
+                        );
         
         return http.build();
     }
