@@ -11,6 +11,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface TransportRepository extends JpaRepository<Trasport, Long> {
@@ -19,4 +21,6 @@ public interface TransportRepository extends JpaRepository<Trasport, Long> {
     Page<Trasport> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeTransport type, Pageable pageable);
     
     Page<Trasport> findByEmployee(Employee employee, Pageable pageable);
+    
+    List<Trasport> findByEmployee(Employee employee);
 }

@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
     //Custom query
@@ -17,4 +19,6 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
     Page<Accommodation> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeAccommodation type, Pageable pageable);
     
     Page<Accommodation> findByEmployee(Employee employee, Pageable pageable);
+    
+    List<Accommodation> findByEmployee(Employee employee);
 }

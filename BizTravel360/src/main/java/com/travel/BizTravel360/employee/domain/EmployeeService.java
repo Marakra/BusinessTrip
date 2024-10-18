@@ -4,6 +4,7 @@ package com.travel.BizTravel360.employee.domain;
 import com.travel.BizTravel360.employee.enumEmployee.RoleEmployee;
 import com.travel.BizTravel360.employee.exeptions.EmployeeNotFoundException;
 import com.travel.BizTravel360.employee.exeptions.EmployeeSaveException;
+import com.travel.BizTravel360.employee.model.dto.AnalyticsDTO;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
 import com.travel.BizTravel360.employee.model.entity.Employee;
 import jakarta.transaction.Transactional;
@@ -31,6 +32,7 @@ public class EmployeeService {
     private final Validator validator;
     private final EmployeeMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final AnalyticsService analyticsService;
     
     public void  save(EmployeeDTO employeeDTO) throws DataAccessException {
         try {
@@ -69,6 +71,17 @@ public class EmployeeService {
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
         employeeRepository.delete(employee);
     }
+    
+    public AnalyticsDTO getAnalyticsForEmployee(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        
+        AnalyticsDTO analyticsDTO = analyticsService.getAnalyticsForEmployee(employee);
+        analyticsDTO.setId(employeeId);
+        
+        return analyticsDTO;
+    }
+    
     
     public Page<EmployeeDTO> searchEmployee(String keyword, Pageable pageable) {
         return employeeRepository.findByKeyword(keyword, pageable)
