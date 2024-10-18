@@ -1,5 +1,6 @@
 package com.travel.BizTravel360.transport.domain;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import com.travel.BizTravel360.transport.TypeTransport;
 
 import com.travel.BizTravel360.transport.model.entity.Trasport;
@@ -16,4 +17,6 @@ public interface TransportRepository extends JpaRepository<Trasport, Long> {
 
     @Query(value = "SELECT * FROM transport tra WHERE (tra.identifier LIKE %:keyword% ) and (:type IS NULL OR tra.type = :type)", nativeQuery = true)
     Page<Trasport> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeTransport type, Pageable pageable);
+    
+    Page<Trasport> findByEmployee(Employee employee, Pageable pageable);
 }

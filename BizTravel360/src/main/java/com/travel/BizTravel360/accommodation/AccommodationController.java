@@ -34,7 +34,7 @@ public class AccommodationController {
     public String getAllAccommodations(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                        @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                        Model model) {
-        Page<AccommodationDTO> accommodations = accommodationService.findAll(PageRequest.of(page, size));
+        Page<AccommodationDTO> accommodations = accommodationService.findByLoggedInEmployee(PageRequest.of(page, size));
         log.info("Fetched accommodationList: {}", accommodations.getTotalElements());
         model.addAttribute("accommodations", accommodations);
 

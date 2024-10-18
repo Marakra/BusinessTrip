@@ -31,13 +31,17 @@ public class SecurityConfig {
     }
     
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png") // + "/employees/employee", "/employee/employee", "/employee", "/sending-password/**" to create test employee
+                        //public resources
+                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png") //"/employees/employee", "/employee/employee", "/employee", "/sending-password/**"
                         .permitAll()
+                        
+                        //restricting access to Employees for specific roles
+                        .requestMatchers("/employees/**")
+                        .hasAnyRole("ADMIN", "HR", "MANAGER")
+                        
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -50,11 +54,12 @@ public class SecurityConfig {
                 )
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
-                                .logoutSuccessUrl("/")
-                                .invalidateHttpSession(true)
-                                .deleteCookies("JSESSIONID")
-                                .permitAll()
-                        );
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .csrf(csrf -> csrf.disable());
         
         return http.build();
     }

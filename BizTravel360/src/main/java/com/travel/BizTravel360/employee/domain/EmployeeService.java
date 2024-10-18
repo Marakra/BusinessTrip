@@ -1,6 +1,7 @@
 package com.travel.BizTravel360.employee.domain;
 
 
+import com.travel.BizTravel360.employee.enumEmployee.RoleEmployee;
 import com.travel.BizTravel360.employee.exeptions.EmployeeNotFoundException;
 import com.travel.BizTravel360.employee.exeptions.EmployeeSaveException;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
@@ -36,6 +37,8 @@ public class EmployeeService {
             trimEmployee(employeeDTO);
             
             Employee employee = mapper.formEmployeeDTO(employeeDTO);
+            
+            assignRoleOnPosition(employee);
             validateEmployee(employeeDTO);
             
             employeeRepository.save(employee);
@@ -113,6 +116,21 @@ public class EmployeeService {
         employee.setPassword(encodedPassword);
         employeeRepository.save(employee);
         log.info("Encrypting and saving password for employee with token {}", employeeDTO.getToken());
+    }
+    
+    public EmployeeDTO getEmployeeByEmail(String email) {
+        return employeeRepository.findByEmail(email)
+                .map(mapper::toEmployee)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee with email " + email + " not found"));
+    }
+    
+    private void assignRoleOnPosition(Employee employee) {
+        switch (employee.getPosition()) {
+            case ADMINISTRATOR -> employee.setRole(RoleEmployee.ROLE_ADMIN);
+            case MANAGER -> employee.setRole(RoleEmployee.ROLE_MANAGER);
+            case HR -> employee.setRole(RoleEmployee.ROLE_HR);
+            default -> employee.setRole(RoleEmployee.ROLE_EMPLOYEE);
+        }
     }
     
     private void validatePassword(String password) {

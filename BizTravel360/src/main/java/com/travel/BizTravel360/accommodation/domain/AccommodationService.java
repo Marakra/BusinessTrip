@@ -5,6 +5,8 @@ import com.travel.BizTravel360.accommodation.exeptions.AccommodationNotFoundExce
 import com.travel.BizTravel360.accommodation.exeptions.AccommodationSaveException;
 import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.employee.domain.EmployeeRepository;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,6 +26,7 @@ import java.util.*;
 public class AccommodationService{
     
     private final AccommodationRepository accommodationRepository;
+    private final EmployeeRepository employeeRepository;
     private final Validator validator;
     private final AccommodationMapper mapper;
     
@@ -32,6 +36,13 @@ public class AccommodationService{
             
             Accommodation accommodation = mapper.fromAccommodationDTO(accommodationDTO);
             validateAccommodation(accommodationDTO);
+            
+            String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            Employee employee = employeeRepository.findByEmail(loggedInEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+            
+            accommodation.setEmployee(employee);
+            
             accommodationRepository.save(accommodation);
         } catch (DataAccessException exp) {
             log.error("Failed to save accommodation {}", accommodationDTO);
@@ -64,6 +75,16 @@ public class AccommodationService{
     public Page<AccommodationDTO> searchAccommodation(String keyword, TypeAccommodation type, Pageable pageable) {
         return accommodationRepository.findByKeywordAndType(keyword, type, pageable)
                 .map(mapper::toAccommodation);
+    }
+    
+    public Page<AccommodationDTO> findByLoggedInEmployee(Pageable pageable) {
+        String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Employee employee = employeeRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        
+        Page<Accommodation> accommodationPage = accommodationRepository.findByEmployee(employee, pageable);
+        List<AccommodationDTO> accommodationDTOs = mapper.toAccommodationList(accommodationPage.getContent());
+        return new PageImpl<>(accommodationDTOs, pageable, accommodationPage.getTotalElements());
     }
     
     private void validateAccommodation(AccommodationDTO accommodationDTO){

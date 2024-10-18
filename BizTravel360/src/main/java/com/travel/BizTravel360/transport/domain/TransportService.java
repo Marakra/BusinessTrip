@@ -1,5 +1,9 @@
 package com.travel.BizTravel360.transport.domain;
 
+import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
+import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
+import com.travel.BizTravel360.employee.domain.EmployeeRepository;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
@@ -12,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,6 +28,7 @@ import java.util.*;
 public class TransportService  {
 
     private final TransportRepository transportRepository;
+    private final EmployeeRepository employeeRepository;
     private final Validator validator;
     private final TransportMapper mapper;
 
@@ -32,6 +38,13 @@ public class TransportService  {
             validateTransport(transportDTO);
 
             Trasport trasport = mapper.fromTransportDTO(transportDTO);
+            
+            String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            Employee employee = employeeRepository.findByEmail(loggedInEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+            
+            trasport.setEmployee(employee);
+            
             transportRepository.save(trasport);
         }catch (DataAccessException exp) {
                 log.error("Failed to save transport {}", transportDTO);
@@ -60,7 +73,17 @@ public class TransportService  {
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
         transportRepository.delete(trasport);
     }
-
+    
+    public Page<TransportDTO> findByLoggedInEmployee(Pageable pageable) {
+        String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Employee employee = employeeRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+        
+        Page<Trasport> transportPage = transportRepository.findByEmployee(employee, pageable);
+        return new PageImpl<>(mapper.toTransportList(transportPage.getContent()), pageable, transportPage.getTotalElements());
+    }
+    
+    
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {
         return transportRepository.findByKeywordAndType(keyword, type, pageable)
                 .map(mapper::toTransport);

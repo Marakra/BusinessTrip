@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -36,6 +38,13 @@ public class EmployeeController {
     //URL will have first and last name after login
     @GetMapping("/hello/employee")
     public String hello(Model model) {
+        String currentEmployeeEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        EmployeeDTO employeeDTO = employeeService.getEmployeeByEmail(currentEmployeeEmail);
+        
+        model.addAttribute("firstName", employeeDTO.getFirstName());
+        model.addAttribute("lastName", employeeDTO.getLastName());
+        
         return "employee/helloEmployee";
     }
     
@@ -104,6 +113,11 @@ public class EmployeeController {
         employeeService.deleteById(employeeId);
         redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted employee with ID: %s", employeeId));
         return "redirect:/employees/employee";
+    }
+    
+    @GetMapping("/employee/analytics")
+    public String analytics(Model model) {
+        return "employee/analytics";
     }
     
     @GetMapping("/search-employee")
