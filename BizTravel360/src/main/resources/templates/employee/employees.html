@@ -29,9 +29,9 @@
                     <th scope="col">Last Name</th>
                     <th scope="col">Position</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Link to Employee</th>
-                    <th scope="col">Actions</th>
-                    <th scope="col">Analytics</th>
+                    <th scope="col" sec:authorize="hasAnyRole('ROLE_HR')">Link to Employee</th>
+                    <th scope="col" sec:authorize="hasAnyRole('ROLE_HR')">Actions</th>
+                    <th scope="col" >Analytics</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,9 +41,9 @@
                     <td th:text="${#strings.capitalize(employee.lastName.toLowerCase())}"></td>
                     <td th:text="${#strings.toLowerCase(employee.position.toString())}"></td>
                     <td th:text="${#strings.capitalize(employee.email.toLowerCase())}"></td>
-                    <td>
+                    <td sec:authorize="hasAnyRole('ROLE_HR')">
                         <button class="btn btn-sm btn-success" th:attr="data-token=${employee.token}" onclick="copyTokenLink(this)">Click here</button>                    </td>
-                    <td>
+                    <td sec:authorize="hasAnyRole('ROLE_HR')">
                     <a th:href="@{/employee/employee/{id}(id=${employee.id})}" class="btn btn-sm btn-warning">Edit</a>
                         <form th:action="@{/delete-employee/{id}(id=${employee.id})}" method="post" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
