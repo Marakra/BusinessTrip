@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface TransportRepository extends JpaRepository<Trasport, Long> {
 
-    @Query(value = "SELECT * FROM transport tra WHERE (tra.identifier LIKE %:keyword% ) and (:type IS NULL OR tra.type = :type)", nativeQuery = true)
+    @Query(value = "SELECT * FROM transport trans WHERE (trans.identifier LIKE %:keyword% or trans.arrival LIKE %:keyword% or trans.departure LIKE %:keyword%) and (:type IS NULL OR trans.type = :type)", nativeQuery = true)
     Page<Trasport> findByKeywordAndType(@Param("keyword") String keyword, @Param("type") TypeTransport type, Pageable pageable);
     
     Page<Trasport> findByEmployee(Employee employee, Pageable pageable);

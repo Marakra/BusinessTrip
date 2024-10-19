@@ -7,6 +7,7 @@ import com.travel.BizTravel360.accommodation.model.dto.AccommodationDTO;
 import com.travel.BizTravel360.accommodation.model.entity.Accommodation;
 import com.travel.BizTravel360.employee.domain.EmployeeRepository;
 import com.travel.BizTravel360.employee.model.entity.Employee;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -33,14 +34,11 @@ public class AccommodationService{
     public void save(AccommodationDTO accommodationDTO) throws DataAccessException {
         try {
             trimAccommodation(accommodationDTO);
-            
-            Accommodation accommodation = mapper.fromAccommodationDTO(accommodationDTO);
             validateAccommodation(accommodationDTO);
             
-            String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-            Employee employee = employeeRepository.findByEmail(loggedInEmail)
-                    .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
+            Employee employee = findLoggedInEmployee();
             
+            Accommodation accommodation = mapper.fromAccommodationDTO(accommodationDTO);
             accommodation.setEmployee(employee);
             
             accommodationRepository.save(accommodation);
@@ -49,12 +47,6 @@ public class AccommodationService{
             throw new AccommodationSaveException(
                     String.format("Failed to save accommodation: %s, message: %s.", accommodationDTO, exp.getMessage()));
         }
-    }
-
-    public Page<AccommodationDTO> findAll(Pageable pageable) {
-        Page<Accommodation> accommodationPage = accommodationRepository.findAll(pageable);
-        List<AccommodationDTO> accommodationDTOs = mapper.toAccommodationList(accommodationPage.getContent());
-        return new PageImpl<>(accommodationDTOs, pageable, accommodationPage.getTotalElements());
     }
     
     public void updateAccommodation(AccommodationDTO updateAccommodationDTO) {
@@ -78,13 +70,20 @@ public class AccommodationService{
     }
     
     public Page<AccommodationDTO> findByLoggedInEmployee(Pageable pageable) {
-        String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Employee employee = employeeRepository.findByEmail(loggedInEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
-        
+        Employee employee = findLoggedInEmployee();
         Page<Accommodation> accommodationPage = accommodationRepository.findByEmployee(employee, pageable);
         List<AccommodationDTO> accommodationDTOs = mapper.toAccommodationList(accommodationPage.getContent());
         return new PageImpl<>(accommodationDTOs, pageable, accommodationPage.getTotalElements());
+        
+    }
+    
+    public AccommodationDTO getById(Long accommodationId) {
+        return accommodationRepository.findById(accommodationId)
+                .map(mapper::toAccommodation)
+                .orElseThrow(() -> {
+                    log.error("Accommodation with ID {} not found", accommodationId);
+                    return new AccommodationNotFoundException(accommodationId);
+                });
     }
     
     private void validateAccommodation(AccommodationDTO accommodationDTO){
@@ -106,13 +105,10 @@ public class AccommodationService{
         }
     }
     
-    public AccommodationDTO getById(Long accommodationId) {
-        return accommodationRepository.findById(accommodationId)
-                .map(mapper::toAccommodation)
-                .orElseThrow(() -> {
-                    log.error("Accommodation with ID {} not found", accommodationId);
-                    return new AccommodationNotFoundException(accommodationId);
-                });
+    private Employee findLoggedInEmployee() {
+        String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return employeeRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Employee not found with given email: %s", loggedInEmail)));
     }
 }
 
