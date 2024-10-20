@@ -29,8 +29,9 @@
                     <th scope="col">Last Name</th>
                     <th scope="col">Position</th>
                     <th scope="col">Email</th>
-                    <th scope="col">Link to Employee</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col" sec:authorize="hasAnyRole('ROLE_HR')">Link to Employee</th>
+                    <th scope="col" sec:authorize="hasAnyRole('ROLE_HR')">Actions</th>
+                    <th scope="col" >Analytics</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,48 +41,48 @@
                     <td th:text="${#strings.capitalize(employee.lastName.toLowerCase())}"></td>
                     <td th:text="${#strings.toLowerCase(employee.position.toString())}"></td>
                     <td th:text="${#strings.capitalize(employee.email.toLowerCase())}"></td>
-                    <td>
+                    <td sec:authorize="hasAnyRole('ROLE_HR')">
                         <button class="btn btn-sm btn-success" th:attr="data-token=${employee.token}" onclick="copyTokenLink(this)">Click here</button>                    </td>
-                    <td>
+                    <td sec:authorize="hasAnyRole('ROLE_HR')">
                     <a th:href="@{/employee/employee/{id}(id=${employee.id})}" class="btn btn-sm btn-warning">Edit</a>
                         <form th:action="@{/delete-employee/{id}(id=${employee.id})}" method="post" style="display:inline">
                             <input type="hidden" name="_method" value="DELETE"/>
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>
                     </td>
-                </tr>
-                </tbody>
-            </table>
+                    <td>
+                        <a th:href="@{/employee/analytics/{id}(id=${employee.id})}">Show</a></td>
+            </tr>
+            </tbody>
+        </table>
 
-            <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
-                <span th:text="${successMessage}"></span>
-            </div>
-
-            <!-- Pagination -->
-                    <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <!-- Previous Page Button -->
-                            <li class="page-item" th:classappend="${employees.hasPrevious()} ? '' : 'disabled'">
-                                <a class="page-link" th:href="@{/employees/employee(page=${employees.number - 1}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="'Previous'" th:if="${employees.hasPrevious()}"></a>
-                                <span class="page-link" th:if="${!employees.hasPrevious()}">Previous</span>
-                            </li>
-
-                            <!-- Page Number Links -->
-                            <li class="page-item" th:each="i : ${#numbers.sequence(0, employees.totalPages - 1)}" th:classappend="${i == employees.number} ? 'active' : ''">
-                                <a class="page-link" th:href="@{/employees/employee(page=${i}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="${i + 1}"></a>
-                            </li>
-
-                            <!-- Next Page Button -->
-                            <li class="page-item" th:classappend="${employees.hasNext()} ? '' : 'disabled'">
-                                <a class="page-link" th:href="@{/employees/employee(page=${employees.number + 1}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="'Next'" th:if="${employees.hasNext()}"></a>
-                                <span class="page-link" th:if="${!employees.hasNext()}">Next</span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+        <div th:if="${successMessage}" class="alert alert-success mt-3" role="alert">
+            <span th:text="${successMessage}"></span>
         </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- Previous Page Button -->
+                <li class="page-item" th:classappend="${employees.hasPrevious()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="@{/employees/employee(page=${employees.number - 1}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="'Previous'" th:if="${employees.hasPrevious()}"></a>
+                    <span class="page-link" th:if="${!employees.hasPrevious()}">Previous</span>
+                </li>
+
+                <!-- Page Number Links -->
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, employees.totalPages - 1)}" th:classappend="${i == employees.number} ? 'active' : ''">
+                    <a class="page-link" th:href="@{/employees/employee(page=${i}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="${i + 1}"></a>
+                </li>
+
+                <!-- Next Page Button -->
+                <li class="page-item" th:classappend="${employees.hasNext()} ? '' : 'disabled'">
+                    <a class="page-link" th:href="@{/employees/employee(page=${employees.number + 1}, size=${employees.size}, keyword=${param.keyword}, type=${param.type})}" th:text="'Next'" th:if="${employees.hasNext()}"></a>
+                    <span class="page-link" th:if="${!employees.hasNext()}">Next</span>
+                </li>
+            </ul>
+        </nav>
     </div>
+</div>
 <div th:replace="~{fragments/footer::footer}"></div>
 <script src="/copyTokenLink.js"></script>
 </html>

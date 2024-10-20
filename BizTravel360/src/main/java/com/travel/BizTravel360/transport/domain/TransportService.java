@@ -1,5 +1,7 @@
 package com.travel.BizTravel360.transport.domain;
 
+import com.travel.BizTravel360.employee.domain.EmployeeRepository;
+import com.travel.BizTravel360.employee.model.entity.Employee;
 import com.travel.BizTravel360.transport.TypeTransport;
 import com.travel.BizTravel360.transport.exeptions.TransportNotFoundException;
 import com.travel.BizTravel360.transport.model.dto.TransportDTO;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,6 +26,7 @@ import java.util.*;
 public class TransportService  {
 
     private final TransportRepository transportRepository;
+    private final EmployeeRepository employeeRepository;
     private final Validator validator;
     private final TransportMapper mapper;
 
@@ -30,20 +34,18 @@ public class TransportService  {
         try {
             trimTransport(transportDTO);
             validateTransport(transportDTO);
-
+            
+            Employee employee = findLoggedInEmployee();
+            
             Trasport trasport = mapper.fromTransportDTO(transportDTO);
+            trasport.setEmployee(employee);
+            
             transportRepository.save(trasport);
         }catch (DataAccessException exp) {
                 log.error("Failed to save transport {}", transportDTO);
                 throw new TransportSaveException(
                         String.format("Failed to save transport: %s, message: %s.", transportDTO, exp.getMessage()));
             }
-    }
-
-    public Page<TransportDTO> findAll(Pageable pageable) {
-        Page<Trasport> trasportPage = transportRepository.findAll(pageable);
-        List<TransportDTO> transportDTOS = mapper.toTransportList(trasportPage.getContent());
-        return new PageImpl<>(transportDTOS, pageable, trasportPage.getTotalElements());
     }
 
     public void updateTransport(TransportDTO updatedTransportDTO) {
@@ -60,10 +62,26 @@ public class TransportService  {
                 .orElseThrow(() -> new TransportNotFoundException(transportId));
         transportRepository.delete(trasport);
     }
-
+    
+    public Page<TransportDTO> findByLoggedInEmployee(Pageable pageable) {
+        Employee employee = findLoggedInEmployee();
+        Page<Trasport> transportPage = transportRepository.findByEmployee(employee, pageable);
+        return new PageImpl<>(mapper.toTransportList(transportPage.getContent()), pageable, transportPage.getTotalElements());
+    }
+    
+    
     public Page<TransportDTO> searchTransport(String keyword, TypeTransport type, Pageable pageable) {
         return transportRepository.findByKeywordAndType(keyword, type, pageable)
                 .map(mapper::toTransport);
+    }
+    
+    public TransportDTO getById(Long transportId) {
+        return transportRepository.findById(transportId)
+                .map(mapper::toTransport)
+                .orElseThrow(() -> {
+                    log.error("Transport with ID {} not found", transportId);
+                    return new TransportNotFoundException(transportId);
+                });
     }
 
     private void validateTransport(TransportDTO transportDTO){
@@ -81,13 +99,10 @@ public class TransportService  {
         transportDTO.setDeparture(transportDTO.getDeparture().trim());
         transportDTO.setArrival(transportDTO.getArrival().trim());
     }
-
-    public TransportDTO getById(Long transportId) {
-        return transportRepository.findById(transportId)
-                .map(mapper::toTransport)
-                .orElseThrow(() -> {
-                    log.error("Transport with ID {} not found", transportId);
-                    return new TransportNotFoundException(transportId);
-                });
+    
+    private Employee findLoggedInEmployee() {
+        String loggedInEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        return employeeRepository.findByEmail(loggedInEmail)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found with email: " + loggedInEmail));
     }
 }

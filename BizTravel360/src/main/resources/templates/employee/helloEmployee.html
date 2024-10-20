@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl">
 <head th:replace="~{fragments/header::head}"><title>BizTravel</title></head>
     <div th:replace="~{fragments/header::header}"></div>
-    Hi, Employee
+
+   <p>Hi, <span th:text="${firstName}"></span> <span th:text="${lastName}"></span>!</p>
+
     <p>here will be calendar</p>
 
     <div th:replace="~{fragments/footer::footer}"></div>

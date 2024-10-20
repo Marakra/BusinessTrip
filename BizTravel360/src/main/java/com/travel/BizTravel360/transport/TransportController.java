@@ -37,7 +37,7 @@ public class TransportController {
     public String getAllTransports(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,
                                    @RequestParam(value = "size", defaultValue = SIZE_DEFAULT_VALUE) int size,
                                    Model model)  {
-        Page<TransportDTO> transports = transportService.findAll(PageRequest.of(page, size));
+        Page<TransportDTO> transports = transportService.findByLoggedInEmployee(PageRequest.of(page, size));
         log.info("Fetched {} transport", transports.getTotalElements());
         model.addAttribute("transports", transports);
 

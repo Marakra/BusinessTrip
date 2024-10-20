@@ -1,13 +1,19 @@
 package com.travel.BizTravel360.employee.controller;
 
 import com.travel.BizTravel360.employee.domain.EmployeeService;
+import com.travel.BizTravel360.employee.model.dto.AnalyticsDTO;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -36,6 +42,13 @@ public class EmployeeController {
     //URL will have first and last name after login
     @GetMapping("/hello/employee")
     public String hello(Model model) {
+        String currentEmployeeEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        
+        EmployeeDTO employeeDTO = employeeService.getEmployeeByEmail(currentEmployeeEmail);
+        
+        model.addAttribute("firstName", employeeDTO.getFirstName());
+        model.addAttribute("lastName", employeeDTO.getLastName());
+        
         return "employee/helloEmployee";
     }
     
@@ -105,6 +118,60 @@ public class EmployeeController {
         redirectAttributes.addFlashAttribute("successMessage", String.format("Successfully deleted employee with ID: %s", employeeId));
         return "redirect:/employees/employee";
     }
+    
+    @GetMapping("/employee/analytics/{id}")
+    public String getEmployeeAnalytics(@PathVariable Long id, Model model) {
+        AnalyticsDTO analyticsDTO = employeeService.getAnalyticsForEmployee(id);
+        EmployeeDTO employeeDTO = employeeService.getById(id);
+        
+        model.addAttribute("analytics", analyticsDTO);
+        model.addAttribute("employeeName", employeeDTO.getFirstName() + " " + employeeDTO.getLastName());
+        
+        return "employee/analytics";
+    }
+    
+    
+    
+    @GetMapping("/employee/analytics/download/{id}")
+    public ResponseEntity<ByteArrayResource> downloadEmployeeAnalytics(@PathVariable Long id) {
+        AnalyticsDTO analyticsDTO = employeeService.getAnalyticsForEmployee(id);
+        
+        StringBuilder content = new StringBuilder();
+        content.append("Popular Types of Transport:\n");
+        analyticsDTO.getPopularTypeAccommodations().forEach((key, value) -> {
+            content.append(key);
+            content.append(": ");
+            content.append(value);
+            content.append("\n");
+        });
+        
+        content.append("\nAccommodation Costs:\n");
+        analyticsDTO.getAccommodationCosts().forEach((key, value) -> {
+            content.append(key);
+            content.append(": ");
+            content.append(value);
+            content.append("\n");
+        });
+        
+        content.append("\nTransport Costs:\n");
+        analyticsDTO.getTransportCosts().forEach((key, value) -> {
+            content.append(key);
+            content.append(": ");
+            content.append(value);
+            content.append("\n");
+        });
+        
+        content.append("\nTotal Cost: ").append(analyticsDTO.getTotalCost()).append("\n");
+        byte[] bytes = content.toString().getBytes();
+        ByteArrayResource resource = new ByteArrayResource(bytes);
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"analytics.txt\"")
+                .contentType(MediaType.TEXT_PLAIN)
+                .contentLength(bytes.length)
+                .body(resource);
+    }
+    
     
     @GetMapping("/search-employee")
     public String searchEmployees(@RequestParam(value = "page", defaultValue = PAGE_DEFAULT_VALUE) int page,

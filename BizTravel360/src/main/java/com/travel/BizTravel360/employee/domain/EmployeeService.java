@@ -1,8 +1,10 @@
 package com.travel.BizTravel360.employee.domain;
 
 
+import com.travel.BizTravel360.employee.enumEmployee.RoleEmployee;
 import com.travel.BizTravel360.employee.exeptions.EmployeeNotFoundException;
 import com.travel.BizTravel360.employee.exeptions.EmployeeSaveException;
+import com.travel.BizTravel360.employee.model.dto.AnalyticsDTO;
 import com.travel.BizTravel360.employee.model.dto.EmployeeDTO;
 import com.travel.BizTravel360.employee.model.entity.Employee;
 import jakarta.transaction.Transactional;
@@ -30,12 +32,15 @@ public class EmployeeService {
     private final Validator validator;
     private final EmployeeMapper mapper;
     private final PasswordEncoder passwordEncoder;
+    private final AnalyticsService analyticsService;
     
     public void  save(EmployeeDTO employeeDTO) throws DataAccessException {
         try {
             trimEmployee(employeeDTO);
             
             Employee employee = mapper.formEmployeeDTO(employeeDTO);
+            
+            assignRoleOnPosition(employee);
             validateEmployee(employeeDTO);
             
             employeeRepository.save(employee);
@@ -66,6 +71,17 @@ public class EmployeeService {
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
         employeeRepository.delete(employee);
     }
+    
+    public AnalyticsDTO getAnalyticsForEmployee(Long employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
+        
+        AnalyticsDTO analyticsDTO = analyticsService.getAnalyticsForEmployee(employee);
+        analyticsDTO.setId(employeeId);
+        
+        return analyticsDTO;
+    }
+    
     
     public Page<EmployeeDTO> searchEmployee(String keyword, Pageable pageable) {
         return employeeRepository.findByKeyword(keyword, pageable)
@@ -113,6 +129,21 @@ public class EmployeeService {
         employee.setPassword(encodedPassword);
         employeeRepository.save(employee);
         log.info("Encrypting and saving password for employee with token {}", employeeDTO.getToken());
+    }
+    
+    public EmployeeDTO getEmployeeByEmail(String email) {
+        return employeeRepository.findByEmail(email)
+                .map(mapper::toEmployee)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee with email " + email + " not found"));
+    }
+    
+    private void assignRoleOnPosition(Employee employee) {
+        switch (employee.getPosition()) {
+            case ADMINISTRATOR -> employee.setRole(RoleEmployee.ROLE_ADMIN);
+            case MANAGER -> employee.setRole(RoleEmployee.ROLE_MANAGER);
+            case HR -> employee.setRole(RoleEmployee.ROLE_HR);
+            default -> employee.setRole(RoleEmployee.ROLE_EMPLOYEE);
+        }
     }
     
     private void validatePassword(String password) {

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,8 +34,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png", "/employees/employee", "/employee/employee", "/employee", "/sending-password/**")
+                        //public resources
+                        .requestMatchers("/", "/index.html", "/**.js", "/**.css", "/**.png") //"/employees/employee", "/employee/employee", "/employee", "/sending-password/**"
                         .permitAll()
+                        
+                        //restricting access to Employees for specific roles
+                        .requestMatchers("/employees/**")
+                        .hasAnyRole("ADMIN", "HR", "MANAGER")
+                        
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -47,11 +54,11 @@ public class SecurityConfig {
                 )
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
-                                .logoutSuccessUrl("/")
-                                .invalidateHttpSession(true)
-                                .deleteCookies("JSESSIONID")
-                                .permitAll()
-                        )
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
                 .csrf(csrf -> csrf.disable());
         
         return http.build();

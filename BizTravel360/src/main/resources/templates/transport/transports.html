@@ -11,14 +11,7 @@
         <div>
             <form method="GET" action="/search-transport">
                 <div class="input-group">
-                    <input type="text" class="form-control" name="keyword" placeholder="Search transport">
-                    <label>
-                        <select name="type" class="form-control">
-                            <option value="" th:selected="${type == null}">All Types</option>
-                            <option th:each="type : ${T(com.travel.BizTravel360.transport.TypeTransport).values()}"
-                                    th:value="${type}" th:text="${type}" th:selected="${type.equals(selectedType)}"></option>
-                        </select>
-                    </label>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search transport" th:value="${param.keyword}">
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </form>
@@ -92,14 +85,5 @@
             </nav>
         </div>
     </div>
-<div class="container-fluid mt-4">
-    <form method="POST" action="/generate-random-transport">
-        <button type="submit" class="custom-btn">Generate Random Transports</button>
-    </form>
-    <div th:if="${message}" class="alert alert-success mt-3" role="alert">
-        <span th:text="${message}"></span>
-    </div>
-</div>
-
 <div th:replace="~{fragments/footer::footer}"></div>
 </html>

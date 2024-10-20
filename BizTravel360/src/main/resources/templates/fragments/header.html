@@ -21,7 +21,7 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_HR', 'ROLE_MANAGER')">
                         <a class="nav-link" href="/employees/employee">Employees</a>
                     </li>
                     <li class="nav-item">
@@ -29,9 +29,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/transports/employee">Transports</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/delegations/employee">Delegations</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">

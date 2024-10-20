@@ -28,11 +28,11 @@ public class EmployeeDetailsService implements UserDetailsService {
         if (!optionalEmployee.isPresent()) {
             throw new UsernameNotFoundException(String.format("Not found employee with username: %s", username));
         }
+        
         Employee employee = optionalEmployee.get();
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_EMPLOYEE"));
+        GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(employee.getRole().getAuthority());
         
-        return new User(employee.getEmail(), employee.getPassword(), grantedAuthorities);
+        return new User(employee.getEmail(), employee.getPassword(), Set.of(grantedAuthority));
     }
 }
